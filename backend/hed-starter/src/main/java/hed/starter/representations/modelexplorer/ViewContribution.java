@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import hed.homeelectrical.DeviceKind;
 import hed.domain.Messages;
 import hed.starter.HedDomainIcons;
+import hed.starter.representations.tables.HedTableDescriptions;
 
 @Service
 public class ViewContribution implements IEditingContextProcessor, IJavaServiceProvider, IExplorerTreeDescriptionProvider {
@@ -46,18 +47,22 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
 
     private final Locale locale;
 
+    private final HedTableDescriptions tables;
+
     private org.eclipse.sirius.components.view.tree.TreeDescription explorerDescription;
 
-    public ViewContribution(ITreeIdProvider ids, IRepresentationDescriptionSearchService descriptions, IViewRepresentationDescriptionSearchService viewDescriptions, Locale locale) {
+    public ViewContribution(ITreeIdProvider ids, IRepresentationDescriptionSearchService descriptions, IViewRepresentationDescriptionSearchService viewDescriptions, HedTableDescriptions tables,
+            Locale locale) {
         this.ids = ids;
         this.descriptions = descriptions;
         this.viewDescriptions = viewDescriptions;
         this.locale = locale;
+        this.tables = tables;
     }
 
     @Override
     public List<Class<?>> getServiceClasses(View view) {
-        return List.of(HedJavaServices.class);
+        return List.of(HedJavaServices.class, ExplorerRepresentations.class);
     }
 
     @Override
@@ -86,12 +91,13 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
         actions.add(tb.newCustomTreeItemContextMenuEntry().name("hed-new-representation").contributionId("new-representation").labelExpression("aql:self.getHedText('action.newRepresentation')")
                 .preconditionExpression("aql:self.canRepresentHedObject()").build());
         actions.add(tb.newCustomTreeItemContextMenuEntry().name("hed-expand-all").contributionId("expand-all").labelExpression("aql:self.getHedText('action.expandAll')")
-                .preconditionExpression("aql:self.hasHedChildren()").build());
+                .preconditionExpression("aql:self.hasHedChildren() or self.hasHedRepresentations(editingContext)").build());
         var tree = tb.newTreeDescription().name(Messages.text(locale, "explorer.title")).titleExpression("aql:editingContext.getHedText('explorer.title')").preconditionExpression("aql:false")
-                .elementsExpression("aql:editingContext.getHedRoots()").childrenExpression("aql:if expanded->includes(self.getHedId()) then self.getHedChildren() else Sequence{} endif")
-                .hasChildrenExpression("aql:self.hasHedChildren()").treeItemIdExpression("aql:self.getHedId()").treeItemObjectExpression("aql:id.getHedObject(editingContext)")
-                .treeItemIconExpression("aql:self.getHedIcon()").kindExpression("aql:self.getHedKind()").parentExpression("aql:self.getHedParent()").selectableExpression("aql:self.isHedSelectable()")
-                .editableExpression("aql:self.isHedEditable()").deletableExpression("aql:self.isHedDeletable()")
+                .elementsExpression("aql:editingContext.getHedRoots()")
+                .childrenExpression("aql:if expanded->includes(self.getHedId()) then self.getHedChildren(hedRepresentations) else Sequence{} endif")
+                .hasChildrenExpression("aql:self.hasHedChildren(hedRepresentations)").treeItemIdExpression("aql:self.getHedId()").treeItemObjectExpression("aql:id.getHedObject(editingContext)")
+                .treeItemIconExpression("aql:self.getHedIcon()").kindExpression("aql:self.getHedKind()").parentExpression("aql:self.getHedParent(editingContext)")
+                .selectableExpression("aql:self.isHedSelectable()").editableExpression("aql:self.isHedEditable()").deletableExpression("aql:self.isHedDeletable()")
                 .treeItemLabelDescriptions(tb.newTreeItemLabelDescription().name("hed-label").preconditionExpression("aql:true")
                         .children(tb.newTreeItemLabelFragmentDescription().labelExpression("aql:self.getHedExplorerLabel()").build()).build())
                 .contextMenuEntries(actions.toArray(TreeItemContextMenuEntry[]::new)).build();
@@ -124,6 +130,7 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
     }
 
     protected void contributeTables(View view) {
+        this.tables.addTo(view);
     }
 
     @Override

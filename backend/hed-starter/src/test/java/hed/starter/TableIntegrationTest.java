@@ -1,0 +1,196 @@
+/*******************************************************************************
+ * Copyright (c) 2026 Laurent Redor.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+package hed.starter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.sirius.components.core.api.IObjectSearchService;
+import org.eclipse.sirius.components.tables.ColumnFilter;
+import org.eclipse.sirius.components.tables.ColumnSort;
+import org.eclipse.sirius.components.view.builder.generated.view.ViewBuilders;
+import org.eclipse.sirius.components.view.table.CellLabelWidgetDescription;
+import org.eclipse.sirius.components.view.table.CellTextfieldWidgetDescription;
+import org.eclipse.sirius.components.view.table.TableDescription;
+import org.junit.jupiter.api.Test;
+import hed.domain.HedDomain;
+import hed.domain.HedSamples;
+import hed.homeelectrical.ElectricalLoad;
+import hed.homeelectrical.Outlet;
+import hed.homeelectrical.NamedElement;
+import hed.starter.representations.modelexplorer.HedJavaServices;
+import hed.starter.representations.tables.HedTableDescriptions;
+
+class TableIntegrationTest {
+    private HedJavaServices services(BootstrapIntegrationTest.Feedback feedback) {
+        return new HedJavaServices(new BootstrapIntegrationTest.Identity(), new IObjectSearchService.NoOp(), feedback, Locale.ENGLISH, dwelling -> dwelling.getName());
+    }
+
+    @Test
+    void filtersAndSortingAreAppliedToAllRowsBeforePagination() {
+        var home = HedSamples.example();
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        var filtered = service.getHedRows(home, "equipment", "", List.of(new ColumnFilter("category", "outlet")), null);
+        assertEquals(1, filtered.size());
+        assertInstanceOf(Outlet.class, filtered.get(0));
+        var all = service.getHedRows(home, "equipment", "", List.of(), List.of(new ColumnSort("name", true)));
+        assertEquals(home.getEquipment().size(), all.size());
+        var names = all.stream().map(object -> service.getHedCell(object, "name")).toList();
+        var expected = new ArrayList<>(names);
+        expected.sort(String.CASE_INSENSITIVE_ORDER.reversed());
+        assertEquals(expected, names);
+        assertTrue(service.getHedRows(home, "equipment", "nonexistent equipment", List.of(), null).isEmpty());
+    }
+
+    @Test
+    void mixedNumericAndTextNamesUseTheSameTextOrderInEveryTable() {
+        var home = HedSamples.example();
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        var labels = List.of("2", "10", "10-A", "01", "outlet", "Outlet", "");
+        for (var table : List.of("equipment", "circuits", "board", "catalog")) {
+            EObject root = switch (table) {
+                case "board" -> home.getBoards().getFirst();
+                case "catalog" -> home.getCatalog();
+                default -> home;
+            };
+            var expected = new ArrayList<>(service.getHedRows(root, table, "", null, null));
+            for (int index = 0; index < expected.size(); index++) {
+                ((NamedElement) expected.get(index)).setName(labels.get(index % labels.size()));
+            }
+            var ascending = Comparator.comparing((EObject row) -> service.getHedCell(row, "name"), String.CASE_INSENSITIVE_ORDER);
+            expected.sort(ascending);
+            assertEquals(expected, service.getHedRows(root, table, "", null, List.of(new ColumnSort("name", false))), table);
+            expected.sort(ascending.reversed());
+            assertEquals(expected, service.getHedRows(root, table, "", null, List.of(new ColumnSort("name", true))), table);
+        }
+    }
+
+    @Test
+    void mixedNamesDoNotViolateTheSortContractBeforePagination() {
+        var home = HedSamples.empty("Sorting regression");
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        // This order triggered TimSort's comparator-contract exception with pair-dependent numeric/text comparisons.
+        var labels = List.of("2", "20", "10", "2", "20", "01", "2-A", "1", "1", "11", "10-A", "100", "20", "11", "3", "2-A", "20", "1", "10-A", "2-A", "100", "20", "11", "1", "10", "1-A", "01", "10",
+                "01", "10", "11", "2-A", "2", "1", "1", "10-A", "10-A", "10-A", "1", "10-A", "2-A", "3", "1", "10", "10-A", "1-A", "01", "2-A", "11", "1", "01", "100", "10", "20", "100", "2-A", "100",
+                "01", "3", "3", "100", "10", "10-A", "11");
+        for (var label : labels) {
+            HedDomain.addEquipment(home, HedDomain.type(home, hed.homeelectrical.DeviceKind.OUTLET)).setName(label);
+        }
+        var expected = labels.stream().sorted(String.CASE_INSENSITIVE_ORDER).toList();
+        assertEquals(expected, service.getHedRows(home, "equipment", "", null, List.of(new ColumnSort("name", false))).stream().map(row -> service.getHedCell(row, "name")).toList());
+        assertEquals(labels.size(), home.getEquipment().size());
+    }
+
+    @Test
+    void numericColumnsSortMissingValuesAndUseTextTieBreakersInBothDirections() {
+        var home = HedSamples.empty("Numeric sorting");
+        var types = home.getCatalog().getDeviceTypes();
+        var values = java.util.Arrays.asList(null, 10d, 2d, 0.5d);
+        for (int index = 0; index < types.size(); index++) {
+            types.get(index).setRatedCurrentA(values.get(index % values.size()));
+            types.get(index).setName(index % 2 == 0 ? "2" : "10-A");
+        }
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        for (boolean descending : List.of(false, true)) {
+            Comparator<hed.homeelectrical.DeviceType> ratings = Comparator.comparing(hed.homeelectrical.DeviceType::getRatedCurrentA, Comparator.nullsFirst(Double::compare));
+            if (descending) {
+                ratings = ratings.reversed();
+            }
+            var expected = types.stream().sorted(ratings.thenComparing(hed.homeelectrical.DeviceType::getName, String.CASE_INSENSITIVE_ORDER)).toList();
+            assertEquals(expected, service.getHedRows(home.getCatalog(), "catalog", "", null, List.of(new ColumnSort("ratedCurrentA", descending), new ColumnSort("name", false))));
+        }
+    }
+
+    @Test
+    void boardRowsFollowRailsAndUseLiveCatalogRatingsForNumericSorting() {
+        var home = HedSamples.example();
+        var board = home.getBoards().get(0);
+        var feedback = new BootstrapIntegrationTest.Feedback();
+        var service = services(feedback);
+        List<EObject> expected = new ArrayList<>();
+        board.getRails().forEach(rail -> expected.addAll(rail.getDevices()));
+        assertEquals(expected, service.getHedRows(board, "board", "", null, null));
+        var device = board.getDevices().get(0);
+        assertEquals("63.0", service.getHedCell(device, "ratedCurrentA"));
+        service.editHedCell(device, "ratedCurrentA", "40");
+        assertEquals("63.0", service.getHedCell(device, "ratedCurrentA"));
+        assertEquals(1, feedback.messages.size());
+        HedDomain.set(device.getDeviceType(), "ratedCurrentA", 40d);
+        assertEquals("40.0", service.getHedCell(device, "ratedCurrentA"));
+        var ratings = service.getHedRows(board, "board", "", null, List.of(new ColumnSort("ratedCurrentA", false))).stream().map(object -> Double.valueOf(service.getHedCell(object, "ratedCurrentA")))
+                .toList();
+        assertEquals(ratings.stream().sorted().toList(), ratings);
+    }
+
+    @Test
+    void invalidCellEditPreservesTheValueAndReportsTheDomainError() {
+        var home = HedSamples.example();
+        var feedback = new BootstrapIntegrationTest.Feedback();
+        var service = services(feedback);
+        var light = home.getEquipment().stream().filter(ElectricalLoad.class::isInstance).findFirst().orElseThrow();
+        var before = light.getRatedPowerW();
+        service.editHedCell(light, "ratedPowerW", "-10");
+        assertEquals(before, light.getRatedPowerW());
+        assertEquals(1, feedback.messages.size());
+    }
+
+    @Test
+    void boardUpstreamProtectionUsesTheDirectSupplyAndParticipatesInFiltering() {
+        var home = HedSamples.example();
+        var board = home.getBoards().get(0);
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        var rccb = board.getDevices().get(0);
+        var breaker = board.getDevices().get(1);
+        var serviceBreaker = home.getServiceConnection().getMainBreaker();
+        assertEquals(serviceBreaker.getName(), service.getHedCell(rccb, "upstreamProtection"));
+        assertEquals("ID1", service.getHedCell(breaker, "upstreamProtection"));
+        assertEquals(List.of(rccb), service.getHedRows(board, "board", serviceBreaker.getName(), null, null));
+        assertEquals(HedDomain.downstreamDevices(rccb), service.getHedRows(board, "board", "", List.of(new ColumnFilter("upstreamProtection", "ID1")), null));
+        HedDomain.set(rccb, "upstreamServiceBreaker", null);
+        assertEquals("", service.getHedCell(rccb, "upstreamProtection"));
+        HedDomain.set(breaker, "upstreamRccb", null);
+        HedDomain.set(breaker, "upstreamServiceBreaker", serviceBreaker);
+        assertEquals(serviceBreaker.getName(), service.getHedCell(breaker, "upstreamProtection"));
+        var view = new ViewBuilders().newView().build();
+        new HedTableDescriptions(Locale.ENGLISH).addTo(view);
+        var table = view.getDescriptions().stream().map(TableDescription.class::cast).filter(description -> description.getDomainType().endsWith("::DistributionBoard")).findFirst().orElseThrow();
+        var upstreamCell = table.getCellDescriptions().stream().filter(cell -> cell.getName().equals("hed-cell-upstreamProtection")).findFirst().orElseThrow();
+        assertInstanceOf(CellLabelWidgetDescription.class, upstreamCell.getCellWidgetDescription());
+    }
+
+    @Test
+    void descriptionsKeepNamesOnlyAndCatalogOwnedSpecificationsReadOnlyOnInstances() {
+        var home = HedSamples.example();
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        assertTrue(service.canRepresentHedObject(home));
+        assertTrue(service.canRepresentHedObject(home.getBoards().get(0)));
+        assertTrue(service.canRepresentHedObject(home.getCatalog()));
+        assertFalse(service.canRepresentHedObject(home.getBoards().get(0).getRails().get(0)));
+        var view = new ViewBuilders().newView().build();
+        new HedTableDescriptions(Locale.ENGLISH).addTo(view);
+        var descriptions = view.getDescriptions().stream().map(TableDescription.class::cast).toList();
+        var board = descriptions.stream().filter(table -> table.getDomainType().endsWith("::DistributionBoard")).findFirst().orElseThrow();
+        var catalog = descriptions.stream().filter(table -> table.getDomainType().endsWith("::Catalog")).findFirst().orElseThrow();
+        var boardCurrent = board.getCellDescriptions().stream().filter(cell -> cell.getName().equals("hed-cell-ratedCurrentA")).findFirst().orElseThrow();
+        var catalogCurrent = catalog.getCellDescriptions().stream().filter(cell -> cell.getName().equals("hed-cell-ratedCurrentA")).findFirst().orElseThrow();
+        assertInstanceOf(CellLabelWidgetDescription.class, boardCurrent.getCellWidgetDescription());
+        assertInstanceOf(CellTextfieldWidgetDescription.class, catalogCurrent.getCellWidgetDescription());
+        for (String table : List.of("equipment", "circuits", "board", "catalog")) {
+            assertFalse(HedTableDescriptions.fieldsFor(table).contains("reference"));
+            assertFalse(HedTableDescriptions.fieldsFor(table).contains("frenchName"));
+        }
+    }
+}

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -28,7 +29,9 @@ import org.eclipse.sirius.components.emf.services.api.IEMFEditingContext;
 import org.eclipse.sirius.components.representations.Message;
 import org.eclipse.sirius.components.representations.MessageLevel;
 import org.springframework.stereotype.Service;
+import org.eclipse.sirius.web.domain.boundedcontexts.representationdata.RepresentationMetadata;
 import hed.domain.Messages;
+import hed.domain.HedValidation;
 import hed.homeelectrical.Catalog;
 import hed.homeelectrical.Circuit;
 import hed.homeelectrical.ControlChannel;
@@ -51,6 +54,10 @@ import hed.homeelectrical.ServiceConnection;
 import hed.homeelectrical.Storey;
 import hed.starter.HedDomainIcons;
 import hed.starter.project.ProjectNameProvider;
+import hed.starter.representations.tables.HedTableDescriptions;
+import org.eclipse.sirius.components.tables.ColumnFilter;
+import org.eclipse.sirius.components.tables.ColumnSort;
+import static hed.domain.HedDomain.TECHNICAL_FEATURES;
 import static hed.domain.HedDomain.F;
 import static hed.domain.HedDomain.addEquipment;
 import static hed.domain.HedDomain.addModularDevice;
@@ -63,11 +70,16 @@ import static hed.domain.HedDomain.initialize;
 import static hed.domain.HedDomain.kind;
 import static hed.domain.HedDomain.label;
 import static hed.domain.HedDomain.modular;
+import static hed.domain.HedDomain.protectedCircuits;
+import static hed.domain.HedDomain.served;
+import static hed.domain.HedDomain.setText;
 import static hed.domain.HedDomain.type;
 
-/** Services for the virtual model explorer. */
+/** Services for the model explorer view and tabular representations. */
 @Service
 public class HedJavaServices {
+    private static final Set<String> NUMERIC_TABLE_FIELDS = Set.of("ratedCurrentA", "ratedPowerW", "widthModules", "residualCurrentMa", "conductorSectionMm2", "order");
+
     public record ProjectRoot(Dwelling home) {
     }
 
@@ -145,7 +157,26 @@ public class HedJavaServices {
         return !getHedChildren(self).isEmpty();
     }
 
+    public List<Object> getHedChildren(Object self, List<RepresentationMetadata> representations) {
+        var children = new ArrayList<Object>();
+        if (self instanceof EObject) {
+            representations
+                    .stream().filter(representation -> identity.getId(self).equals(representation.getTargetObjectId())).sorted(Comparator
+                            .comparing(RepresentationMetadata::getLabel, String.CASE_INSENSITIVE_ORDER).thenComparing(representation -> representation.getRepresentationMetadataId().toString()))
+                    .forEach(children::add);
+        }
+        children.addAll(getHedChildren(self));
+        return children;
+    }
+
+    public boolean hasHedChildren(Object self, List<RepresentationMetadata> representations) {
+        return !getHedChildren(self, representations).isEmpty();
+    }
+
     public String getHedId(Object self) {
+        if (self instanceof RepresentationMetadata representation) {
+            return representation.getRepresentationMetadataId().toString();
+        }
         if (self instanceof ProjectRoot project) {
             return "hed-project:" + Base64.getUrlEncoder().withoutPadding().encodeToString(identity.getId(project.home()).getBytes(StandardCharsets.UTF_8));
         }
@@ -169,6 +200,9 @@ public class HedJavaServices {
     }
 
     public String getHedLabel(Object self) {
+        if (self instanceof RepresentationMetadata representation) {
+            return representation.getLabel();
+        }
         if (self instanceof ProjectRoot project) {
             return projectNames.getName(project.home());
         }
@@ -183,15 +217,17 @@ public class HedJavaServices {
     }
 
     public String getHedKind(Object self) {
-        return self instanceof ProjectRoot ? "hed-project" : self instanceof Group ? "hed-group" : identity.getKind(self);
+        return self instanceof RepresentationMetadata representation ? representation.getKind()
+                : self instanceof ProjectRoot ? "hed-project" : self instanceof Group ? "hed-group" : identity.getKind(self);
     }
 
     public String getHedIcon(Object self) {
-        return HedDomainIcons.of(self);
+        return self instanceof RepresentationMetadata representation ? representation.getIconURLs().stream().map(icon -> icon.url()).findFirst().orElse(HedDomainIcons.path("table-large"))
+                : HedDomainIcons.of(self);
     }
 
     public boolean isHedSelectable(Object self) {
-        return self instanceof EObject;
+        return self instanceof EObject || self instanceof RepresentationMetadata;
     }
 
     public boolean isHedEditable(Object self) {
@@ -199,8 +235,9 @@ public class HedJavaServices {
     }
 
     public boolean isHedDeletable(Object self) {
-        return self instanceof EObject && !(self instanceof Dwelling) && !(self instanceof Catalog) && !(self instanceof DINRail r && !r.getDevices().isEmpty())
-                && !(self instanceof DeviceType t && inUse(t)) && !(self instanceof ControlChannel c && ((ControlDevice) c.eContainer()).getChannels().size() == 1);
+        return self instanceof RepresentationMetadata
+                || self instanceof EObject && !(self instanceof Dwelling) && !(self instanceof Catalog) && !(self instanceof DINRail r && !r.getDevices().isEmpty())
+                        && !(self instanceof DeviceType t && inUse(t)) && !(self instanceof ControlChannel c && ((ControlDevice) c.eContainer()).getChannels().size() == 1);
     }
 
     public boolean canAddHedObject(Object self) {
@@ -214,7 +251,11 @@ public class HedJavaServices {
     }
 
     public boolean canRepresentHedObject(Object self) {
-        return false;
+        return self instanceof Dwelling || self instanceof DistributionBoard || self instanceof Catalog;
+    }
+
+    public Object getHedParent(Object self, IEditingContext context) {
+        return self instanceof RepresentationMetadata representation ? search.getObject(context, representation.getTargetObjectId()).orElse(null) : getHedParent(self);
     }
 
     public Object getHedParent(Object self) {
@@ -392,6 +433,121 @@ public class HedJavaServices {
             delete(self);
         } catch (IllegalArgumentException ex) {
             feedback.addFeedbackMessage(new Message(Messages.text(locale, ex.getMessage()), MessageLevel.ERROR));
+        }
+        return self;
+    }
+
+    public String getHedCell(EObject self, String feature) {
+        if (feature.equals("upstreamProtection") && self instanceof ModularDevice device) {
+            var upstream = device.getUpstreamRccb() != null ? device.getUpstreamRccb() : device.getUpstreamServiceBreaker();
+            return upstream == null ? "" : label(upstream, locale);
+        }
+        if (self instanceof ModularDevice && TECHNICAL_FEATURES.contains(feature)) {
+            return Objects.toString(get(self, feature), "");
+        }
+        if (feature.equals("upstreamRccb") && self instanceof Circuit circuit) {
+            var protectiveDevice = circuit.getProtectiveDevice();
+            return protectiveDevice == null ? ""
+                    : protectiveDevice.getUpstreamRccb() != null ? label(protectiveDevice.getUpstreamRccb(), locale) : kind(protectiveDevice) == DeviceKind.RCBO ? label(protectiveDevice, locale) : "";
+        }
+        if (feature.equals("category")) {
+            return self instanceof Equipment e && e.getDeviceType() != null ? Messages.text(locale, "kind." + kind(e).getName()) : "";
+        }
+        if (feature.equals("issues")) {
+            return new HedValidation().validate(dwelling(self)).stream().filter(i -> i.target() == self).map(i -> Messages.text(locale, i.code())).reduce((a, b) -> a + "; " + b).orElse("");
+        }
+        if (feature.equals("served")) {
+            return self instanceof FinalCircuit c ? joined(served(c)) : "";
+        }
+        if (feature.equals("protectedCircuits")) {
+            return self instanceof ModularDevice d ? joined(protectedCircuits(d)) : "";
+        }
+        if (feature.equals("controls")) {
+            return joined(dwelling(self).getControlFunctions().stream()
+                    .filter(c -> c.getTargets().contains(self) || self instanceof ControlDevice d && c.getChannels().stream().anyMatch(ch -> ch.eContainer() == d)).toList());
+        }
+        if (feature.equals("order")) {
+            return self instanceof ModularDevice d && d.getRail() != null ? String.valueOf(d.getRail().getDevices().indexOf(d) + 1) : "";
+        }
+        var structural = self.eClass().getEStructuralFeature(feature);
+        if (structural == null) {
+            return "";
+        }
+        var value = self.eGet(structural);
+        if (value instanceof EObject e) {
+            return label(e, locale);
+        }
+        if (value instanceof Collection<?> collection) {
+            return collection.stream().map(Object::toString).reduce((a, b) -> a + ", " + b).orElse("");
+        }
+        if (value instanceof org.eclipse.emf.common.util.Enumerator e) {
+            return Messages.text(locale, "enum." + e.getClass().getSimpleName() + "." + e.getName());
+        }
+        return Objects.toString(value, "");
+    }
+
+    private String joined(Collection<? extends EObject> values) {
+        return values.stream().map(e -> label(e, locale)).reduce((a, b) -> a + ", " + b).orElse("");
+    }
+
+    public List<EObject> getHedRows(EObject self, String table, String globalFilter, List<ColumnFilter> filters, List<ColumnSort> sorting) {
+        List<? extends EObject> raw = switch (table) {
+            case "equipment" -> ((Dwelling) self).getEquipment();
+            case "circuits" -> ((Dwelling) self).getCircuits();
+            case "board" -> {
+                var ordered = new ArrayList<ModularDevice>();
+                ((DistributionBoard) self).getRails().forEach(rail -> ordered.addAll(rail.getDevices()));
+                yield ordered;
+            }
+            case "catalog" -> ((Catalog) self).getDeviceTypes();
+            default -> List.of();
+        };
+        var columns = HedTableDescriptions.fieldsFor(table);
+        var rows = new ArrayList<EObject>();
+        for (var row : raw) {
+            if (globalFilter != null && !globalFilter.isBlank() && columns.stream().noneMatch(field -> contains(getHedCell(row, field), globalFilter))) {
+                continue;
+            }
+            if (filters != null && filters.stream().anyMatch(filter -> !contains(getHedCell(row, filter.id()), filter.value().replace("\"", "")))) {
+                continue;
+            }
+            rows.add(row);
+        }
+        Comparator<EObject> comparator = null;
+        if (sorting != null) {
+            for (var sort : sorting) {
+                Comparator<String> values = NUMERIC_TABLE_FIELDS.contains(sort.id()) ? Comparator.comparing(this::tableNumber, Comparator.nullsFirst(Double::compare)) : String.CASE_INSENSITIVE_ORDER;
+                Comparator<EObject> next = Comparator.comparing(row -> getHedCell(row, sort.id()), values);
+                if (sort.desc()) {
+                    next = next.reversed();
+                }
+                comparator = comparator == null ? next : comparator.thenComparing(next);
+            }
+        }
+        if (comparator != null) {
+            rows.sort(comparator);
+        }
+        return rows;
+    }
+
+    /** Missing numeric values sort together; a column's comparison rule never depends on the current pair of rows. */
+    private Double tableNumber(String value) {
+        try {
+            return Double.valueOf(value);
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
+    private boolean contains(String text, String query) {
+        return text.toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT).strip());
+    }
+
+    public Object editHedCell(EObject self, String feature, String value) {
+        try {
+            setText(self, feature, value);
+        } catch (IllegalArgumentException ex) {
+            feedback.addFeedbackMessage(new Message(Messages.text(locale, ex instanceof NumberFormatException ? "positiveValue" : ex.getMessage()), MessageLevel.ERROR));
         }
         return self;
     }

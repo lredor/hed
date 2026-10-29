@@ -10,7 +10,7 @@ SPDX-License-Identifier: EPL-2.0
 
 # Model Explorer
 
-Select **Electrical installation** in the explorer selector to use the domain tree. Model Explorer provides contextual creation, rename and delete actions.
+Select **Electrical installation** in the explorer selector to use the domain tree. Model Explorer provides contextual creation, rename and delete actions, and lists saved representations beneath their model element.
 
 ## Hierarchy and creation contexts
 
@@ -39,7 +39,7 @@ Project
     └── Terminal equipment
 ```
 
-The project root, GTL and category groups are navigation objects. They do not add semantic classes or duplicate the model. The displayed **Dwelling** label is localized; select it to edit the dwelling's stored name and properties. Inline Rename is disabled for that fixed navigation label.
+The project root, GTL and category groups are navigation objects. They do not add semantic classes or duplicate the model. The displayed **Dwelling** label is localized; select it to edit the dwelling's stored name and properties. Inline Rename is disabled for that fixed navigation label. Saved representations remain beneath their real semantic owner: dwelling tables under Dwelling, board tables under their distribution board, and catalog tables under Device catalog.
 
 | Context | Creation actions |
 | --- | --- |

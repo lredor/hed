@@ -66,8 +66,9 @@ The starter follows Ontology's separation of project setup and representation co
 | --- | --- |
 | `hed.starter` | `HedDomainConfiguration` connects EMF, validation, locale and image paths to Sirius Web; `HedDomainIcons` supplies shared pictograms. |
 | `hed.starter.project` | `ProjectTemplates` advertises the available project templates; `ProjectInitializer` creates their semantic content; `ProjectNames` resolves the native project name for the explorer root. |
-| `hed.starter.representations.modelexplorer` | `ViewContribution`, `HedJavaServices` and `ExplorerMetadata` describe the explorer; `HedDomainEditing` and `HedDomainLabels` provide editing and label services. |
+| `hed.starter.representations.modelexplorer` | `ViewContribution`, `HedJavaServices`, `ExplorerMetadata` and `ExplorerRepresentations` describe the explorer and its saved representations; `HedDomainEditing` and `HedDomainLabels` provide editing and label services. |
 | `hed.starter.representations.details` | `HedPropertiesDescriptionRegistryConfigurer` builds the properties pages. |
+| `hed.starter.representations.tables` | `HedTableDescriptions` builds equipment, circuit, board and catalog tables. |
 
 The domain configuration remains in the starter because it also registers Sirius Web editing-context services, image paths and application locale. The model and edit modules remain independent of Spring and Sirius Web.
 
@@ -81,7 +82,7 @@ The domain configuration remains in the starter because it also registers Sirius
 6. Configure circuit source boards, protective devices and functional controls through reference selectors. Clear an incompatible protection before changing a circuit's source board.
 7. Rename through the Name property or the explorer, and delete through the explorer. Reopen the project to continue editing the persisted model.
 
-The explorer root displays the native Sirius Web project name above Dwelling, Electrical service area (GTL) and Device catalog. Dwelling contains storeys/rooms, unlocated equipment and functional controls; the GTL contains the service connection, boards and circuits. The catalog groups distribution board device types separately from terminal equipment types. These navigation nodes do not change semantic ownership. Modular appliances appear under their rails. See [the hierarchy and creation contexts](model-explorer.md). Specialized schedules and diagrams are introduced in separate increments.
+The explorer root displays the native Sirius Web project name above Dwelling, Electrical service area (GTL) and Device catalog. Dwelling contains storeys/rooms, unlocated equipment and functional controls; the GTL contains the service connection, boards and circuits. The catalog groups distribution board device types separately from terminal equipment types. These navigation nodes do not change semantic ownership. Modular appliances appear under their rails. See [the hierarchy and creation contexts](model-explorer.md). Specialized tables and diagrams are introduced in separate increments.
 
 Modular specifications are editable on catalog types and displayed read-only on instances. Each equipment or circuit has one Name; modular appliances also have Label text. The properties view exposes domain validation messages and the native validation service uses the same domain rules.
 
@@ -116,17 +117,19 @@ A new project's default catalog names use its creation language. There is only o
 
 ## Validation
 
-`mvn -s settings.xml.example -Papplication verify` runs the domain and starter integration tests. The starter suite checks native Sirius JSON serialization, catalog and protection references, branch assignments, explorer projection, room/rail creation, stale creation-dialog rejection, read-only catalog specifications, stable view identifiers across languages and local category icon resolution.
+`mvn -s settings.xml.example -Papplication verify` runs the domain and starter integration tests. The starter suite checks native Sirius JSON serialization, catalog and protection references, branch assignments, explorer projection, room/rail creation, stale creation-dialog rejection, read-only catalog specifications, stable view identifiers across languages, local category icon resolution, table filtering/numeric sorting, rejected cell edits and catalog-owned board ratings.
 
 Browser checks cover project creation, catalog editing, native object creation, circuit assignment, renaming, deletion, reopening and French/English behavior. They use a locally installed Chrome and create and delete only their own uniquely named test project. For a running French instance on port 8081:
 
 ```powershell
 $env:HED_BASE_URL = 'http://localhost:8081'
 $env:HED_TEST_LOCALE = 'fr_FR'
-npm --prefix frontend test -- bootstrap.spec.ts upstream-protection.spec.ts explorer-hierarchy.spec.ts
+npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-hierarchy.spec.ts
 ```
 
 The protection workflow checks service-breaker inverse links, the read-only RCCB downstream list and persistence after reopening.
+
+The [table workflow](tables.md) also checks all four representation contexts and persistence of table edits.
 
 Use `HED_TEST_LOCALE=en_GB` for an English backend. Use a separate database when validating persistence across application restarts so these checks remain independent of existing projects.
 

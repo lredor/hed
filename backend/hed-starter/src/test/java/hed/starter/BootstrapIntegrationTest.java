@@ -58,6 +58,7 @@ import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfi
 import hed.starter.representations.modelexplorer.HedDomainEditing;
 import hed.starter.representations.modelexplorer.HedJavaServices;
 import hed.starter.representations.modelexplorer.ViewContribution;
+import hed.starter.representations.tables.HedTableDescriptions;
 
 class BootstrapIntegrationTest {
     static final class Identity implements IIdentityService {
@@ -211,9 +212,9 @@ class BootstrapIntegrationTest {
 
     @Test
     void explorerDescriptionIdsAreUniqueAndStableAcrossRebuildsAndLanguages() {
-        var first = new ViewContribution(null, null, null, Locale.ENGLISH).createView();
-        var again = new ViewContribution(null, null, null, Locale.ENGLISH).createView();
-        var french = new ViewContribution(null, null, null, Locale.FRENCH).createView();
+        var first = new ViewContribution(null, null, null, new HedTableDescriptions(Locale.ENGLISH), Locale.ENGLISH).createView();
+        var again = new ViewContribution(null, null, null, new HedTableDescriptions(Locale.ENGLISH), Locale.ENGLISH).createView();
+        var french = new ViewContribution(null, null, null, new HedTableDescriptions(Locale.FRENCH), Locale.FRENCH).createView();
         assertEquals(ids(first), ids(again));
         assertEquals(ids(first), ids(french));
         assertEquals(ids(first).size(), new HashSet<>(ids(first)).size());

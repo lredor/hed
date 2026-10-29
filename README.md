@@ -39,7 +39,7 @@ See [the metamodel and editing rules](doc/metamodel.md).
 
 ## Sirius Web application
 
-The `application` Maven profile adds the Sirius Web 2026.9.0 backend and the standard React frontend. It provides empty/sample dwelling templates, the domain explorer, contextual creation and deletion, editable properties, domain validation and local pictograms.
+The `application` Maven profile adds the Sirius Web 2026.9.0 backend and the standard React frontend. It provides empty/sample dwelling templates, the domain explorer, contextual creation and deletion, editable properties, four electrical tables, domain validation and local pictograms.
 
 Build the frontend before packaging the application, then run it against PostgreSQL. See [building, configuration and the first modeling workflow](doc/development.md). English is the default; set `HED_LOCALE=fr_FR` for French. New catalog names use the creation language and remain editable user data afterward.
 
@@ -49,7 +49,7 @@ Docker builds the frontend and backend from source, runs the Maven tests, and st
 
 ## Model Explorer
 
-Use Model Explorer to create, rename and delete model elements and inspect their properties.
+Use Model Explorer to create, rename and delete model elements, inspect their properties and open saved representations.
 
 If another explorer is active, choose **Electrical installation** in the explorer selector to use the domain projection. Its root is the native project name, with **Dwelling**, **Electrical service area (GTL)** and **Device catalog** beneath it. Storeys, rooms and functional controls are under Dwelling; the service connection, distribution boards and circuits are under the GTL. The catalog separates **Distribution board devices** from **Terminal equipment**.
 
@@ -58,6 +58,36 @@ Create a distribution board from the GTL, then rails on the board and appliances
 ### Model pictograms
 
 The explorer, creation menus and reference selectors share the local [Material Design Icons selection](doc/icons.md), with visual previews and author credits. The SVGs retain their upstream licenses.
+
+## Representations
+
+The same residential electrical model can be viewed through several representations. Each representation is associated with a model element and shares its data with Model Explorer and Properties. Table columns can be resized to suit the information being displayed. Create a view using **New representation** on its owner in Model Explorer. Saved representations appear beneath that owner and can be opened, renamed or deleted there; deleting a representation preserves the model element.
+
+See [table creation and editing](doc/tables.md) for the available columns and editing rules.
+
+### Equipment Table
+
+Create this table on a **Dwelling**. It lists terminal equipment, rooms, catalog types, circuits, functional controls and power ratings. Names and power ratings can be edited inline.
+
+![Equipment Table](doc/images/representations/equipment-table.png)
+
+### Circuit Table
+
+Create this table on a **Dwelling**. It shows circuit uses, source boards, protective devices, conductor cross-sections and served equipment. Names and conductor cross-sections can be edited inline.
+
+![Circuit Table](doc/images/representations/circuit-table.png)
+
+### Distribution Board Table
+
+Create this table on a **DistributionBoard**. It shows rail assignments, catalog types and protective-device specifications. The read-only **Upstream protection** column shows each device's direct supply (RCCB or service circuit-breaker). Names and label text can be edited here; catalog-owned specifications remain read-only on instances.
+
+![Distribution Board Table](doc/images/representations/distribution-board-table.png)
+
+### Device Catalog Table
+
+Create this table on a **Catalog**. It lists the available device types, their ratings, module widths, manufacturers and product references. Editing a type updates the specifications displayed for its instances.
+
+![Device Catalog Table](doc/images/representations/device-catalog-table.png)
 
 ## References
 

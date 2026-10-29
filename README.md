@@ -43,6 +43,10 @@ The `application` Maven profile adds the Sirius Web 2026.9.0 backend and the sta
 
 Build the frontend before packaging the application, then run it against PostgreSQL. See [building, configuration and the first modeling workflow](doc/development.md). English is the default; set `HED_LOCALE=fr_FR` for French. New catalog names use the creation language and remain editable user data afterward.
 
+## Docker launch
+
+Docker builds the frontend and backend from source, runs the Maven tests, and starts the application with PostgreSQL. See [the Docker launch and persistence workflow](doc/docker.md) and [GitHub Packages access](doc/github-packages.md).
+
 ## Model Explorer
 
 Use Model Explorer to create, rename and delete model elements and inspect their properties.

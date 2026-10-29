@@ -14,3 +14,7 @@ The Eclipse Java formatter and cleanup profiles in tools/style are copied from
 Eclipse Sirius Web v2026.9.0 and retain its EPL-2.0 licensing. The formatting
 Checkstyle rules are adapted from the same release.
 Source: https://github.com/eclipse-sirius/sirius-web/tree/v2026.9.0/packages/releng/backend/sirius-components-resources
+
+The frontend distribution also includes assets/third-party-licenses.md, generated
+from the bundled dependencies and containing their license notices, including
+those for the Roboto font.

@@ -17,3 +17,4 @@
 tempImagesNotInConf/
 playwright-report/
 test-results/
+backend/hed-application/src/main/resources/static/

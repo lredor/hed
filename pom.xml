@@ -44,8 +44,38 @@ SPDX-License-Identifier: EPL-2.0
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>4.1.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>github-sirius-web</id>
+            <url>https://maven.pkg.github.com/eclipse-sirius/sirius-web</url>
+        </repository>
+        <repository>
+            <id>github-sirius-emfjson</id>
+            <url>https://maven.pkg.github.com/eclipse-sirius/sirius-emf-json</url>
+        </repository>
+    </repositories>
+    <profiles>
+        <profile>
+            <id>application</id>
+            <modules>
+                <module>backend/hed-starter</module>
+                <module>backend/hed-application</module>
+            </modules>
+        </profile>
+    </profiles>
     <build>
         <pluginManagement>
             <plugins>

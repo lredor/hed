@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Copyright (c) 2026 Laurent Redor.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+-->
+<genmodel:GenModel
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    codeFormatting="true"
+    complianceLevel="17.0"
+    copyrightFields="false"
+    copyrightText="Copyright (c) 2026 Laurent Redor.&#10;This program and the accompanying materials&#10;are made available under the terms of the Eclipse Public License v2.0&#10;which accompanies this distribution, and is available at&#10;https://www.eclipse.org/legal/epl-2.0/&#10;&#10;SPDX-License-Identifier: EPL-2.0"
+    editDirectory="/hed-model-edit/src/main/java"
+    editPluginID="hed-model-edit"
+    modelDirectory="/hed-model/src/main/java"
+    modelName="HomeElectrical"
+    modelPluginID="hed-model"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    xmi:version="2.0">
+    <genPackages basePackage="hed" disposableProviderFactory="true" prefix="HomeElectrical">
+        <ecorePackage href="homeelectrical.ecore#/"/>
+        <genEnums typeSafeEnumCompatible="false">
+            <ecoreEnum href="homeelectrical.ecore#//DeviceKind"/>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/OUTLET"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/SWITCH"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/PUSH_BUTTON"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/DIMMER"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/SHUTTER_CONTROL"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/LUMINAIRE"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/SHUTTER_MOTOR"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/HEATER"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/WATER_HEATER"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/VENTILATION"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/COOKER"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/FIXED_APPLIANCE"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/MCB"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/RCCB"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/RCBO"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/FUSE"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/ISOLATOR"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/SPD"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/IMPULSE_RELAY"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/CONTACTOR"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/ENERGY_METER"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/SERVICE_BREAKER"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/OTHER_FIELD"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/OTHER_MODULAR"/>
+            </genEnumLiterals>
+        </genEnums>
+        <genEnums typeSafeEnumCompatible="false">
+            <ecoreEnum href="homeelectrical.ecore#//SupplyPhase"/>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//SupplyPhase/UNKNOWN"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//SupplyPhase/SINGLE_PHASE"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//SupplyPhase/THREE_PHASE"/>
+            </genEnumLiterals>
+        </genEnums>
+        <genEnums typeSafeEnumCompatible="false">
+            <ecoreEnum href="homeelectrical.ecore#//CircuitPhase"/>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitPhase/UNKNOWN"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitPhase/L1"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitPhase/L2"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitPhase/L3"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitPhase/THREE_PHASE"/>
+            </genEnumLiterals>
+        </genEnums>
+        <genEnums typeSafeEnumCompatible="false">
+            <ecoreEnum href="homeelectrical.ecore#//CircuitUse"/>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/UNKNOWN"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/LIGHTING"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/SOCKET_OUTLETS"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/SHUTTERS"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/HEATING"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/WATER_HEATING"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/VENTILATION"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/COOKING"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/DEDICATED_APPLIANCE"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//CircuitUse/OTHER"/>
+            </genEnumLiterals>
+        </genEnums>
+        <genEnums typeSafeEnumCompatible="false">
+            <ecoreEnum href="homeelectrical.ecore#//ControlMode"/>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//ControlMode/SWITCHING"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//ControlMode/DIMMING"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//ControlMode/SHUTTER"/>
+            </genEnumLiterals>
+        </genEnums>
+        <genClasses image="false">
+            <ecoreClass href="homeelectrical.ecore#//NamedElement"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//NamedElement/name" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//NamedElement/description" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses image="false">
+            <ecoreClass href="homeelectrical.ecore#//TechnicalElement"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//TechnicalElement/ratedCurrentA" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//TechnicalElement/ratedPowerW" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//TechnicalElement/widthModules" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature
+                    href="homeelectrical.ecore#//TechnicalElement/residualCurrentMa"
+                    xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//TechnicalElement/residualType" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//TechnicalElement/tripCurve" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature
+                    href="homeelectrical.ecore#//TechnicalElement/poleConfiguration"
+                    xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//Dwelling"/>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Dwelling/catalog" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Dwelling/storeys" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Dwelling/equipment" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Dwelling/boards" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Dwelling/circuits" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Dwelling/controlFunctions" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Dwelling/serviceConnection" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//Storey"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//Storey/levelNumber" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Storey/rooms" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//Room"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//Room/usage" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//Catalog"/>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//Catalog/deviceTypes" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//DeviceType"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//DeviceType/kind" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//DeviceType/manufacturer" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//DeviceType/productReference" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//DeviceType/channelCount" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses image="false">
+            <ecoreClass href="homeelectrical.ecore#//Equipment"/>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//Equipment/deviceType" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses image="false">
+            <ecoreClass href="homeelectrical.ecore#//FieldEquipment"/>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//FieldEquipment/room" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//FieldEquipment/circuit" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//FieldEquipment/branch" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//Outlet"/>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//ElectricalLoad"/>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//ControlDevice"/>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//ControlDevice/channels" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//ControlChannel"/>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//DistributionBoard"/>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//DistributionBoard/room" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//DistributionBoard/rails" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//DistributionBoard/devices" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//DINRail"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//DINRail/capacityModules" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//DINRail/devices" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//ModularDevice"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//ModularDevice/labelText" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//ModularDevice/rail" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//ModularDevice/upstreamRccb" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature
+                    href="homeelectrical.ecore#//ModularDevice/upstreamServiceBreaker"
+                    xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses image="false">
+            <ecoreClass href="homeelectrical.ecore#//Circuit"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//Circuit/phase" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//Circuit/conductorSectionMm2" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//Circuit/sourceBoard" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//Circuit/protectiveDevice" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//FinalCircuit"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//FinalCircuit/usage" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//FinalCircuit/branches" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//DistributionCircuit"/>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature
+                    href="homeelectrical.ecore#//DistributionCircuit/targetBoard"
+                    xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//ControlFunction"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//ControlFunction/mode" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//ControlFunction/channels" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//ControlFunction/targets" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//ControlFunction/actuator" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//ServiceConnection"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//ServiceConnection/phase" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature
+                    href="homeelectrical.ecore#//ServiceConnection/subscribedPowerKva"
+                    xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//ServiceConnection/meter" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//ServiceConnection/mainBreaker" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//EnergyMeter"/>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//EnergyMeter/serialNumber" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//ServiceCircuitBreaker"/>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature
+                    href="homeelectrical.ecore#//ServiceCircuitBreaker/downstreamDevices"
+                    xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//CircuitBranch"/>
+            <genFeatures createChild="false" notify="false" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//CircuitBranch/circuit" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//CircuitBranch/equipment" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+    </genPackages>
+</genmodel:GenModel>

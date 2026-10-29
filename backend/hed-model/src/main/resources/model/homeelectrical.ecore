@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Copyright (c) 2026 Laurent Redor.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+-->
+<ecore:EPackage
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    name="homeelectrical"
+    nsPrefix="hed"
+    nsURI="https://lredor.github.io/home-electrical-designer/1.0"
+    xmi:version="2.0">
+    <eClassifiers abstract="true" name="NamedElement" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="name"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="description"
+            xsi:type="ecore:EAttribute"/>
+    </eClassifiers>
+    <eClassifiers abstract="true" eSuperTypes="#//NamedElement" name="TechnicalElement" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"
+            name="ratedCurrentA"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"
+            name="ratedPowerW"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"
+            name="widthModules"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"
+            name="residualCurrentMa"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="residualType"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="tripCurve"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="poleConfiguration"
+            xsi:type="ecore:EAttribute"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="Dwelling" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            containment="true"
+            eType="#//Catalog"
+            lowerBound="1"
+            name="catalog"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//Storey"
+            name="storeys"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//FieldEquipment"
+            name="equipment"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//DistributionBoard"
+            name="boards"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//Circuit"
+            name="circuits"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//ControlFunction"
+            name="controlFunctions"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//ServiceConnection"
+            name="serviceConnection"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="Storey" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"
+            name="levelNumber"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//Room"
+            name="rooms"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="Room" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="usage"
+            xsi:type="ecore:EAttribute"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="Catalog" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            containment="true"
+            eType="#//DeviceType"
+            name="deviceTypes"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//TechnicalElement" name="DeviceType" xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//DeviceKind" name="kind" xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="manufacturer"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="productReference"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            defaultValueLiteral="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+            name="channelCount"
+            xsi:type="ecore:EAttribute"/>
+    </eClassifiers>
+    <eClassifiers abstract="true" eSuperTypes="#//NamedElement" name="Equipment" xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//DeviceType" lowerBound="1" name="deviceType" xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers
+        abstract="true"
+        eSuperTypes="#//Equipment #//TechnicalElement"
+        name="FieldEquipment"
+        xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//Room" name="room" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures eType="#//FinalCircuit" name="circuit" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            eOpposite="#//CircuitBranch/equipment"
+            eType="#//CircuitBranch"
+            name="branch"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//FieldEquipment" name="Outlet" xsi:type="ecore:EClass"/>
+    <eClassifiers eSuperTypes="#//FieldEquipment" name="ElectricalLoad" xsi:type="ecore:EClass"/>
+    <eClassifiers eSuperTypes="#//FieldEquipment" name="ControlDevice" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            containment="true"
+            eType="#//ControlChannel"
+            lowerBound="1"
+            name="channels"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="ControlChannel" xsi:type="ecore:EClass"/>
+    <eClassifiers eSuperTypes="#//NamedElement" name="DistributionBoard" xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//Room" name="room" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//DINRail"
+            name="rails"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//ModularDevice"
+            name="devices"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="DINRail" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            defaultValueLiteral="13"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+            name="capacityModules"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eOpposite="#//ModularDevice/rail"
+            eType="#//ModularDevice"
+            name="devices"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//Equipment" name="ModularDevice" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="labelText"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eOpposite="#//DINRail/devices"
+            eType="#//DINRail"
+            lowerBound="1"
+            name="rail"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures eType="#//ModularDevice" name="upstreamRccb" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            eOpposite="#//ServiceCircuitBreaker/downstreamDevices"
+            eType="#//ServiceCircuitBreaker"
+            name="upstreamServiceBreaker"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers abstract="true" eSuperTypes="#//NamedElement" name="Circuit" xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//CircuitPhase" name="phase" xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"
+            name="conductorSectionMm2"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures eType="#//DistributionBoard" name="sourceBoard" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures eType="#//ModularDevice" name="protectiveDevice" xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//Circuit" name="FinalCircuit" xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//CircuitUse" name="usage" xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            containment="true"
+            eOpposite="#//CircuitBranch/circuit"
+            eType="#//CircuitBranch"
+            name="branches"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//Circuit" name="DistributionCircuit" xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//DistributionBoard" name="targetBoard" xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="ControlFunction" xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//ControlMode" name="mode" xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures eType="#//ControlChannel" name="channels" upperBound="-1" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures eType="#//FieldEquipment" name="targets" upperBound="-1" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures eType="#//ModularDevice" name="actuator" xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="ServiceConnection" xsi:type="ecore:EClass">
+        <eStructuralFeatures eType="#//SupplyPhase" name="phase" xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"
+            name="subscribedPowerKva"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures containment="true" eType="#//EnergyMeter" name="meter" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//ServiceCircuitBreaker"
+            name="mainBreaker"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//Equipment #//TechnicalElement" name="EnergyMeter" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="serialNumber"
+            xsi:type="ecore:EAttribute"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//Equipment #//TechnicalElement" name="ServiceCircuitBreaker" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            eOpposite="#//ModularDevice/upstreamServiceBreaker"
+            eType="#//ModularDevice"
+            name="downstreamDevices"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="CircuitBranch" xsi:type="ecore:EClass">
+        <eStructuralFeatures
+            eOpposite="#//FinalCircuit/branches"
+            eType="#//FinalCircuit"
+            lowerBound="1"
+            name="circuit"
+            xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            eOpposite="#//FieldEquipment/branch"
+            eType="#//FieldEquipment"
+            name="equipment"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers name="DeviceKind" xsi:type="ecore:EEnum">
+        <eLiterals name="OUTLET" value="0"/>
+        <eLiterals name="SWITCH" value="1"/>
+        <eLiterals name="PUSH_BUTTON" value="2"/>
+        <eLiterals name="DIMMER" value="3"/>
+        <eLiterals name="SHUTTER_CONTROL" value="4"/>
+        <eLiterals name="LUMINAIRE" value="5"/>
+        <eLiterals name="SHUTTER_MOTOR" value="6"/>
+        <eLiterals name="HEATER" value="7"/>
+        <eLiterals name="WATER_HEATER" value="8"/>
+        <eLiterals name="VENTILATION" value="9"/>
+        <eLiterals name="COOKER" value="10"/>
+        <eLiterals name="FIXED_APPLIANCE" value="11"/>
+        <eLiterals name="MCB" value="12"/>
+        <eLiterals name="RCCB" value="13"/>
+        <eLiterals name="RCBO" value="14"/>
+        <eLiterals name="FUSE" value="15"/>
+        <eLiterals name="ISOLATOR" value="16"/>
+        <eLiterals name="SPD" value="17"/>
+        <eLiterals name="IMPULSE_RELAY" value="18"/>
+        <eLiterals name="CONTACTOR" value="19"/>
+        <eLiterals name="ENERGY_METER" value="20"/>
+        <eLiterals name="SERVICE_BREAKER" value="21"/>
+        <eLiterals name="OTHER_FIELD" value="22"/>
+        <eLiterals name="OTHER_MODULAR" value="23"/>
+    </eClassifiers>
+    <eClassifiers name="SupplyPhase" xsi:type="ecore:EEnum">
+        <eLiterals name="UNKNOWN" value="0"/>
+        <eLiterals name="SINGLE_PHASE" value="1"/>
+        <eLiterals name="THREE_PHASE" value="2"/>
+    </eClassifiers>
+    <eClassifiers name="CircuitPhase" xsi:type="ecore:EEnum">
+        <eLiterals name="UNKNOWN" value="0"/>
+        <eLiterals name="L1" value="1"/>
+        <eLiterals name="L2" value="2"/>
+        <eLiterals name="L3" value="3"/>
+        <eLiterals name="THREE_PHASE" value="4"/>
+    </eClassifiers>
+    <eClassifiers name="CircuitUse" xsi:type="ecore:EEnum">
+        <eLiterals name="UNKNOWN" value="0"/>
+        <eLiterals name="LIGHTING" value="1"/>
+        <eLiterals name="SOCKET_OUTLETS" value="2"/>
+        <eLiterals name="SHUTTERS" value="3"/>
+        <eLiterals name="HEATING" value="4"/>
+        <eLiterals name="WATER_HEATING" value="5"/>
+        <eLiterals name="VENTILATION" value="6"/>
+        <eLiterals name="COOKING" value="7"/>
+        <eLiterals name="DEDICATED_APPLIANCE" value="8"/>
+        <eLiterals name="OTHER" value="9"/>
+    </eClassifiers>
+    <eClassifiers name="ControlMode" xsi:type="ecore:EEnum">
+        <eLiterals name="SWITCHING" value="0"/>
+        <eLiterals name="DIMMING" value="1"/>
+        <eLiterals name="SHUTTER" value="2"/>
+    </eClassifiers>
+</ecore:EPackage>

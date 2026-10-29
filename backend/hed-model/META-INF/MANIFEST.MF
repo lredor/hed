@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-Copyright: Copyright (c) 2026 Laurent Redor.
+Bundle-License: https://www.eclipse.org/legal/epl-2.0/
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: hed-model;singleton:=true
+Automatic-Module-Name: hed-model
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Export-Package: hed.homeelectrical,
+ hed.homeelectrical.impl,
+ hed.homeelectrical.util
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport
+Bundle-ActivationPolicy: lazy

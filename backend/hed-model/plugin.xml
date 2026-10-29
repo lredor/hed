@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Copyright (c) 2026 Laurent Redor.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+-->
+<?eclipse version="3.0"?><plugin>
+    <extension point="org.eclipse.emf.ecore.generated_package">
+        <!-- @generated homeelectrical -->
+        <package
+            class="hed.homeelectrical.HomeElectricalPackage"
+            genModel="src/main/resources/model/homeelectrical.genmodel"
+            uri="https://lredor.github.io/home-electrical-designer/1.0"/>
+    </extension>
+</plugin>

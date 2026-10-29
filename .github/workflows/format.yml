@@ -1,0 +1,41 @@
+# Copyright (c) 2026 Laurent Redor.
+# This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v2.0
+# which accompanies this distribution, and is available at
+# https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+
+name: Formatting
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Check Java formatting
+        run: >-
+          mvn -B -f tools/codegen/pom.xml compile exec:java
+          -Dexec.mainClass=hed.codegen.SourceFormatting
+          "-Dexec.args=--check ."
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        if: hashFiles('frontend/.prettierrc') != ''
+        with:
+          node-version: '22.16.0'
+      - name: Check frontend formatting
+        if: hashFiles('frontend/.prettierrc') != ''
+        run: >-
+          npm exec --yes --package=prettier@2.7.1 -- prettier --check
+          --config frontend/.prettierrc
+          "frontend/src/**/*.{ts,tsx,css}" "frontend/e2e/**/*.ts"
+          "frontend/*.ts" frontend/index.html

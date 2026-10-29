@@ -1,0 +1,24 @@
+# Copyright (c) 2026 Laurent Redor.
+# This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v2.0
+# which accompanies this distribution, and is available at
+# https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+[*.{java,xml,xml.example}]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[*.{ts,tsx,css}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true

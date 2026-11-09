@@ -64,7 +64,7 @@ The starter follows Ontology's separation of project setup and representation co
 
 | Package | Responsibilities |
 | --- | --- |
-| `hed.starter` | `HedDomainConfiguration` connects EMF, validation, locale and image paths to Sirius Web; the default EMF label service supplies the generated pictograms. |
+| `hed.starter` | `HedDomainConfiguration` connects EMF, validation, locale and image paths to Sirius Web; `HedDomainIcons` supplies shared pictograms. |
 | `hed.starter.project` | `ProjectTemplates` advertises the available project templates; `ProjectInitializer` creates their semantic content; `ProjectNames` resolves the native project name for the explorer root. |
 | `hed.starter.representations.modelexplorer` | `ViewContribution`, `HedJavaServices` and `ExplorerMetadata` describe the explorer; `HedDomainEditing` and `HedDomainLabels` provide editing and label services. |
 | `hed.starter.representations.details` | `HedPropertiesDescriptionRegistryConfigurer` builds the properties pages. |
@@ -85,7 +85,7 @@ The explorer root displays the native Sirius Web project name above Dwelling, El
 
 Modular specifications are editable on catalog types and displayed read-only on instances. Each equipment or circuit has one Name; modular appliances also have Label text. The properties view exposes domain validation messages and the native validation service uses the same domain rules.
 
-The explorer and semantic reference selectors use the native EMF icon service. Project templates and creation actions use the Sirius default icon. The navigation icon returns to the home page through a React `Link` to `/` and a translated tooltip.
+The [Material Design Icons](icons.md) are served locally and shared by project templates, the explorer, creation tools and semantic reference selectors. The navigation icon returns to the home page through a React `Link` to `/` and a translated tooltip.
 
 ## Source formatting
 
@@ -116,7 +116,7 @@ A new project's default catalog names use its creation language. There is only o
 
 ## Validation
 
-`mvn -s settings.xml.example -Papplication verify` runs the domain and starter integration tests. The starter suite checks native Sirius JSON serialization, catalog and protection references, branch assignments, explorer projection, room/rail creation, stale creation-dialog rejection, read-only catalog specifications, stable view identifiers across languages and generated EMF icon resolution.
+`mvn -s settings.xml.example -Papplication verify` runs the domain and starter integration tests. The starter suite checks native Sirius JSON serialization, catalog and protection references, branch assignments, explorer projection, room/rail creation, stale creation-dialog rejection, read-only catalog specifications, stable view identifiers across languages and local category icon resolution.
 
 Browser checks cover project creation, catalog editing, native object creation, circuit assignment, renaming, deletion, reopening and French/English behavior. They use a locally installed Chrome and create and delete only their own uniquely named test project. For a running French instance on port 8081:
 
@@ -130,7 +130,7 @@ The protection workflow checks service-breaker inverse links, the read-only RCCB
 
 Use `HED_TEST_LOCALE=en_GB` for an English backend. Use a separate database when validating persistence across application restarts so these checks remain independent of existing projects.
 
-The project is distributed under EPL-2.0. Model, edit, starter and application artifacts include the project license and notice; the generated EMF icons follow the project license. Vite also emits `assets/third-party-licenses.md` alongside the frontend to preserve the license texts of bundled dependencies, including the Roboto font.
+The project is distributed under EPL-2.0. Model, edit, starter and application artifacts include the project license and notice; the MDI assets retain their upstream notices. Vite also emits `assets/third-party-licenses.md` alongside the frontend to preserve the license texts of bundled dependencies, including the Roboto font.
 
 ## Automated formatting checks
 

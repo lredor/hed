@@ -14,11 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.Locale;
-import org.eclipse.sirius.components.emf.services.ComposedEMFLabelService;
-import org.eclipse.sirius.components.emf.services.DefaultEMFLabelService;
 import org.eclipse.sirius.components.forms.description.IfDescription;
 import org.eclipse.sirius.components.forms.description.PageDescription;
 import org.eclipse.sirius.components.forms.description.TextfieldDescription;
@@ -27,7 +23,6 @@ import org.eclipse.sirius.components.representations.VariableManager;
 import org.junit.jupiter.api.Test;
 import hed.domain.HedDomain;
 import hed.domain.HedSamples;
-import hed.homeelectrical.provider.HomeElectricalItemProviderAdapterFactory;
 import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfigurer;
 
 class UpstreamProtectionIntegrationTest {
@@ -37,9 +32,7 @@ class UpstreamProtectionIntegrationTest {
         var rccb = home.getBoards().get(0).getDevices().get(0);
         var breaker = home.getBoards().get(0).getDevices().get(1);
         var pages = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(new BootstrapIntegrationTest.Identity(), Locale.ENGLISH,
-                new ComposedEMFLabelService(new DefaultEMFLabelService(List.of(HomeElectricalItemProviderAdapterFactory::new), object -> Optional.empty()), List.of()))
-                .addPropertiesDescriptions(pages::add);
+        new HedPropertiesDescriptionRegistryConfigurer(new BootstrapIntegrationTest.Identity(), Locale.ENGLISH).addPropertiesDescriptions(pages::add);
         var vm = new VariableManager();
         vm.put(VariableManager.SELF, rccb);
         var page = pages.stream().filter(description -> description.getCanCreatePredicate().test(vm)).findFirst().orElseThrow();

@@ -26,7 +26,7 @@ const messages = Object.fromEntries(
     })
 );
 
-test('create, edit and reopen a dwelling with catalog names, native icons and rail specifications', async ({
+test('create, edit and reopen a dwelling with catalog names, category icons and rail specifications', async ({
   page,
   request,
 }) => {
@@ -115,9 +115,8 @@ test('create, edit and reopen a dwelling with catalog names, native icons and ra
     const current = page.getByRole('textbox', { name: messages['feature.ratedCurrentA'], exact: true });
     await expect(current).toBeDisabled();
     await expect(current).toHaveValue('63.0');
-    const icon = item(projectName).locator('../..').locator('img').first();
+    const icon = page.locator('img[src$="/hed/mdi/home-outline.svg"]').first();
     await expect(icon).toBeVisible();
-    expect(await icon.getAttribute('src')).not.toContain('/hed/mdi/');
     expect((await request.get((await icon.getAttribute('src'))!)).ok()).toBeTruthy();
     const favicon = await page.locator('link[rel="icon"]').getAttribute('href');
     expect((await request.get(favicon!)).headers()['content-type']).toContain('image/svg+xml');

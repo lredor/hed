@@ -20,6 +20,7 @@ import org.eclipse.sirius.web.application.views.explorer.ExplorerEventProcessorF
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import hed.domain.Messages;
+import hed.starter.HedDomainIcons;
 
 /**
  * Ephemeral explorer metadata is required by the tree palette and context menus.
@@ -49,6 +50,6 @@ public class ExplorerMetadata implements IRepresentationMetadataProvider {
             return Optional.empty();
         }
         return Optional.of(RepresentationMetadata.newRepresentationMetadata(representationId).kind(Tree.KIND).label(Messages.text(locale, "explorer.title")).descriptionId(expected)
-                .iconURLs(List.of("/icons/svg/Default.svg")).build());
+                .iconURLs(List.of(HedDomainIcons.path("file-tree-outline"))).build());
     }
 }

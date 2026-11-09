@@ -12,6 +12,7 @@ package hed.starter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -57,12 +58,6 @@ import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfi
 import hed.starter.representations.modelexplorer.HedDomainEditing;
 import hed.starter.representations.modelexplorer.HedJavaServices;
 import hed.starter.representations.modelexplorer.ViewContribution;
-import org.eclipse.sirius.components.emf.services.DefaultEMFLabelService;
-import org.eclipse.sirius.components.emf.services.ComposedEMFLabelService;
-import org.eclipse.sirius.components.emf.services.api.IEMFLabelService;
-import org.eclipse.sirius.components.emf.services.api.IDefaultEMFLabelService;
-import hed.homeelectrical.provider.HomeElectricalItemProviderAdapterFactory;
-import hed.starter.representations.modelexplorer.HedDomainLabels;
 
 class BootstrapIntegrationTest {
     static final class Identity implements IIdentityService {
@@ -89,16 +84,8 @@ class BootstrapIntegrationTest {
         }
     }
 
-    private IDefaultEMFLabelService defaultLabels() {
-        return new DefaultEMFLabelService(List.of(HomeElectricalItemProviderAdapterFactory::new), object -> Optional.empty());
-    }
-
-    private IEMFLabelService nativeLabels() {
-        return new ComposedEMFLabelService(defaultLabels(), List.of());
-    }
-
     private HedJavaServices services() {
-        return new HedJavaServices(new Identity(), new IObjectSearchService.NoOp(), new Feedback(), Locale.ENGLISH, nativeLabels(), dwelling -> dwelling.getName());
+        return new HedJavaServices(new Identity(), new IObjectSearchService.NoOp(), new Feedback(), Locale.ENGLISH, dwelling -> dwelling.getName());
     }
 
     @Test
@@ -188,7 +175,7 @@ class BootstrapIntegrationTest {
                 return identity.ids.entrySet().stream().filter(e -> e.getValue().equals(id)).map(Map.Entry::getKey).findFirst();
             }
         };
-        var service = new HedJavaServices(identity, search, feedback, Locale.FRENCH, nativeLabels(), dwelling -> dwelling.getName());
+        var service = new HedJavaServices(identity, search, feedback, Locale.FRENCH, dwelling -> dwelling.getName());
         var editing = new HedDomainEditing(service, identity, Locale.FRENCH, feedback);
         var description = "hed-type:" + identity.getId(type);
         var railId = identity.getId(rail);
@@ -205,7 +192,7 @@ class BootstrapIntegrationTest {
     @Test
     void propertiesReadModularRatingsFromCatalogAndRejectInstanceEdits() {
         var pages = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(new Identity(), Locale.ENGLISH, nativeLabels()).addPropertiesDescriptions(pages::add);
+        new HedPropertiesDescriptionRegistryConfigurer(new Identity(), Locale.ENGLISH).addPropertiesDescriptions(pages::add);
         var rccb = HedSamples.example().getBoards().get(0).getDevices().get(0);
         var vm = new VariableManager();
         vm.put(VariableManager.SELF, rccb);
@@ -237,13 +224,14 @@ class BootstrapIntegrationTest {
     }
 
     @Test
-    void generatedEmfIconsAreUsedByDefault() {
+    void catalogAndEquipmentShareLocallyAvailableCategoryIcons() {
         var home = HedSamples.example();
-        var equipment = HedDomain.addEquipment(home, HedDomain.type(home, DeviceKind.OUTLET));
-        var defaults = defaultLabels();
-        var labels = new HedDomainLabels(Locale.ENGLISH, defaults);
-        assertEquals(defaults.getImagePaths(equipment), labels.getImagePaths(equipment));
-        assertTrue(labels.getImagePaths(equipment).stream().anyMatch(path -> path.contains("/icons/full/obj16/Outlet")));
+        var type = HedDomain.type(home, DeviceKind.OUTLET);
+        var equipment = HedDomain.addEquipment(home, type);
+        assertEquals("/hed/mdi/power-socket-fr.svg", HedDomainIcons.of(type));
+        assertEquals(HedDomainIcons.of(type), HedDomainIcons.of(equipment));
+        assertNotNull(HedDomainIcons.class.getResource(HedDomainIcons.of(equipment)));
+        assertNotNull(HedDomainIcons.class.getResource(HedDomainIcons.concept("CircuitBranch")));
     }
 
     @Test

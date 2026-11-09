@@ -33,6 +33,7 @@ import hed.homeelectrical.DeviceType;
 import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.Room;
+import hed.starter.HedDomainIcons;
 
 @Service
 public class HedDomainEditing extends IEditServiceDelegate.NoOp {
@@ -63,7 +64,7 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
 
     @Override
     public List<ChildCreationDescription> getRootCreationDescriptions(IEditingContext context, String domainId, boolean suggested, String referenceKind) {
-        return List.of(new ChildCreationDescription("hed-dwelling", Messages.text(locale, "class.Dwelling"), List.of("/icons/svg/Default.svg")));
+        return List.of(new ChildCreationDescription("hed-dwelling", Messages.text(locale, "class.Dwelling"), List.of(HedDomainIcons.concept("Dwelling"))));
     }
 
     @Override
@@ -76,7 +77,7 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
         for (var name : List.of("Storey", "Room", "DistributionBoard", "DINRail", "FinalCircuit", "CircuitBranch", "DistributionCircuit", "ControlFunction", "ControlChannel", "ServiceConnection",
                 "EnergyMeter", "ServiceCircuitBreaker", "DeviceType")) {
             if (services.canCreateHedObject(owner, name)) {
-                descriptions.add(new ChildCreationDescription("hed-class:" + name, Messages.text(locale, "class." + name), List.of("/icons/svg/Default.svg")));
+                descriptions.add(new ChildCreationDescription("hed-class:" + name, Messages.text(locale, "class." + name), List.of(HedDomainIcons.concept(name))));
             }
         }
         var home = HedDomain.dwelling(owner);
@@ -85,7 +86,7 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
                 var k = type.getKind();
                 if (HedDomain.modular(k) ? owner instanceof DINRail rail && HedDomain.canAddToRail(rail, type)
                         : (owner instanceof Room || owner instanceof Dwelling) && k != DeviceKind.ENERGY_METER && k != DeviceKind.SERVICE_BREAKER) {
-                    descriptions.add(new ChildCreationDescription("hed-type:" + identity.getId(type), HedDomain.label(type, locale), List.of("/icons/svg/Default.svg")));
+                    descriptions.add(new ChildCreationDescription("hed-type:" + identity.getId(type), HedDomain.label(type, locale), List.of(HedDomainIcons.of(type))));
                 }
             }
         }

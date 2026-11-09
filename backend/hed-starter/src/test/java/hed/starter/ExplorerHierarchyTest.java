@@ -42,7 +42,7 @@ class ExplorerHierarchyTest {
     };
 
     private HedJavaServices services(Locale locale) {
-        return new HedJavaServices(identity, search, new BootstrapIntegrationTest.Feedback(), locale, null, home -> "Native project name");
+        return new HedJavaServices(identity, search, new BootstrapIntegrationTest.Feedback(), locale, home -> "Native project name");
     }
 
     @Test
@@ -54,6 +54,7 @@ class ExplorerHierarchyTest {
         assertEquals(List.of(home, gtl, home.getCatalog()), service.getHedChildren(root));
         assertEquals("Native project name", service.getHedExplorerLabel(root));
         assertEquals("hed-project", service.getHedKind(root));
+        assertEquals("/hed/mdi/folder-home-outline.svg", service.getHedIcon(root));
         assertEquals(root, service.getHedObject(service.getHedId(root), null));
         assertEquals(gtl, service.getHedObject(service.getHedId(gtl), null));
         assertEquals(root, service.getHedParent(home));

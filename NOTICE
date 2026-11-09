@@ -8,6 +8,16 @@ and is available at https://www.eclipse.org/legal/epl-2.0/.
 
 Third-party components retain their respective licenses and copyright notices.
 
+Material Design Icons 7.4.47
+--------------------------
+The bundled SVG subset is provided by Pictogrammers and the individual icon
+authors. The original upstream license notice, Apache License 2.0 text and
+per-icon author credits are included under:
+backend/hed-starter/src/main/resources/hed/mdi/
+
+Source: https://github.com/Templarian/MaterialDesign-SVG
+These third-party SVG files are not relicensed under the project's EPL-2.0.
+
 Sirius Web formatting profiles
 ------------------------------
 The Eclipse Java formatter and cleanup profiles in tools/style are copied from

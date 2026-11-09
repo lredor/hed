@@ -34,6 +34,7 @@ import org.eclipse.sirius.web.application.views.explorer.services.api.IExplorerT
 import org.springframework.stereotype.Service;
 import hed.homeelectrical.DeviceKind;
 import hed.domain.Messages;
+import hed.starter.HedDomainIcons;
 
 @Service
 public class ViewContribution implements IEditingContextProcessor, IJavaServiceProvider, IExplorerTreeDescriptionProvider {
@@ -77,7 +78,7 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
         for (var name : names) {
             var key = Character.isUpperCase(name.charAt(0)) && name.contains("_") || Arrays.stream(DeviceKind.values()).anyMatch(k -> k.getName().equals(name)) ? "kind." + name : "class." + name;
             actions.add(tb.newSingleClickTreeItemContextMenuEntry().name("hed-create-" + name).preconditionExpression("aql:self.canCreateHedObject('" + name + "')")
-                    .labelExpression("aql:self.getHedText('action.create') + ' ' + self.getHedText('" + key + "')").iconURLExpression("/icons/svg/Default.svg")
+                    .labelExpression("aql:self.getHedText('action.create') + ' ' + self.getHedText('" + key + "')").iconURLExpression(HedDomainIcons.concept(name))
                     .body(vb.newChangeContext().expression("aql:self.createHedObject('" + name + "')").build()).build());
         }
         actions.add(tb.newCustomTreeItemContextMenuEntry().name("hed-new-object").contributionId("new-object").labelExpression("aql:self.getHedText('action.newObject')")

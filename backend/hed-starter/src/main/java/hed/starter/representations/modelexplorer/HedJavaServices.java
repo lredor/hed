@@ -49,8 +49,8 @@ import hed.homeelectrical.NamedElement;
 import hed.homeelectrical.Room;
 import hed.homeelectrical.ServiceConnection;
 import hed.homeelectrical.Storey;
+import hed.starter.HedDomainIcons;
 import hed.starter.project.ProjectNameProvider;
-import org.eclipse.sirius.components.emf.services.api.IEMFLabelService;
 import static hed.domain.HedDomain.F;
 import static hed.domain.HedDomain.addEquipment;
 import static hed.domain.HedDomain.addModularDevice;
@@ -82,17 +82,14 @@ public class HedJavaServices {
 
     private final Locale locale;
 
-    private final IEMFLabelService labels;
-
     private final ProjectNameProvider projectNames;
 
-    public HedJavaServices(IIdentityService identity, IObjectSearchService search, IFeedbackMessageService feedback, Locale locale, IEMFLabelService labels, ProjectNameProvider projectNames) {
+    public HedJavaServices(IIdentityService identity, IObjectSearchService search, IFeedbackMessageService feedback, Locale locale, ProjectNameProvider projectNames) {
         this.identity = identity;
         this.search = search;
         this.feedback = feedback;
         this.locale = locale;
         this.projectNames = projectNames;
-        this.labels = labels;
     }
 
     public List<Object> getHedRoots(IEditingContext context) {
@@ -190,8 +187,7 @@ public class HedJavaServices {
     }
 
     public String getHedIcon(Object self) {
-        EObject object = self instanceof ProjectRoot project ? project.home() : self instanceof Group group ? group.owner() : self instanceof EObject semantic ? semantic : null;
-        return object == null ? "" : this.labels.getImagePaths(object).stream().findFirst().orElse("");
+        return HedDomainIcons.of(self);
     }
 
     public boolean isHedSelectable(Object self) {

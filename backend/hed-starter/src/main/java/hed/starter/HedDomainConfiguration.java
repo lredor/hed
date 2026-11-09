@@ -9,11 +9,13 @@
  *******************************************************************************/
 package hed.starter;
 
+import java.util.List;
 import java.util.Locale;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.sirius.components.core.api.IEditingContext;
 import org.eclipse.sirius.components.core.api.IEditingContextProcessor;
+import org.eclipse.sirius.components.core.api.IImagePathService;
 import org.eclipse.sirius.components.emf.services.api.IEMFEditingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +30,11 @@ public class HedDomainConfiguration {
     @Bean
     public ComposedAdapterFactory.Descriptor hedAdapterFactory() {
         return HomeElectricalItemProviderAdapterFactory::new;
+    }
+
+    @Bean
+    public IImagePathService hedImagePaths() {
+        return () -> List.of("/hed");
     }
 
     @Bean

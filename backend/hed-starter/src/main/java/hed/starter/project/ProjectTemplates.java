@@ -16,6 +16,7 @@ import org.eclipse.sirius.web.application.project.services.api.ProjectTemplate;
 import org.eclipse.sirius.web.application.project.services.api.ProjectTemplateNature;
 import org.springframework.stereotype.Service;
 import hed.domain.Messages;
+import hed.starter.HedDomainIcons;
 
 @Service
 public class ProjectTemplates implements IProjectTemplateProvider {
@@ -30,7 +31,7 @@ public class ProjectTemplates implements IProjectTemplateProvider {
     @Override
     public List<ProjectTemplate> getProjectTemplates() {
         var natures = List.of(new ProjectTemplateNature(NATURE));
-        return List.of(new ProjectTemplate(EMPTY, Messages.text(locale, "template.empty"), "/icons/svg/Default.svg", natures),
-                new ProjectTemplate(EXAMPLE, Messages.text(locale, "template.example"), "/icons/svg/Default.svg", natures));
+        return List.of(new ProjectTemplate(EMPTY, Messages.text(locale, "template.empty"), HedDomainIcons.concept("Dwelling"), natures),
+                new ProjectTemplate(EXAMPLE, Messages.text(locale, "template.example"), HedDomainIcons.concept("Dwelling"), natures));
     }
 }

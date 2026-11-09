@@ -60,7 +60,7 @@ import hed.homeelectrical.Equipment;
 import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.ServiceCircuitBreaker;
-import org.eclipse.sirius.components.emf.services.api.IEMFLabelService;
+import hed.starter.HedDomainIcons;
 
 @Service
 public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDescriptionRegistryConfigurer {
@@ -68,12 +68,9 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
 
     private final Locale locale;
 
-    private final IEMFLabelService labels;
-
-    public HedPropertiesDescriptionRegistryConfigurer(IIdentityService identity, Locale locale, IEMFLabelService labels) {
+    public HedPropertiesDescriptionRegistryConfigurer(IIdentityService identity, Locale locale) {
         this.identity = identity;
         this.locale = locale;
-        this.labels = labels;
     }
 
     @Override
@@ -150,7 +147,8 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
     }
 
     private List<String> icons(Object value) {
-        return value instanceof EObject object ? this.labels.getImagePaths(object) : List.of();
+        var path = value instanceof EObject ? HedDomainIcons.of(value) : value instanceof DeviceKind kind ? HedDomainIcons.concept(kind.getName()) : null;
+        return path == null ? List.of() : List.of(path);
     }
 
     private IStatus update(Runnable action) {

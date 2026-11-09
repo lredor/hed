@@ -17,17 +17,14 @@ import org.eclipse.sirius.components.emf.services.api.IEMFLabelServiceDelegate;
 import org.springframework.stereotype.Service;
 import hed.domain.HedDomain;
 import hed.homeelectrical.HomeElectricalPackage;
-import org.eclipse.sirius.components.emf.services.api.IDefaultEMFLabelService;
+import hed.starter.HedDomainIcons;
 
 @Service
 public class HedDomainLabels implements IEMFLabelServiceDelegate {
     private final Locale locale;
 
-    private final IDefaultEMFLabelService defaultLabels;
-
-    public HedDomainLabels(Locale locale, IDefaultEMFLabelService defaultLabels) {
+    public HedDomainLabels(Locale locale) {
         this.locale = locale;
-        this.defaultLabels = defaultLabels;
     }
 
     @Override
@@ -42,6 +39,6 @@ public class HedDomainLabels implements IEMFLabelServiceDelegate {
 
     @Override
     public List<String> getImagePaths(EObject self) {
-        return this.defaultLabels.getImagePaths(self);
+        return List.of(HedDomainIcons.of(self));
     }
 }

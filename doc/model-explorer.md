@@ -39,7 +39,7 @@ Project
     └── Terminal equipment
 ```
 
-The project root, GTL and category groups are navigation objects. They do not add semantic classes or duplicate the model. The displayed **Dwelling** label is localized; select it to edit the dwelling's stored name and properties. Inline Rename is disabled for that fixed navigation label. Saved representations remain beneath their real semantic owner: dwelling tables under Dwelling, board tables under their distribution board, and catalog tables under Device catalog.
+The project root, GTL and category groups are navigation objects. They do not add semantic classes or duplicate the model. The displayed **Dwelling** label is localized; select it to edit the dwelling's stored name and properties. Inline Rename is disabled for that fixed navigation label. Saved representations remain beneath their real semantic owner: dwelling tables under Dwelling, panel tables/diagrams under their distribution board, and catalog tables under Device catalog.
 
 | Context | Creation actions |
 | --- | --- |

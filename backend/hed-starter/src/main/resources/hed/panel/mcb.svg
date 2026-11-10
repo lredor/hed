@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Copyright (c) 2026 Laurent Redor.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+-->
+<svg xmlns="http://www.w3.org/2000/svg" height="1384" viewBox="0 0 297 1384" width="297">
+    <title>Disjoncteur C16 simplifié</title>
+    <rect fill="#F0F2F2" height="1380" id="Boîtier" rx="5" stroke="#A5AFB4" stroke-width="1.5" width="291" x="3" y="2"/>
+    <rect
+        fill="#E2E8EA"
+        height="1000"
+        id="Bande latérale gauche"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="9"
+        x="4"
+        y="194"/>
+    <rect
+        fill="#DCE3E5"
+        height="1000"
+        id="Bande latérale droite"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="9"
+        x="284"
+        y="194"/>
+    <rect
+        fill="#E8EDEF"
+        height="187"
+        id="Zone des bornes hautes"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="287"
+        x="5"
+        y="3"/>
+    <rect fill="#E2E8EA" height="123" id="Zone haute" rx="0" stroke="none" stroke-width="0" width="287" x="5" y="191"/>
+    <rect fill="#CAD3D7" height="2" id="Joint haut" rx="0" stroke="none" stroke-width="0" width="285" x="6" y="190"/>
+    <text dominant-baseline="central" fill="#A2ADB4" font-family="Arial, sans-serif" font-size="40" font-weight="400" id="Neutre haut" text-anchor="start" x="16" y="32.5">N</text>
+    <ellipse
+        cx="87"
+        cy="115"
+        fill="#D5DCDF"
+        id="Borne haute N — logement"
+        rx="52"
+        ry="52"
+        stroke="#A5AFB4"
+        stroke-width="2"/>
+    <ellipse
+        cx="87"
+        cy="115"
+        fill="#292F34"
+        id="Borne haute N — bague"
+        rx="46"
+        ry="46"
+        stroke="#71818A"
+        stroke-width="2"/>
+    <ellipse
+        cx="87"
+        cy="115"
+        fill="#92A4AD"
+        id="Borne haute N — tête"
+        rx="36"
+        ry="36"
+        stroke="#DDE7EA"
+        stroke-width="2"/>
+    <rect
+        fill="#292F34"
+        height="7"
+        id="Borne haute N — fente horizontale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="46"
+        x="64"
+        y="111.5"/>
+    <rect
+        fill="#292F34"
+        height="46"
+        id="Borne haute N — fente verticale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="7"
+        x="83.5"
+        y="92"/>
+    <ellipse cx="87" cy="115" fill="#71858F" id="Borne haute N — centre" rx="9" ry="9" stroke="none" stroke-width="0"/>
+    <ellipse
+        cx="224"
+        cy="115"
+        fill="#D5DCDF"
+        id="Borne haute phase — logement"
+        rx="52"
+        ry="52"
+        stroke="#A5AFB4"
+        stroke-width="2"/>
+    <ellipse
+        cx="224"
+        cy="115"
+        fill="#292F34"
+        id="Borne haute phase — bague"
+        rx="46"
+        ry="46"
+        stroke="#71818A"
+        stroke-width="2"/>
+    <ellipse
+        cx="224"
+        cy="115"
+        fill="#92A4AD"
+        id="Borne haute phase — tête"
+        rx="36"
+        ry="36"
+        stroke="#DDE7EA"
+        stroke-width="2"/>
+    <rect
+        fill="#292F34"
+        height="7"
+        id="Borne haute phase — fente horizontale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="46"
+        x="201"
+        y="111.5"/>
+    <rect
+        fill="#292F34"
+        height="46"
+        id="Borne haute phase — fente verticale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="7"
+        x="220.5"
+        y="92"/>
+    <ellipse
+        cx="224"
+        cy="115"
+        fill="#71858F"
+        id="Borne haute phase — centre"
+        rx="9"
+        ry="9"
+        stroke="none"
+        stroke-width="0"/>
+    <rect
+        fill="#A9D1E3"
+        height="247"
+        id="Guide bleu gauche"
+        rx="0"
+        stroke="#6DA7BD"
+        stroke-width="1"
+        width="16"
+        x="4"
+        y="317"/>
+    <rect
+        fill="#A9D1E3"
+        height="247"
+        id="Guide bleu droit"
+        rx="0"
+        stroke="#6DA7BD"
+        stroke-width="1"
+        width="16"
+        x="277"
+        y="317"/>
+    <rect
+        fill="#D7E1E6"
+        height="200"
+        id="Fond du porte-étiquette"
+        rx="5"
+        stroke="#A5AFB4"
+        stroke-width="2"
+        width="243"
+        x="27"
+        y="326"/>
+    <rect
+        fill="#E9EFF2"
+        height="170"
+        id="Porte-étiquette"
+        rx="3"
+        stroke="#B1C0C8"
+        stroke-width="1"
+        width="227"
+        x="35"
+        y="345"/>
+    <rect
+        fill="#F8F9F9"
+        height="25"
+        id="Bord supérieur porte-étiquette"
+        rx="8"
+        stroke="#A5AFB4"
+        stroke-width="1"
+        width="195"
+        x="51"
+        y="314"/>
+    <rect
+        fill="#FFFFFF"
+        height="137"
+        id="Reflet porte-étiquette"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="3"
+        x="37.5"
+        y="350"/>
+    <rect
+        fill="#C2CBCD"
+        height="217"
+        id="Cavité de manœuvre"
+        rx="5"
+        stroke="#A6B1B7"
+        stroke-width="2"
+        width="158"
+        x="68"
+        y="580"/>
+    <rect
+        fill="#292F34"
+        height="181"
+        id="Axe de manette"
+        rx="0"
+        stroke="#1D252B"
+        stroke-width="1"
+        width="146"
+        x="74"
+        y="599"/>
+    <rect fill="#1A2126" height="5" id="Rainure 1" rx="0" stroke="none" stroke-width="0" width="142" x="76" y="646"/>
+    <rect fill="#48545C" height="2" id="Relief 1" rx="0" stroke="none" stroke-width="0" width="142" x="76" y="652"/>
+    <rect fill="#1A2126" height="5" id="Rainure 2" rx="0" stroke="none" stroke-width="0" width="142" x="76" y="680"/>
+    <rect fill="#48545C" height="2" id="Relief 2" rx="0" stroke="none" stroke-width="0" width="142" x="76" y="686"/>
+    <rect fill="#1A2126" height="5" id="Rainure 3" rx="0" stroke="none" stroke-width="0" width="142" x="76" y="714"/>
+    <rect fill="#48545C" height="2" id="Relief 3" rx="0" stroke="none" stroke-width="0" width="142" x="76" y="720"/>
+    <rect
+        fill="#CE2738"
+        height="49"
+        id="Témoin rouge de position"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="146"
+        x="74"
+        y="727"/>
+    <text dominant-baseline="central" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="32" font-weight="400" id="Position" text-anchor="middle" x="147" y="751.5">I · On</text>
+    <path
+        d="M5 13 C75 -4 207 -4 277 13 L282 109 C211 117 71 117 0 109 Z"
+        fill="#292F34"
+        id="Manette — poignée"
+        stroke="#1B242B"
+        stroke-width="2"
+        transform="translate(9 494)"/>
+    <path
+        d="M3 9 C80 -3 190 -3 267 9 L270 44 C184 31 85 31 0 44 Z"
+        fill="#3E474D"
+        id="Manette — relief supérieur"
+        stroke="none"
+        stroke-width="0"
+        transform="translate(15 503)"/>
+    <rect
+        fill="#F7F8F7"
+        height="254"
+        id="Panneau de marquage"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="287"
+        x="5"
+        y="827"/>
+    <rect
+        fill="#C1C9CC"
+        height="1.5"
+        id="Joint panneau de marquage"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="285"
+        x="6"
+        y="826.25"/>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="35" font-weight="400" id="Gamme" text-anchor="start" x="44" y="870.5">DNX³</text>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="63" font-weight="400" id="Courbe" text-anchor="start" x="43" y="927">C</text>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="63" font-weight="400" id="Calibre en ampères" text-anchor="start" x="87" y="927">16</text>
+    <path
+        d="M0 40 L46 0 L65 12 L60 18 L46 9 L5 46 Z"
+        fill="#CE2738"
+        id="Pictogramme maison — toit"
+        stroke="none"
+        stroke-width="0"
+        transform="translate(166 857)"/>
+    <rect
+        fill="#CE2738"
+        height="55"
+        id="Pictogramme maison — mur"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="8"
+        x="176"
+        y="891"/>
+    <rect
+        fill="#CE2738"
+        height="8"
+        id="Pictogramme maison — base"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="52"
+        x="176"
+        y="938"/>
+    <rect
+        fill="#CE2738"
+        height="34"
+        id="Pictogramme — porte"
+        rx="3"
+        stroke="none"
+        stroke-width="0"
+        width="23"
+        x="203"
+        y="911"/>
+    <rect
+        fill="#292F34"
+        height="85"
+        id="Pictogramme — repère"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="15"
+        x="240"
+        y="860"/>
+    <ellipse
+        cx="247.5"
+        cy="934.5"
+        fill="#FFFFFF"
+        id="Pictogramme — point"
+        rx="3.5"
+        ry="3.5"
+        stroke="none"
+        stroke-width="0"/>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="22" font-weight="400" id="Référence produit" text-anchor="middle" transform="rotate(270 280 901)" x="280" y="901">0928 23</text>
+    <rect
+        fill="none"
+        height="33"
+        id="Cadre pouvoir de coupure"
+        rx="0"
+        stroke="#202B33"
+        stroke-width="2"
+        width="135"
+        x="49"
+        y="967"/>
+    <rect
+        fill="#202B33"
+        height="31"
+        id="Séparation classe"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="2"
+        x="152"
+        y="968"/>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="26" font-weight="400" id="Pouvoir de coupure" text-anchor="middle" x="102" y="983">3000</text>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="25" font-weight="400" id="Classe" text-anchor="middle" x="168" y="983">3</text>
+    <path
+        d="M0 0 L8 0 L8 155 C8 174 12 176 27 176 L27 184 C5 184 0 177 0 155 Z"
+        fill="#CE2738"
+        id="Signature rouge gauche"
+        stroke="none"
+        stroke-width="0"
+        transform="translate(9 861)"/>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="40" font-weight="700" id="Marque" text-anchor="start" x="45" y="1039">legrand</text>
+    <rect
+        fill="#CE2738"
+        height="11"
+        id="Signature rouge droite"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="64"
+        x="220"
+        y="1033"/>
+    <rect fill="#DBE1E3" height="108" id="Face basse" rx="0" stroke="none" stroke-width="0" width="287" x="5" y="1084"/>
+    <rect fill="#B9C4C9" height="2" id="Joint bas" rx="0" stroke="none" stroke-width="0" width="285" x="6" y="1192"/>
+    <rect
+        fill="#E9EDEE"
+        height="186"
+        id="Zone des bornes basses"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="287"
+        x="5"
+        y="1195"/>
+    <ellipse
+        cx="81"
+        cy="1266"
+        fill="#D5DCDF"
+        id="Borne basse N — logement"
+        rx="52"
+        ry="52"
+        stroke="#A5AFB4"
+        stroke-width="2"/>
+    <ellipse
+        cx="81"
+        cy="1266"
+        fill="#292F34"
+        id="Borne basse N — bague"
+        rx="46"
+        ry="46"
+        stroke="#71818A"
+        stroke-width="2"/>
+    <ellipse
+        cx="81"
+        cy="1266"
+        fill="#92A4AD"
+        id="Borne basse N — tête"
+        rx="36"
+        ry="36"
+        stroke="#DDE7EA"
+        stroke-width="2"/>
+    <rect
+        fill="#292F34"
+        height="7"
+        id="Borne basse N — fente horizontale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="46"
+        x="58"
+        y="1262.5"/>
+    <rect
+        fill="#292F34"
+        height="46"
+        id="Borne basse N — fente verticale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="7"
+        x="77.5"
+        y="1243"/>
+    <ellipse cx="81" cy="1266" fill="#71858F" id="Borne basse N — centre" rx="9" ry="9" stroke="none" stroke-width="0"/>
+    <ellipse
+        cx="220"
+        cy="1266"
+        fill="#D5DCDF"
+        id="Borne basse phase — logement"
+        rx="52"
+        ry="52"
+        stroke="#A5AFB4"
+        stroke-width="2"/>
+    <ellipse
+        cx="220"
+        cy="1266"
+        fill="#292F34"
+        id="Borne basse phase — bague"
+        rx="46"
+        ry="46"
+        stroke="#71818A"
+        stroke-width="2"/>
+    <ellipse
+        cx="220"
+        cy="1266"
+        fill="#92A4AD"
+        id="Borne basse phase — tête"
+        rx="36"
+        ry="36"
+        stroke="#DDE7EA"
+        stroke-width="2"/>
+    <rect
+        fill="#292F34"
+        height="7"
+        id="Borne basse phase — fente horizontale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="46"
+        x="197"
+        y="1262.5"/>
+    <rect
+        fill="#292F34"
+        height="46"
+        id="Borne basse phase — fente verticale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="7"
+        x="216.5"
+        y="1243"/>
+    <ellipse
+        cx="220"
+        cy="1266"
+        fill="#71858F"
+        id="Borne basse phase — centre"
+        rx="9"
+        ry="9"
+        stroke="none"
+        stroke-width="0"/>
+    <text dominant-baseline="central" fill="#A2ADB4" font-family="Arial, sans-serif" font-size="43" font-weight="400" id="Neutre bas" text-anchor="start" x="13" y="1355.5">N</text>
+</svg>

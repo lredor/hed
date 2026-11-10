@@ -91,6 +91,12 @@ Create this table on a **Catalog**. It lists the available device types, their r
 
 ![Device Catalog Table](doc/images/representations/device-catalog-table.png)
 
+### Distribution Board Layout
+
+Create this diagram on a **DistributionBoard**. The SVG cabinet contains DIN rails and modular devices in model order, with widths taken from their catalog types. Move devices by drag-and-drop and use the Model Explorer commands to reorder rails. See [diagram editing and Canva artwork](doc/distribution-board-layout.md).
+
+![Distribution Board Layout](doc/images/representations/distribution-board-layout.png)
+
 ## References
 
 - [Sirius Web 2026.9.0](https://github.com/eclipse-sirius/sirius-web/tree/v2026.9.0)

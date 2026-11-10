@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Copyright (c) 2026 Laurent Redor.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+-->
+<svg xmlns="http://www.w3.org/2000/svg" height="1384" viewBox="0 0 296 1384" width="296">
+    <title>Télérupteur simplifié 16A</title>
+    <rect fill="#F0F2F2" height="1380" id="Boîtier" rx="5" stroke="#A5AFB4" stroke-width="1.5" width="290" x="3" y="2"/>
+    <rect
+        fill="#E2E8EA"
+        height="1000"
+        id="Bande latérale gauche"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="9"
+        x="4"
+        y="194"/>
+    <rect
+        fill="#DCE3E5"
+        height="1000"
+        id="Bande latérale droite"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="9"
+        x="283"
+        y="194"/>
+    <rect
+        fill="#E8EDEF"
+        height="187"
+        id="Zone des bornes hautes"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="286"
+        x="5"
+        y="3"/>
+    <rect fill="#E2E8EA" height="123" id="Zone haute" rx="0" stroke="none" stroke-width="0" width="286" x="5" y="191"/>
+    <rect fill="#CAD3D7" height="2" id="Joint haut" rx="0" stroke="none" stroke-width="0" width="284" x="6" y="190"/>
+    <text dominant-baseline="central" fill="#A2ADB4" font-family="Arial, sans-serif" font-size="40" font-weight="400" id="Neutre" text-anchor="start" x="16" y="32.5">N</text>
+    <text dominant-baseline="central" fill="#A2ADB4" font-family="Arial, sans-serif" font-size="40" font-weight="400" id="Phase" text-anchor="start" x="245" y="32.5">L</text>
+    <ellipse
+        cx="81"
+        cy="115"
+        fill="#D5DCDF"
+        id="Borne haute N — logement"
+        rx="52"
+        ry="52"
+        stroke="#A5AFB4"
+        stroke-width="2"/>
+    <ellipse
+        cx="81"
+        cy="115"
+        fill="#292F34"
+        id="Borne haute N — bague"
+        rx="46"
+        ry="46"
+        stroke="#71818A"
+        stroke-width="2"/>
+    <ellipse
+        cx="81"
+        cy="115"
+        fill="#92A4AD"
+        id="Borne haute N — tête"
+        rx="36"
+        ry="36"
+        stroke="#DDE7EA"
+        stroke-width="2"/>
+    <rect
+        fill="#292F34"
+        height="7"
+        id="Borne haute N — fente horizontale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="46"
+        x="58"
+        y="111.5"/>
+    <rect
+        fill="#292F34"
+        height="46"
+        id="Borne haute N — fente verticale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="7"
+        x="77.5"
+        y="92"/>
+    <ellipse cx="81" cy="115" fill="#71858F" id="Borne haute N — centre" rx="9" ry="9" stroke="none" stroke-width="0"/>
+    <ellipse
+        cx="220"
+        cy="115"
+        fill="#D5DCDF"
+        id="Borne haute L — logement"
+        rx="52"
+        ry="52"
+        stroke="#A5AFB4"
+        stroke-width="2"/>
+    <ellipse
+        cx="220"
+        cy="115"
+        fill="#292F34"
+        id="Borne haute L — bague"
+        rx="46"
+        ry="46"
+        stroke="#71818A"
+        stroke-width="2"/>
+    <ellipse
+        cx="220"
+        cy="115"
+        fill="#92A4AD"
+        id="Borne haute L — tête"
+        rx="36"
+        ry="36"
+        stroke="#DDE7EA"
+        stroke-width="2"/>
+    <rect
+        fill="#292F34"
+        height="7"
+        id="Borne haute L — fente horizontale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="46"
+        x="197"
+        y="111.5"/>
+    <rect
+        fill="#292F34"
+        height="46"
+        id="Borne haute L — fente verticale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="7"
+        x="216.5"
+        y="92"/>
+    <ellipse cx="220" cy="115" fill="#71858F" id="Borne haute L — centre" rx="9" ry="9" stroke="none" stroke-width="0"/>
+    <rect
+        fill="#A9D1E3"
+        height="274"
+        id="Guide bleu gauche"
+        rx="0"
+        stroke="#6DA7BD"
+        stroke-width="1"
+        width="16"
+        x="4"
+        y="317"/>
+    <rect
+        fill="#A9D1E3"
+        height="274"
+        id="Guide bleu droit"
+        rx="0"
+        stroke="#6DA7BD"
+        stroke-width="1"
+        width="16"
+        x="276"
+        y="317"/>
+    <rect
+        fill="#D7E1E6"
+        height="248"
+        id="Fond du porte-étiquette"
+        rx="5"
+        stroke="#A5AFB4"
+        stroke-width="2"
+        width="242"
+        x="27"
+        y="326"/>
+    <rect
+        fill="#E9EFF2"
+        height="214"
+        id="Porte-étiquette"
+        rx="3"
+        stroke="#B1C0C8"
+        stroke-width="1"
+        width="226"
+        x="35"
+        y="345"/>
+    <rect
+        fill="#F8F9F9"
+        height="25"
+        id="Bord supérieur porte-étiquette"
+        rx="8"
+        stroke="#A5AFB4"
+        stroke-width="1"
+        width="194"
+        x="51"
+        y="314"/>
+    <rect
+        fill="#FFFFFF"
+        height="180"
+        id="Reflet porte-étiquette"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="3"
+        x="37.5"
+        y="350"/>
+    <rect
+        fill="#F7F8F7"
+        height="488"
+        id="Face de commande et marquage"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="286"
+        x="5"
+        y="593"/>
+    <rect
+        fill="#292F34"
+        height="24"
+        id="Fenêtre de signalisation"
+        rx="12"
+        stroke="#1B242B"
+        stroke-width="1"
+        width="176"
+        x="87"
+        y="622"/>
+    <rect
+        fill="#D4DBDE"
+        height="108"
+        id="Logement du bouton de commande"
+        rx="10"
+        stroke="#67757D"
+        stroke-width="1.5"
+        width="184"
+        x="83"
+        y="675"/>
+    <rect
+        fill="#8C969C"
+        height="96"
+        id="Bouton de commande"
+        rx="8"
+        stroke="#66737C"
+        stroke-width="2"
+        width="172"
+        x="89"
+        y="681"/>
+    <rect
+        fill="#B7C1C6"
+        height="4"
+        id="Relief du bouton"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="160"
+        x="95"
+        y="685"/>
+    <ellipse
+        cx="46"
+        cy="695"
+        fill="none"
+        id="Symbole allumage — centre"
+        rx="9"
+        ry="9"
+        stroke="#202B33"
+        stroke-width="2.5"/>
+    <path d="M59 695L64 695" stroke="#202B33" stroke-width="2.5"/>
+    <path
+        d="M55.19238815542512 704.1923881554251L58.72792206135786 707.7279220613578"
+        stroke="#202B33"
+        stroke-width="2.5"/>
+    <path d="M46 708L46 713" stroke="#202B33" stroke-width="2.5"/>
+    <path
+        d="M36.80761184457488 704.1923881554251L33.27207793864214 707.7279220613578"
+        stroke="#202B33"
+        stroke-width="2.5"/>
+    <path d="M33 695L28 695" stroke="#202B33" stroke-width="2.5"/>
+    <path
+        d="M36.80761184457488 685.8076118445749L33.27207793864214 682.2720779386422"
+        stroke="#202B33"
+        stroke-width="2.5"/>
+    <path d="M46 682L46 677" stroke="#202B33" stroke-width="2.5"/>
+    <path
+        d="M55.192388155425114 685.8076118445749L58.72792206135785 682.2720779386422"
+        stroke="#202B33"
+        stroke-width="2.5"/>
+    <ellipse
+        cx="46"
+        cy="756.5"
+        fill="none"
+        id="Symbole lampe — ampoule"
+        rx="8"
+        ry="9.5"
+        stroke="#202B33"
+        stroke-width="2.5"/>
+    <rect
+        fill="#202B33"
+        height="4"
+        id="Symbole lampe — culot"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="8"
+        x="42"
+        y="766"/>
+    <rect
+        fill="#202B33"
+        height="2"
+        id="Symbole lampe — base"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="6"
+        x="43"
+        y="772"/>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="43" font-weight="400" id="Marquage de contact" text-anchor="start" x="42" y="920">μ</text>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="63" font-weight="400" id="Calibre en ampères" text-anchor="start" x="72" y="920">16</text>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="63" font-weight="400" id="Unité du calibre" text-anchor="start" x="161" y="920">A</text>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="29" font-weight="400" id="Tension" text-anchor="start" x="44" y="971.5">250</text>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="29" font-weight="400" id="Unité de tension" text-anchor="start" x="115" y="971.5">V~</text>
+    <rect
+        fill="#292F34"
+        height="110"
+        id="Repère vertical"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="15"
+        x="252"
+        y="861"/>
+    <ellipse
+        cx="259.5"
+        cy="960.5"
+        fill="#FFFFFF"
+        id="Point du repère"
+        rx="3.5"
+        ry="3.5"
+        stroke="none"
+        stroke-width="0"/>
+    <path
+        d="M0 0 L8 0 L8 155 C8 174 12 176 27 176 L27 184 C5 184 0 177 0 155 Z"
+        fill="#CE2738"
+        id="Signature rouge gauche"
+        transform="translate(9 861)"/>
+    <text dominant-baseline="central" fill="#202B33" font-family="Arial, sans-serif" font-size="40" font-weight="700" id="Marque" text-anchor="start" x="45" y="1039">legrand</text>
+    <rect
+        fill="#CE2738"
+        height="11"
+        id="Signature rouge droite"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="64"
+        x="220"
+        y="1033"/>
+    <rect fill="#DBE1E3" height="108" id="Face basse" rx="0" stroke="none" stroke-width="0" width="286" x="5" y="1084"/>
+    <rect
+        fill="#E9EDEE"
+        height="186"
+        id="Zone des bornes basses"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="286"
+        x="5"
+        y="1195"/>
+    <rect fill="#B9C4C9" height="2" id="Joint bas" rx="0" stroke="none" stroke-width="0" width="284" x="6" y="1192"/>
+    <ellipse
+        cx="220"
+        cy="1193"
+        fill="#D5DCDF"
+        id="Borne basse droite en retrait — logement"
+        rx="52"
+        ry="52"
+        stroke="#A5AFB4"
+        stroke-width="2"/>
+    <ellipse
+        cx="220"
+        cy="1193"
+        fill="#292F34"
+        id="Borne basse droite en retrait — bague"
+        rx="46"
+        ry="46"
+        stroke="#71818A"
+        stroke-width="2"/>
+    <ellipse
+        cx="220"
+        cy="1193"
+        fill="#92A4AD"
+        id="Borne basse droite en retrait — tête"
+        rx="36"
+        ry="36"
+        stroke="#DDE7EA"
+        stroke-width="2"/>
+    <rect
+        fill="#292F34"
+        height="7"
+        id="Borne basse droite en retrait — fente horizontale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="46"
+        x="197"
+        y="1189.5"/>
+    <rect
+        fill="#292F34"
+        height="46"
+        id="Borne basse droite en retrait — fente verticale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="7"
+        x="216.5"
+        y="1170"/>
+    <ellipse
+        cx="220"
+        cy="1193"
+        fill="#71858F"
+        id="Borne basse droite en retrait — centre"
+        rx="9"
+        ry="9"
+        stroke="none"
+        stroke-width="0"/>
+    <rect
+        fill="#DBE1E3"
+        height="49"
+        id="Lèvre de la face avant"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="133"
+        x="158"
+        y="1081"/>
+    <ellipse
+        cx="81"
+        cy="1293"
+        fill="#D5DCDF"
+        id="Borne basse gauche — logement"
+        rx="52"
+        ry="52"
+        stroke="#A5AFB4"
+        stroke-width="2"/>
+    <ellipse
+        cx="81"
+        cy="1293"
+        fill="#292F34"
+        id="Borne basse gauche — bague"
+        rx="46"
+        ry="46"
+        stroke="#71818A"
+        stroke-width="2"/>
+    <ellipse
+        cx="81"
+        cy="1293"
+        fill="#92A4AD"
+        id="Borne basse gauche — tête"
+        rx="36"
+        ry="36"
+        stroke="#DDE7EA"
+        stroke-width="2"/>
+    <rect
+        fill="#292F34"
+        height="7"
+        id="Borne basse gauche — fente horizontale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="46"
+        x="58"
+        y="1289.5"/>
+    <rect
+        fill="#292F34"
+        height="46"
+        id="Borne basse gauche — fente verticale"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="7"
+        x="77.5"
+        y="1270"/>
+    <ellipse
+        cx="81"
+        cy="1293"
+        fill="#71858F"
+        id="Borne basse gauche — centre"
+        rx="9"
+        ry="9"
+        stroke="none"
+        stroke-width="0"/>
+    <path d="M185 1319L202 1319" stroke="#202B33" stroke-width="3"/>
+    <path d="M201 1319L235 1305" stroke="#202B33" stroke-width="3"/>
+    <path d="M244 1319L263 1319" stroke="#202B33" stroke-width="3"/>
+    <rect
+        fill="#202B33"
+        height="10"
+        id="Contact — point fixe"
+        rx="0"
+        stroke="none"
+        stroke-width="0"
+        width="4"
+        x="242"
+        y="1314"/>
+</svg>

@@ -1,3 +1,7 @@
 {
-  "scope": "Conception électrique du logement"
+  "scope": "Conception électrique du logement",
+  "panel": {
+    "empty": "Créez des rails DIN dans le Model Explorer pour composer le tableau.",
+    "modules": "modules"
+  }
 }

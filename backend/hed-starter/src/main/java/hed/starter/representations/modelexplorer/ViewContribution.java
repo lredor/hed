@@ -35,6 +35,8 @@ import org.springframework.stereotype.Service;
 import hed.homeelectrical.DeviceKind;
 import hed.domain.Messages;
 import hed.starter.HedDomainIcons;
+import hed.starter.representations.diagrams.panel.PanelDiagram;
+import hed.starter.representations.diagrams.panel.PanelServices;
 import hed.starter.representations.tables.HedTableDescriptions;
 
 @Service
@@ -62,7 +64,7 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
 
     @Override
     public List<Class<?>> getServiceClasses(View view) {
-        return List.of(HedJavaServices.class, ExplorerRepresentations.class);
+        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class);
     }
 
     @Override
@@ -107,7 +109,7 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
                 .contextMenuEntries(actions.toArray(TreeItemContextMenuEntry[]::new)).build();
         var view = vb.newView().build();
         view.getDescriptions().add(tree);
-        contributeTables(view);
+        contributeRepresentations(view);
         view.eAdapters().add(new IDAdapter(UUID.nameUUIDFromBytes("hed-view-v1".getBytes(StandardCharsets.UTF_8))));
         view.eAllContents().forEachRemaining(o -> o.eAdapters().add(new IDAdapter(UUID.nameUUIDFromBytes(("hed-view-v1/" + stablePath(view, o)).getBytes(StandardCharsets.UTF_8)))));
         var resource = new JSONResourceFactory().createResourceFromPath(UUID.nameUUIDFromBytes("hed-view".getBytes(StandardCharsets.UTF_8)).toString());
@@ -133,8 +135,9 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
         return String.join("/", segments);
     }
 
-    protected void contributeTables(View view) {
+    protected void contributeRepresentations(View view) {
         this.tables.addTo(view);
+        view.getDescriptions().add(new PanelDiagram(locale).create());
     }
 
     @Override

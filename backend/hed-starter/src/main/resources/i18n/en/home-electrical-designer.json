@@ -1,3 +1,7 @@
 {
-  "scope": "Residential electrical design"
+  "scope": "Residential electrical design",
+  "panel": {
+    "empty": "Create DIN rails in Model Explorer to populate the board.",
+    "modules": "modules"
+  }
 }

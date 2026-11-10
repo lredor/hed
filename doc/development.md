@@ -124,10 +124,12 @@ Browser checks cover project creation, catalog editing, native object creation, 
 ```powershell
 $env:HED_BASE_URL = 'http://localhost:8081'
 $env:HED_TEST_LOCALE = 'fr_FR'
-npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-hierarchy.spec.ts
+npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-hierarchy.spec.ts panel.spec.ts
 ```
 
 The protection workflow checks service-breaker inverse links, the read-only RCCB downstream list and persistence after reopening.
+
+The [panel diagram workflow](distribution-board-layout.md) checks SVG alignment, module widths, drag-and-drop transfers and reopening of the constrained layout.
 
 The [table workflow](tables.md) also checks all four representation contexts and persistence of table edits.
 

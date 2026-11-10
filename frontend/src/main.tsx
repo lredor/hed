@@ -10,6 +10,8 @@
 import { createRoot } from 'react-dom/client';
 import {
   SiriusWebApplication,
+  DiagramRepresentationConfiguration,
+  apolloClientOptionsConfigurersExtensionPoint,
   navigationBarIconExtensionPoint,
   footerExtensionPoint,
 } from '@eclipse-sirius/sirius-web-application';
@@ -20,6 +22,9 @@ import Tooltip from '@mui/material/Tooltip';
 import '@fontsource/roboto/400.css';
 import '@xyflow/react/dist/style.css';
 import './style.css';
+import { panelDocumentTransform, panelNodeRegistry } from './representations/diagrams/panel/PanelDiagram';
+import { diagramRendererReactFlowPropsCustomizerExtensionPoint } from '@eclipse-sirius/sirius-components-diagrams';
+import { usePanelRailDropProps } from './representations/diagrams/panel/PanelRailDrop';
 const httpOrigin = import.meta.env.VITE_BACKEND_URL || window.location.origin;
 const wsOrigin = httpOrigin.replace(/^http/, 'ws');
 const registry = new ExtensionRegistry();
@@ -51,6 +56,23 @@ function Footer() {
 }
 registry.addComponent(navigationBarIconExtensionPoint, { identifier: 'hed-brand', Component: Brand });
 registry.addComponent(footerExtensionPoint, { identifier: 'hed-footer', Component: Footer });
+registry.putData(apolloClientOptionsConfigurersExtensionPoint, {
+  identifier: 'hed-panel-style',
+  data: [
+    (options) => ({
+      ...options,
+      documentTransform: options.documentTransform
+        ? options.documentTransform.concat(panelDocumentTransform)
+        : panelDocumentTransform,
+    }),
+  ],
+});
+registry.putData(diagramRendererReactFlowPropsCustomizerExtensionPoint, {
+  identifier: 'hed-rail-drop',
+  data: [usePanelRailDropProps],
+});
 createRoot(document.getElementById('root')!).render(
-  <SiriusWebApplication httpOrigin={httpOrigin} wsOrigin={wsOrigin} extensionRegistry={registry} />
+  <SiriusWebApplication httpOrigin={httpOrigin} wsOrigin={wsOrigin} extensionRegistry={registry}>
+    <DiagramRepresentationConfiguration nodeTypeRegistry={panelNodeRegistry} />
+  </SiriusWebApplication>
 );

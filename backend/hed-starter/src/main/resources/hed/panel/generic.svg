@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+Copyright (c) 2026 Laurent Redor.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+-->
+<svg xmlns="http://www.w3.org/2000/svg" height="1384" viewBox="0 0 297 1384" width="297">
+    <title>Generic modular device</title>
+    <rect fill="#edf1f3" height="1380" rx="5" stroke="#a5afb4" stroke-width="2" width="291" x="3" y="2"/>
+    <rect fill="#f7f9fa" height="1000" width="287" x="5" y="195"/>
+    <path d="M5 195H292M5 1195H292" stroke="#bcc9d0" stroke-width="3"/>
+    <g fill="#92a4ad" stroke="#dfe8ec" stroke-width="6">
+        <circle cx="85" cy="110" r="35"/>
+        <circle cx="220" cy="110" r="35"/>
+        <circle cx="85" cy="1280" r="35"/>
+        <circle cx="220" cy="1280" r="35"/>
+    </g>
+    <g stroke="#34454e" stroke-width="7">
+        <path d="M64 110h42m-21-21v42M199 110h42m-21-21v42M64 1280h42m-21-21v42M199 1280h42m-21-21v42"/>
+    </g>
+    <rect fill="#e7eef2" height="190" rx="6" stroke="#b1c0c8" stroke-width="2" width="241" x="28" y="340"/>
+    <text fill="#34454e" font-family="Arial,sans-serif" font-size="60" id="Calibre en ampères" text-anchor="middle" x="148" y="930">—</text>
+    <text fill="#647789" font-family="Arial,sans-serif" font-size="40" text-anchor="middle" x="148" y="1000">A</text>
+</svg>

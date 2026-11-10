@@ -62,6 +62,7 @@ import static hed.domain.HedDomain.F;
 import static hed.domain.HedDomain.addEquipment;
 import static hed.domain.HedDomain.addModularDevice;
 import static hed.domain.HedDomain.canAddToRail;
+import static hed.domain.HedDomain.canReorder;
 import static hed.domain.HedDomain.delete;
 import static hed.domain.HedDomain.dwelling;
 import static hed.domain.HedDomain.get;
@@ -71,6 +72,7 @@ import static hed.domain.HedDomain.kind;
 import static hed.domain.HedDomain.label;
 import static hed.domain.HedDomain.modular;
 import static hed.domain.HedDomain.protectedCircuits;
+import static hed.domain.HedDomain.reorder;
 import static hed.domain.HedDomain.served;
 import static hed.domain.HedDomain.setText;
 import static hed.domain.HedDomain.type;
@@ -435,6 +437,19 @@ public class HedJavaServices {
             feedback.addFeedbackMessage(new Message(Messages.text(locale, ex.getMessage()), MessageLevel.ERROR));
         }
         return self;
+    }
+
+    public boolean canReorderHedObject(Object self, int delta) {
+        return self instanceof EObject object && canReorder(object, delta);
+    }
+
+    public EObject reorderHedObject(EObject self, int delta) {
+        reorder(self, delta);
+        return self;
+    }
+
+    public String getHedReorderLabel(Object self, int delta) {
+        return Messages.text(locale, self instanceof DINRail ? delta < 0 ? "action.moveUp" : "action.moveDown" : delta < 0 ? "action.moveLeft" : "action.moveRight");
     }
 
     public String getHedCell(EObject self, String feature) {

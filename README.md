@@ -55,6 +55,8 @@ If another explorer is active, choose **Electrical installation** in the explore
 
 Create a distribution board from the GTL, then rails on the board and appliances directly on a rail. See [the hierarchy and contextual creation menus](doc/model-explorer.md).
 
+See [reordering rails and mounted devices](doc/explorer-reordering.md) for Model Explorer movement commands.
+
 ### Model pictograms
 
 The explorer, creation menus and reference selectors share the local [Material Design Icons selection](doc/icons.md), with visual previews and author credits. The SVGs retain their upstream licenses.

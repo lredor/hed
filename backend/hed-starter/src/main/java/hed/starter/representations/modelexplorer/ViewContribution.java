@@ -92,6 +92,10 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
                 .preconditionExpression("aql:self.canRepresentHedObject()").build());
         actions.add(tb.newCustomTreeItemContextMenuEntry().name("hed-expand-all").contributionId("expand-all").labelExpression("aql:self.getHedText('action.expandAll')")
                 .preconditionExpression("aql:self.hasHedChildren() or self.hasHedRepresentations(editingContext)").build());
+        for (int delta : new int[] { -1, 1 }) {
+            actions.add(tb.newSingleClickTreeItemContextMenuEntry().name("hed-reorder-" + delta).preconditionExpression("aql:self.canReorderHedObject(" + delta + ")")
+                    .labelExpression("aql:self.getHedReorderLabel(" + delta + ")").body(vb.newChangeContext().expression("aql:self.reorderHedObject(" + delta + ")").build()).build());
+        }
         var tree = tb.newTreeDescription().name(Messages.text(locale, "explorer.title")).titleExpression("aql:editingContext.getHedText('explorer.title')").preconditionExpression("aql:false")
                 .elementsExpression("aql:editingContext.getHedRoots()")
                 .childrenExpression("aql:if expanded->includes(self.getHedId()) then self.getHedChildren(hedRepresentations) else Sequence{} endif")

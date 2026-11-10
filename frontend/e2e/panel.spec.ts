@@ -41,7 +41,7 @@ test('create a Canva panel diagram, reorder and transfer devices, and reopen the
   const item = (name: string) =>
     page
       .locator('p')
-      .filter({ hasText: new RegExp(`^${escape(name)}$`) })
+      .filter({ hasText: new RegExp(`^${escape(name)}(?: - .+)?$`) })
       .first();
   const more = async (name: string) => {
     await item(name).locator('../..').getByRole('button').click();
@@ -118,8 +118,9 @@ test('create a Canva panel diagram, reorder and transfer devices, and reopen the
       .click();
     await expand();
     await page
-      .getByTestId(messages['kind.MCB'])
-      .filter({ has: page.locator('img[alt*="entity=ModularDevice"]') })
+      .locator('img[alt*="entity=ModularDevice"]')
+      .locator('../..')
+      .filter({ has: page.locator('p').filter({ hasText: new RegExp(`^${escape(messages['kind.MCB'])}(?: - .+)?$`) }) })
       .click();
     await page.getByRole('textbox', { name: messages['feature.name'], exact: true }).fill('Q9');
     await page.keyboard.press('Tab');

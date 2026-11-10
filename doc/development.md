@@ -66,7 +66,7 @@ The starter follows Ontology's separation of project setup and representation co
 | --- | --- |
 | `hed.starter` | `HedDomainConfiguration` connects EMF, validation, locale and image paths to Sirius Web; `HedDomainIcons` supplies shared pictograms. |
 | `hed.starter.project` | `ProjectTemplates` advertises the available project templates; `ProjectInitializer` creates their semantic content; `ProjectNames` resolves the native project name for the explorer root. |
-| `hed.starter.representations.modelexplorer` | `ViewContribution`, `HedJavaServices`, `ExplorerMetadata` and `ExplorerRepresentations` describe the explorer and its saved representations; `HedDomainEditing` and `HedDomainLabels` provide editing and label services. |
+| `hed.starter.representations.modelexplorer` | `ViewContribution`, `HedJavaServices`, `ExplorerMetadata` and `ExplorerRepresentations` describe the explorer and its saved representations; `HedDomainEditing` and `HedDomainLabels` provide editing and label services; `HedInitialDirectEditTreeItemLabelProvider` supplies the stored name when renaming an appliance. |
 | `hed.starter.representations.details` | `HedPropertiesDescriptionRegistryConfigurer` builds the properties pages. |
 | `hed.starter.representations.tables` | `HedTableDescriptions` builds equipment, circuit, board and catalog tables. |
 
@@ -124,7 +124,7 @@ Browser checks cover project creation, catalog editing, native object creation, 
 ```powershell
 $env:HED_BASE_URL = 'http://localhost:8081'
 $env:HED_TEST_LOCALE = 'fr_FR'
-npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-hierarchy.spec.ts panel.spec.ts
+npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts panel.spec.ts
 ```
 
 The protection workflow checks service-breaker inverse links, the read-only RCCB downstream list and persistence after reopening.

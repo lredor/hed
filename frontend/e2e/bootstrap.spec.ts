@@ -40,7 +40,7 @@ test('create, edit and reopen a dwelling with catalog names, category icons and 
   const item = (name: string) =>
     page
       .locator('p')
-      .filter({ hasText: new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) })
+      .filter({ hasText: new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?: - .+)?$`) })
       .first();
   const more = async (name: string) => {
     await item(name).locator('../..').getByRole('button').click();

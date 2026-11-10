@@ -132,7 +132,7 @@ test('organize the project, classify catalog types and create appliances only on
     await expect(name).toHaveValue(messages['kind.MCB']);
     await name.fill('Q9');
     await name.press('Tab');
-    const appliance = 'Q9';
+    const appliance = `Q9 - ${messages['kind.MCB']}`;
     await expand();
     await expect(parentLabel(appliance)).toHaveText('Test rail');
     await more('Test rail');

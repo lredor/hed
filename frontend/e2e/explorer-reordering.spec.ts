@@ -34,7 +34,7 @@ test('reorder rails and mounted devices from Model Explorer and reopen the saved
   const item = (name: string) =>
     page
       .locator('p')
-      .filter({ hasText: new RegExp(`^${name}$`) })
+      .filter({ hasText: new RegExp(`^${name}(?: - .+)?$`) })
       .first();
   const more = async (name: string) => {
     await item(name).locator('../..').getByRole('button').click();
@@ -61,7 +61,9 @@ test('reorder rails and mounted devices from Model Explorer and reopen the saved
     await page.keyboard.press('Escape');
     await more('Q1');
     await page.getByRole('button', { name: messages['action.moveRight'], exact: true }).click();
-    await expect(deviceLabels()).toHaveText(['ID1', 'Q2', 'Q1', 'Q3', 'Q5', 'Q4']);
+    await expect(deviceLabels()).toHaveText(
+      ['ID1', 'Q2', 'Q1', 'Q3', 'Q5', 'Q4'].map((name) => new RegExp(`^${name} - .+$`))
+    );
     await item('Q1').click();
     await expect(page.getByTestId(messages['feature.upstreamRccb']).getByRole('combobox')).toContainText('ID1');
     await more('Main distribution board');
@@ -79,7 +81,9 @@ test('reorder rails and mounted devices from Model Explorer and reopen the saved
     await expect(railLabels()).toHaveText(['Second rail', 'Row 1', 'Row 1']);
     await page.reload();
     await expand();
-    await expect(deviceLabels()).toHaveText(['ID1', 'Q2', 'Q1', 'Q3', 'Q5', 'Q4']);
+    await expect(deviceLabels()).toHaveText(
+      ['ID1', 'Q2', 'Q1', 'Q3', 'Q5', 'Q4'].map((name) => new RegExp(`^${name} - .+$`))
+    );
     await expect(railLabels()).toHaveText(['Second rail', 'Row 1', 'Row 1']);
     await item('Q1').click();
     await expect(page.getByTestId(messages['feature.upstreamRccb']).getByRole('combobox')).toContainText('ID1');

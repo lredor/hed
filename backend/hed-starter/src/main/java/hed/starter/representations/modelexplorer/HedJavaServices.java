@@ -215,7 +215,15 @@ public class HedJavaServices {
     }
 
     public String getHedExplorerLabel(Object self) {
-        return self instanceof Dwelling ? Messages.text(locale, "class.Dwelling") : getHedLabel(self);
+        if (self instanceof Dwelling) {
+            return Messages.text(locale, "class.Dwelling");
+        }
+        if (self instanceof ModularDevice device && device.getDeviceType() != null) {
+            var name = Objects.toString(device.getName(), "").strip();
+            var typeName = label(device.getDeviceType(), locale);
+            return name.isEmpty() ? typeName : name + " - " + typeName;
+        }
+        return getHedLabel(self);
     }
 
     public String getHedKind(Object self) {

@@ -37,7 +37,7 @@ test('connect protection devices and reopen both downstream relationships', asyn
     page
       .locator('p')
       .filter({ hasText: name })
-      .filter({ hasText: new RegExp(`^${name}$`) })
+      .filter({ hasText: new RegExp(`^${name}(?: - .+)?$`) })
       .first();
   const field = (key: string) => page.getByTestId(messages[`feature.${key}`]).getByRole('combobox');
   const expand = async () => {

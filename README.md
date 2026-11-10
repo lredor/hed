@@ -55,6 +55,8 @@ If another explorer is active, choose **Electrical installation** in the explore
 
 Create a distribution board from the GTL, then rails on the board and appliances directly on a rail. See [the hierarchy and contextual creation menus](doc/model-explorer.md).
 
+Rail-mounted appliances display **Name - Device type name**, for example `Q1 - MCB C16 A`. Rename edits only the appliance name. See [explorer labels and editing](doc/model-explorer.md).
+
 See [reordering rails and mounted devices](doc/explorer-reordering.md) for Model Explorer movement commands.
 
 ### Model pictograms

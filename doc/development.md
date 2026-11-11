@@ -165,6 +165,14 @@ Use `HED_TEST_LOCALE=en_GB` for an English backend. Use a separate database when
 
 The project is distributed under EPL-2.0. Model, edit, starter and application artifacts include the project license and notice; the MDI assets retain their upstream notices. Vite also emits `assets/third-party-licenses.md` alongside the frontend to preserve the license texts of bundled dependencies, including the Roboto font.
 
+## User documentation
+
+The illustrated guides live in `doc/user/en/index.adoc` and `doc/user/fr/index.adoc`, and can be read directly in the repository. This follows [Ontology's repository user guide](https://github.com/ObeoNetwork/ontology/blob/main/doc/user.adoc). [SysON's documentation](https://github.com/eclipse-syson/syson/tree/main/doc) also uses AsciiDoc, organized into Antora user, installation and developer modules; HED currently keeps one guide per language for its smaller scope.
+
+The pinned `@asciidoctor/core` build dependency converts both guides into HTML after Vite builds the frontend. Local screenshots, the stylesheet and its MIT license are packaged under `static/help/` in the executable application. Remote web fonts are disabled, and conversion errors fail the build. Run `npm --prefix frontend run build-docs` to regenerate the guides after a frontend build; `npm --prefix frontend run build` and the Docker source build include this step automatically.
+
+The native `navigationBarMenuHelpURLExtensionPoint` points to `/api/hed/help`, outside Sirius Web's frontend-route forwarding. `hed.starter.help.UserGuideController` redirects to the French or English static guide using the same injected application locale as domain contributions. The development proxy forwards `/help` assets to the backend alongside its existing `/api` proxy. Each guide links to the other language without changing project data. The browser help test checks the actual native menu, locale redirect, all local screenshots and language switching.
+
 ## Automated formatting checks
 
 The Java formatter and cleanup profiles come from Sirius Web 2026.9.0. Maven runs formatting-focused Checkstyle rules in `validate`. The code-generation tool can apply or check the exact Sirius Java profile as described in the repository README. Java imports must be explicit; static wildcard imports are rejected too.

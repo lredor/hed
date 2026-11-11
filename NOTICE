@@ -28,3 +28,12 @@ Source: https://github.com/eclipse-sirius/sirius-web/tree/v2026.9.0/packages/rel
 The frontend distribution also includes assets/third-party-licenses.md, generated
 from the bundled dependencies and containing their license notices, including
 those for the Roboto font.
+
+Asciidoctor user-guide stylesheet
+--------------------------------
+The bundled user guides use the default stylesheet from @asciidoctor/core
+3.0.4, under the MIT License. The stylesheet retains its upstream notice;
+the complete license is included in the application at
+help/ASCIIDOCTOR-LICENSE.txt. The guide sources are original HED content
+under EPL-2.0.
+Source: https://github.com/asciidoctor/asciidoctor.js

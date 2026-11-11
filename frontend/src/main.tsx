@@ -13,6 +13,7 @@ import {
   DiagramRepresentationConfiguration,
   apolloClientOptionsConfigurersExtensionPoint,
   navigationBarIconExtensionPoint,
+  navigationBarMenuHelpURLExtensionPoint,
   footerExtensionPoint,
 } from '@eclipse-sirius/sirius-web-application';
 import { ExtensionRegistry, representationFactoryExtensionPoint } from '@eclipse-sirius/sirius-components-core';
@@ -65,6 +66,10 @@ function Footer() {
   return <span style={{ padding: '0 12px' }}>Home Electrical Designer · {t('scope')}</span>;
 }
 registry.addComponent(navigationBarIconExtensionPoint, { identifier: 'hed-brand', Component: Brand });
+registry.putData(navigationBarMenuHelpURLExtensionPoint, {
+  identifier: 'hed-user-guide',
+  data: httpOrigin + '/api/hed/help',
+});
 registry.addComponent(footerExtensionPoint, { identifier: 'hed-footer', Component: Footer });
 registry.putData(apolloClientOptionsConfigurersExtensionPoint, {
   identifier: 'hed-diagram-styles',

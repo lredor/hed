@@ -12,6 +12,8 @@ FROM node:22.16.0-bookworm-slim AS frontend
 WORKDIR /workspace
 COPY .editorconfig ./
 COPY frontend/ frontend/
+COPY doc/user/ doc/user/
+COPY doc/images/representations/ doc/images/representations/
 WORKDIR /workspace/frontend
 RUN --mount=type=cache,target=/root/.npm \
     --mount=type=secret,id=github_packages_token,required=true \

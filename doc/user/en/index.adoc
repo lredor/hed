@@ -1,0 +1,242 @@
+////
+Copyright (c) 2026 Laurent Redor.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+= Home Electrical Designer: User Guide
+:toc:
+:toc-title: Contents
+:sectanchors:
+:imagesdir: ../../images/representations
+:other-guide: ../fr/index.adoc
+:lang: en
+
+link:{other-guide}[Lire ce guide en français]
+
+Home Electrical Designer helps you describe a dwelling's electrical installation, organize its equipment and document its distribution boards, floor plans and circuits.
+The same model is shared by the explorer, Properties, tables and diagrams.
+The application documents a design; it does not certify electrical compliance.
+
+== Start with a project
+
+. On the home page, choose *Empty dwelling* to start your installation, or *Sample dwelling* to explore a completed example.
+. Enter a project name and create the project.
+. Open *Electrical installation* in Model Explorer if another explorer is selected.
+. Expand the project and select an object to show its *Properties*.
+
+The sample's rooms, equipment, circuits and catalog use the application's language at creation.
+Afterward, names are editable project data: changing the application language does not rename your objects.
+
+Changes are saved as you edit.
+Confirm a property edit by leaving the field, for example with Tab.
+Use a decimal point for numeric values, such as `1.5` for a conductor section in mm²; an empty optional value means it is not yet specified.
+Reopen the project to continue your work.
+Click the house-and-lightning icon at the top left to return to the home page.
+The top-right menu's *Help* entry opens this guide.
+
+== Find your way in Model Explorer
+
+[cols="1,3",options="header"]
+|===
+|Project section |Contents
+|Dwelling |Storeys, rooms, terminal equipment and functional controls.
+|Electrical service area (GTL) |Service connection, distribution boards and circuits.
+|Device catalog |Distribution-board device types and terminal-equipment types.
+|===
+
+Use an object's options menu to create a child, rename it, delete it or create a representation.
+Creation choices depend on the selected object.
+For example, create a room on a storey, a DIN rail on a board and a modular device on a rail.
+*New Object* also offers compatible catalog types, including your own variants.
+
+A rail-mounted device's explorer label is *Name - Device type name*.
+Renaming edits its Name only.
+Its optional *Label text* is the wording to print on the board label.
+
+== Describe the dwelling and catalog
+
+. Create storeys below *Dwelling*, then create their rooms.
+. In the catalog, select a type to edit its name, category and applicable technical specifications.
+. Create terminal equipment from a room's menu, or drag a terminal-equipment type from the catalog onto the room.
+. Select an equipment instance to edit its name, room and connections in Properties.
+
+A catalog drop creates an installed instance; the type stays in the catalog.
+New equipment takes the catalog type's current name.
+Equipment remains in the model if its room is deleted; find it under *Unlocated equipment* and assign another room.
+
+For modular devices, ratings, residual-current characteristics and module width belong to the catalog type.
+Properties shows these specifications read-only on the installed instance.
+Editing the type updates every instance using it.
+Create a separate type when you need a different product variant.
+The category of a type already in use cannot be changed, and the type cannot be deleted.
+
+== Build the distribution board
+
+. Under the GTL, create a distribution board.
+. Create its DIN rails and set each rail's capacity in modules.
+. Create modular devices on a rail, or drag compatible catalog types onto it.
+. Use *Move up / Move down* on rails and *Move left / Move right* on devices to change their physical order.
+
+A modular device must be on a rail belonging to its own board.
+Creation and moves are refused when the destination rail has insufficient capacity.
+The New Object dialog includes compact catalog variants when they fit.
+An occupied rail cannot be deleted; first move or delete its devices.
+
+Select an RCCB and set its *Upstream service circuit-breaker* to connect it to the service breaker.
+Select a downstream device and set its *Upstream RCCB* when applicable.
+These two upstream assignments are alternatives; clear the current one before choosing the other.
+Properties also shows an RCCB's directly supplied devices.
+
+=== Distribution Board Layout
+
+Create *Distribution Board Layout* on a *Distribution board* using *New representation*.
+The cabinet and rails follow the model order, and device widths come from the catalog.
+Drag a device onto another device to reorder it, or onto a rail to append it.
+Dropping onto free space at the end of its current rail moves it to the end.
+You can also drag catalog types onto a rail in this diagram to create devices.
+
+image::distribution-board-layout.png[Distribution Board Layout,width=1000]
+
+An empty device Name produces no device-name label in the diagram.
+An RCCB displays its residual-current value and differential type, such as *Type A*.
+*Delete* on a device in this diagram deletes the installed device from the model and clears its incoming references.
+
+== Associate circuits and equipment
+
+. Create a final circuit below the GTL's *Circuits* section or from a distribution board.
+. Select its source board, protective device, usage and conductor section in Properties.
+. Without branches, edit the circuit's *Associated equipment* list, or select the circuit from an equipment's *Supply circuit* field.
+. For separate runs, create *Branch* objects below the final circuit.
+
+The first branch receives the circuit's existing equipment.
+Further branches start empty.
+Once branches exist, the circuit's Associated equipment list becomes their combined, read-only list.
+To connect equipment, select its *Branch*, edit a branch's equipment list or drag existing room equipment onto the branch in Model Explorer.
+The room and equipment identity are retained.
+A circuit with branches cannot be selected as a new direct supply assignment.
+
+Removing equipment from a branch clears its supply circuit.
+Deleting a branch retains its devices: if other branches remain, those devices become unassigned; deleting the last branch keeps their direct supply assignments and restores the circuit's editable list.
+Moving a branch to another final circuit updates its members' supply circuit.
+If it becomes that circuit's first branch, the destination's existing direct equipment also joins it.
+
+Each protective device protects one circuit; branches share that circuit's protection.
+A distribution circuit instead supplies another board.
+Deleting a circuit retains its equipment and removes their supply assignments.
+
+The circuit's *Phase / supply* field and table column are visible only when the service connection's general supply is explicitly *Three-phase*.
+Hiding them preserves recorded values.
+
+=== Functional controls
+
+A control device owns independent channels, for example the two commands of a double switch.
+Create a functional control below Dwelling and select its channels, controlled equipment and optional modular actuator in Properties.
+Room location, supply-circuit assignment and functional control are independent relationships.
+
+== Place equipment on a floor plan
+
+. Select a *Storey* and create a *Floor Plan* representation.
+. Use *Import floor plan* to select a PNG, JPEG or SVG image, up to 10 MB.
+. Drag existing equipment from that storey's rooms in Model Explorer onto the image.
+. Move the pictograms freely to match the installation.
+
+image::floor-plan.png[Floor Plan with equipment labels enabled,width=1000]
+
+The image keeps its proportions; very flat or very tall images can be rejected.
+Replacing or clearing a background preserves equipment placement.
+The background image is shared by that storey's floor plans, while each representation saves its own equipment positions.
+
+Pictograms are frameless 24 × 24 nodes.
+Names are hidden by default.
+Enable *Show equipment labels* in the plan header to show them outside the icons; this does not resize the nodes.
+The preference is local to that diagram in your browser.
+
+An equipment drop onto a plan creates a graphical view of the existing equipment.
+It does not create another installed device.
+Equipment from another storey is refused; first change its room assignment if needed.
+
+IMPORTANT: *Delete* or *Remove from plan* removes selected graphical views only. The equipment remains in Model Explorer with its room, circuit and control relationships. Drag it onto the plan again to place it anew.
+
+=== Find equipment still missing from plans
+
+In Model Explorer's *Filters* menu, enable *Highlight equipments not in floor plans*.
+It is disabled by default.
+Equipment missing from every floor plan of its storey appears in red, as do its room, storey and dwelling.
+The parent labels remain red when collapsed.
+Disabling the filter restores normal labels and never hides equipment.
+
+== Create and use tables
+
+Use *New representation* on the owner listed below.
+Saved tables and diagrams appear beneath their owner in Model Explorer; open, rename or delete them from there.
+Deleting a representation retains its semantic owner and equipment.
+
+[cols="2,1,3",options="header"]
+|===
+|Table |Create on |Purpose and editing
+|Equipment Table |Dwelling |Rooms, equipment types, circuits, branches and controls. Edit equipment names and power ratings.
+|Circuit Table |Dwelling |Source boards, protection, conductor sections and served equipment. Edit names and conductor sections.
+|Distribution Board Table |Distribution board |Rails, device order, protection and specifications. Edit names and label text; catalog specifications are read-only.
+|Device Catalog Table |Device catalog |Type names, ratings, module widths and product information. Edit catalog data shared by its instances.
+|===
+
+Use search and column filters to narrow the rows.
+Click a column's sort button to change ordering; names sort as text and electrical quantities numerically.
+Columns can be resized and rows are paginated.
+Refused edits preserve the previous value and show feedback.
+
+image::equipment-table.png[Equipment Table,width=1000]
+image::circuit-table.png[Circuit Table,width=1000]
+image::distribution-board-table.png[Distribution Board Table,width=1000]
+image::device-catalog-table.png[Device Catalog Table,width=1000]
+
+== Inspect the experimental Circuit Diagram
+
+WARNING: The *Circuit Diagram* is experimental. It will evolve, and future changes may cause existing circuit diagrams and their saved layouts to be lost. Limit its use and avoid investing time in layouts you need to retain.
+
+Create it on *Dwelling* using *New representation*.
+It displays storeys and rooms as containers, equipment pictograms, boards, circuits and branches.
+Solid arrows show supply and protection; dashed purple links show functional controls and their channels.
+Move and resize containers freely to organize the view.
+Moving a node changes its layout, not its room or electrical relationships.
+Edit connections through Model Explorer and Properties; the diagram updates automatically.
+
+image::circuit-diagram.png[Circuit Diagram,width=1000]
+
+== Save a copy and understand deletion
+
+The project menu's *Download* command saves a project archive when offered by the application.
+Keep a copy before substantial changes.
+The home page's project-upload action imports an archive.
+
+[cols="2,3",options="header"]
+|===
+|Action |Effect
+|Delete equipment in Model Explorer |Deletes the semantic device and its graphical occurrences; incoming references are cleared.
+|Delete a device in Distribution Board Layout |Deletes the semantic modular device.
+|Delete equipment in Floor Plan |Removes its graphical view only.
+|Delete a saved representation |Deletes the view and its layout, retaining model objects.
+|Delete a room |Retains its equipment, now without a room.
+|Delete a protective device |Retains its circuits, now without that protection.
+|===
+
+Deletion dialogs ask for confirmation.
+These operations do not provide an undo command.
+
+== Troubleshooting
+
+[cols="2,3",options="header"]
+|===
+|Symptom |Check
+|A representation is not offered |Select its owner: Dwelling for equipment/circuit tables and Circuit Diagram, Storey for Floor Plan, board for board views, catalog for its table.
+|A rail creation tool is missing |Check remaining capacity and the catalog type's module width. New Object lists compatible variants that fit.
+|A circuit is missing from an equipment's supply choices |If it has branches, choose a Branch instead.
+|A circuit phase field is missing |Set the general supply to Three-phase if that matches your installation.
+|An equipment cannot be placed on a plan |Check that its room belongs to the plan's storey and that it is not already placed there.
+|Red explorer labels are absent |Enable the optional floor-plan placement filter.
+|A technical value cannot be edited on a modular device |Edit its device type in the catalog.
+|===

@@ -16,6 +16,12 @@ A Sirius Web modeler for residential electrical installations. English is the de
 
 The initial scope covers rooms, outlets, control devices, electrical loads, distribution boards, DIN rails, protective devices, final/distribution circuits and their branches, functional controls and an editable device catalog. Equipment and circuits use a single name. Modular devices take their technical specifications from their catalog type and must be mounted on a rail within its capacity. This is a design and documentation tool; it does not certify compliance with NF C 15-100.
 
+## User guides
+
+Read the [English user guide](doc/user/en/index.adoc) or the [guide utilisateur en français](doc/user/fr/index.adoc) for project creation, catalog editing, circuit associations, tables and diagrams. Both illustrated guides are also bundled with the application: the top-right **Help / Aide** menu opens the guide in the configured application language, with a link to switch languages. No documentation hosting is required.
+
+New sample projects use that same creation language for their names. Existing and user-edited names remain unchanged.
+
 ## Domain build
 
 Requirements: JDK 21 or later and Maven 3.9.9 or later.

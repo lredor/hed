@@ -8,10 +8,11 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "npm run format-lint && tsc --noEmit && vite build",
+    "build": "npm run format-lint && tsc --noEmit && vite build && npm run build-docs",
+    "build-docs": "node scripts/build-user-guide.mjs",
     "test": "playwright test",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"*.ts\" \"index.html\"",
-    "format-lint": "prettier --check \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"*.ts\" \"index.html\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"scripts/**/*.mjs\" \"*.ts\" \"index.html\"",
+    "format-lint": "prettier --check \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"scripts/**/*.mjs\" \"*.ts\" \"index.html\""
   },
   "dependencies": {
     "@apollo/client": "3.10.4",
@@ -80,14 +81,15 @@
     "tss-react": "4.9.16"
   },
   "devDependencies": {
+    "@asciidoctor/core": "3.0.4",
     "@playwright/test": "1.56.1",
     "@types/node": "22.16.0",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "6.0.2",
+    "prettier": "2.7.1",
     "typescript": "5.4.5",
-    "vite": "8.1.5",
-    "prettier": "2.7.1"
+    "vite": "8.1.5"
   },
   "license": "EPL-2.0"
 }

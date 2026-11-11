@@ -1,0 +1,244 @@
+////
+Copyright (c) 2026 Laurent Redor.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+= Home Electrical Designer : guide utilisateur
+:toc:
+:toc-title: Sommaire
+:sectanchors:
+:imagesdir: ../../images/representations
+:other-guide: ../en/index.adoc
+:lang: fr
+:warning-caption: Attention
+:important-caption: Important
+
+link:{other-guide}[Read this guide in English]
+
+Home Electrical Designer permet de décrire l’installation électrique d’un logement, d’organiser ses équipements et de documenter ses tableaux, plans d’implantation et circuits.
+Le même modèle est partagé par l’explorateur, les propriétés, les tableaux et les diagrammes.
+L’application documente une conception ; elle ne certifie pas sa conformité électrique.
+
+== Commencer par un projet
+
+. Depuis l’accueil, choisissez *Logement vide* pour commencer votre installation, ou *Logement d’exemple* pour découvrir un exemple déjà renseigné.
+. Saisissez le nom du projet et créez-le.
+. Sélectionnez *Installation électrique* dans Model Explorer si un autre explorateur est actif.
+. Dépliez le projet et sélectionnez un objet pour afficher ses propriétés.
+
+Les noms des pièces, équipements, circuits et types du catalogue de l’exemple sont créés dans la langue de l’application.
+Ils deviennent ensuite des données modifiables du projet : changer la langue de l’application ne les renomme pas.
+
+Les modifications sont enregistrées au fil de l’édition.
+Validez une propriété en quittant le champ, par exemple avec Tab.
+Utilisez un point pour les nombres décimaux, par exemple `1.5` pour une section en mm² ; un champ numérique facultatif vide signifie que la valeur n’est pas encore renseignée.
+Rouvrez le projet pour poursuivre votre travail.
+L’icône maison-éclair en haut à gauche ramène à l’accueil.
+L’entrée *Aide* du menu en haut à droite ouvre ce guide.
+
+== Se repérer dans Model Explorer
+
+[cols="1,3",options="header"]
+|===
+|Partie du projet |Contenu
+|Logement |Niveaux, pièces, équipements terminaux et commandes fonctionnelles.
+|Gaine technique logement (GTL) |Branchement, tableaux de répartition et circuits.
+|Catalogue |Types d’appareils du tableau et types d’équipements terminaux.
+|===
+
+Le menu d’un objet permet de créer un enfant, le renommer, le supprimer ou créer une représentation.
+Les choix dépendent de l’objet sélectionné.
+Par exemple, créez une pièce sur un niveau, un rail DIN sur un tableau et un appareil modulaire sur un rail.
+*Nouvel objet* propose aussi les types compatibles du catalogue, y compris vos variantes.
+
+Le libellé d’un appareil sur rail est *Nom - Nom du type d’équipement*.
+Le renommage modifie uniquement son Nom.
+Le champ facultatif *Libellé d’étiquette* contient le texte destiné à l’étiquette du tableau.
+
+== Décrire le logement et le catalogue
+
+. Créez les niveaux sous *Logement*, puis leurs pièces.
+. Dans le catalogue, sélectionnez un type pour modifier son nom, sa catégorie et ses caractéristiques applicables.
+. Créez les équipements terminaux depuis le menu d’une pièce, ou glissez un type d’équipement terminal du catalogue sur cette pièce.
+. Sélectionnez un équipement pour modifier son nom, sa pièce et ses relations dans les propriétés.
+
+Le dépôt d’un type crée un équipement installé ; le type reste dans le catalogue.
+Le nouvel équipement reçoit le nom actuellement enregistré sur son type.
+Supprimer une pièce conserve ses équipements : retrouvez-les sous *Équipements sans pièce* puis affectez-leur une autre pièce.
+
+Pour les appareils modulaires, le courant assigné, les caractéristiques différentielles et l’encombrement appartiennent au type du catalogue.
+Ils sont affichés en lecture seule sur l’appareil installé.
+Modifier le type met à jour tous les appareils qui l’utilisent.
+Créez un autre type si vous avez besoin d’une variante différente.
+Un type déjà utilisé ne peut pas être supprimé ni changer de catégorie.
+
+== Construire le tableau électrique
+
+. Sous la GTL, créez un tableau de répartition.
+. Créez ses rails DIN et renseignez leur capacité en modules.
+. Créez les appareils sur un rail, ou glissez-y des types compatibles du catalogue.
+. Utilisez *Déplacer vers le haut / Déplacer vers le bas* sur les rails et *Déplacer à gauche / Déplacer à droite* sur les appareils pour modifier leur ordre physique.
+
+Un appareil modulaire doit être installé sur un rail de son propre tableau.
+Une création ou un déplacement est refusé si la capacité disponible est insuffisante.
+Le dialogue Nouvel objet propose les variantes compactes du catalogue lorsqu’elles tiennent sur le rail.
+Un rail occupé ne peut pas être supprimé : déplacez ou supprimez d’abord ses appareils.
+
+Sélectionnez un interrupteur différentiel et renseignez son *Disjoncteur de branchement amont* pour le relier au disjoncteur général.
+Sur un appareil en aval, renseignez l’*Interrupteur différentiel amont* lorsque cette relation s’applique.
+Ces deux alimentations amont sont alternatives : effacez la relation actuelle avant de choisir l’autre.
+Les propriétés affichent aussi les appareils directement en aval d’un interrupteur différentiel.
+
+=== Implantation du tableau
+
+Créez *Implantation du tableau* sur un *Tableau de répartition* avec *Nouvelle représentation*.
+Le coffret et les rails suivent l’ordre du modèle ; la largeur des appareils vient du catalogue.
+Glissez un appareil sur un autre pour le réordonner, ou sur un rail pour l’ajouter à la fin.
+Un dépôt dans l’espace libre en fin de son rail actuel le déplace en dernière position.
+Vous pouvez aussi glisser des types du catalogue sur les rails du diagramme pour créer des appareils.
+
+image::distribution-board-layout.png[Implantation du tableau,width=1000]
+
+Un appareil dont le Nom est vide n’a pas de libellé de nom sur le diagramme.
+Un interrupteur différentiel affiche sa sensibilité et son type, par exemple *Type A*.
+La touche *Suppr* sur un appareil de ce diagramme supprime l’appareil du modèle et efface les références qui le désignaient.
+
+== Associer les circuits et les équipements
+
+. Créez un circuit terminal sous *Circuits* dans la GTL, ou depuis un tableau de répartition.
+. Renseignez son tableau source, sa protection, son usage et sa section de conducteurs dans les propriétés.
+. Sans branche, modifiez sa liste *Équipements associés*, ou choisissez ce circuit dans le champ *Circuit d’alimentation* d’un équipement.
+. Pour distinguer plusieurs départs, créez des *Branches* sous le circuit terminal.
+
+La première branche reçoit les équipements déjà associés au circuit.
+Les suivantes sont créées vides.
+Dès qu’il existe des branches, la liste du circuit devient leur cumul en lecture seule.
+Pour raccorder un équipement, choisissez sa *Branche*, modifiez la liste d’une branche ou glissez un équipement existant d’une pièce sur cette branche dans Model Explorer.
+La pièce et l’identité de l’équipement sont conservées.
+Un circuit comportant des branches n’est pas proposé pour une nouvelle affectation directe.
+
+Retirer un équipement d’une branche efface son circuit d’alimentation.
+Supprimer une branche conserve ses équipements : s’il reste d’autres branches, ils deviennent non affectés ; supprimer la dernière branche conserve leur alimentation directe et rétablit la liste modifiable du circuit.
+Déplacer une branche vers un autre circuit terminal met à jour le circuit de ses membres.
+Si elle devient la première branche du circuit destinataire, elle reçoit aussi ses équipements directement associés.
+
+Chaque appareil de protection protège un seul circuit ; les branches partagent la protection de ce circuit.
+Un circuit de distribution sert à alimenter un autre tableau.
+Supprimer un circuit conserve ses équipements et efface leurs affectations d’alimentation.
+
+Le champ *Phase / alimentation* des circuits et sa colonne dans le tableau apparaissent uniquement si l’alimentation générale du branchement est explicitement *Triphasé*.
+Masquer ces champs conserve les valeurs déjà enregistrées.
+
+=== Fonctions de commande
+
+Un organe de commande possède des canaux indépendants, par exemple les deux commandes d’un double interrupteur.
+Créez une commande fonctionnelle sous Logement puis choisissez ses canaux, les équipements commandés et l’éventuel actionneur modulaire dans les propriétés.
+La pièce, le circuit d’alimentation et la commande fonctionnelle sont des relations indépendantes.
+
+== Placer les équipements sur un plan
+
+. Sélectionnez un *Niveau* et créez une représentation *Plan d’implantation*.
+. Utilisez *Importer un plan* pour choisir une image PNG, JPEG ou SVG de 10 Mo au maximum.
+. Glissez les équipements existants des pièces de ce niveau depuis Model Explorer vers l’image.
+. Déplacez librement les pictogrammes pour représenter leur implantation.
+
+image::floor-plan.png[Plan d’implantation avec libellés affichés,width=1000]
+
+Les proportions de l’image sont conservées ; les images très aplaties ou très allongées peuvent être refusées.
+Remplacer ou retirer le fond conserve les positions des équipements.
+L’image de fond est partagée par les plans du même niveau, mais chaque représentation conserve ses propres positions.
+
+Les pictogrammes sont des nœuds de 24 × 24 sans cadre.
+Les noms sont masqués par défaut.
+Activez *Afficher les libellés* dans l’en-tête du plan pour les afficher en bordure des icônes, sans agrandir les nœuds.
+Cette préférence est locale à ce diagramme dans votre navigateur.
+
+Déposer un équipement sur un plan crée une vue graphique de l’équipement existant.
+Cela ne crée pas un second équipement installé.
+Un équipement d’un autre niveau est refusé ; modifiez d’abord sa pièce si nécessaire.
+
+IMPORTANT: La touche *Suppr* et l’outil *Retirer du plan* suppriment uniquement les vues graphiques sélectionnées. Les équipements restent dans Model Explorer avec leur pièce, circuit et commandes. Glissez-les à nouveau sur le plan pour les repositionner.
+
+=== Repérer les équipements absents des plans
+
+Dans le menu *Filtres* de Model Explorer, activez *Surligner les équipements absents des plans*.
+Ce filtre est désactivé par défaut.
+Les équipements absents de tous les plans de leur niveau apparaissent en rouge, ainsi que leur pièce, leur niveau et le logement.
+Les parents restent rouges quand l’arbre est replié.
+Désactiver le filtre rétablit les libellés normaux sans masquer les équipements.
+
+== Créer et utiliser les tableaux
+
+Utilisez *Nouvelle représentation* sur l’élément indiqué ci-dessous.
+Les tableaux et diagrammes enregistrés apparaissent sous cet élément dans Model Explorer ; vous pouvez les ouvrir, renommer ou supprimer depuis l’arbre.
+Supprimer une représentation conserve son élément sémantique et les équipements.
+
+[cols="2,1,3",options="header"]
+|===
+|Tableau |Création sur |Contenu et édition
+|Inventaire des équipements |Logement |Pièces, types, circuits, branches et commandes. Noms et puissances modifiables.
+|Liste des circuits |Logement |Tableaux sources, protections, sections et équipements alimentés. Noms et sections modifiables.
+|Composition du tableau |Tableau de répartition |Rails, ordre des appareils, protections et caractéristiques. Noms et libellés étiquette modifiables ; caractéristiques du catalogue en lecture seule.
+|Catalogue des équipements |Catalogue |Noms des types, valeurs assignées, encombrements et références produit. Données partagées par les appareils utilisant les types.
+|===
+
+Utilisez la recherche et les filtres de colonnes pour réduire la liste.
+Le bouton de tri d’une colonne change l’ordre : les noms sont triés comme du texte et les grandeurs électriques comme des nombres.
+Les colonnes sont redimensionnables et les lignes sont paginées.
+Une édition refusée conserve la valeur précédente et affiche un message.
+
+image::equipment-table.png[Inventaire des équipements,width=1000]
+image::circuit-table.png[Liste des circuits,width=1000]
+image::distribution-board-table.png[Composition du tableau,width=1000]
+image::device-catalog-table.png[Catalogue des équipements,width=1000]
+
+== Découvrir le Schéma des circuits expérimental
+
+WARNING: Le *Schéma des circuits* est expérimental. Il va évoluer et ces évolutions pourront entraîner la perte des diagrammes existants et de leurs positions. Limitez son utilisation et évitez de consacrer du temps à des mises en page que vous souhaitez conserver.
+
+Créez-le sur *Logement* avec *Nouvelle représentation*.
+Il affiche les niveaux et les pièces comme des boîtes englobantes, les pictogrammes des équipements, les tableaux, les circuits et les branches.
+Les flèches pleines représentent l’alimentation et la protection ; les liens violets en pointillés représentent les commandes et leurs canaux.
+Déplacez et redimensionnez librement les conteneurs pour organiser la vue.
+Déplacer un nœud change sa position graphique, pas sa pièce ni ses relations électriques.
+Modifiez les relations dans Model Explorer et les propriétés : le diagramme se met à jour automatiquement.
+
+image::circuit-diagram.png[Schéma des circuits,width=1000]
+
+== Conserver une copie et comprendre les suppressions
+
+La commande *Télécharger* du menu du projet, lorsqu’elle est proposée, enregistre une archive du projet.
+Conservez-en une copie avant des modifications importantes.
+L’action de téléversement de projet sur l’accueil permet d’importer une archive.
+
+[cols="2,3",options="header"]
+|===
+|Action |Effet
+|Supprimer un équipement dans Model Explorer |Supprime l’objet sémantique et ses vues graphiques ; les références vers lui sont effacées.
+|Supprimer un appareil dans l’implantation du tableau |Supprime l’appareil modulaire du modèle.
+|Supprimer un équipement dans un plan d’implantation |Retire uniquement sa vue graphique.
+|Supprimer une représentation enregistrée |Supprime la vue et sa mise en page, en conservant les objets métier.
+|Supprimer une pièce |Conserve ses équipements, désormais sans pièce.
+|Supprimer un appareil de protection |Conserve ses circuits, désormais sans cette protection.
+|===
+
+Les dialogues de suppression demandent une confirmation.
+Ces opérations ne proposent pas de commande d’annulation.
+
+== Résoudre les difficultés courantes
+
+[cols="2,3",options="header"]
+|===
+|Symptôme |Vérification
+|Une représentation n’est pas proposée |Sélectionnez son propriétaire : Logement pour l’inventaire, les circuits et leur schéma ; Niveau pour le plan ; tableau de répartition pour ses vues ; catalogue pour son tableau.
+|Un outil de création sur rail est absent |Vérifiez la capacité disponible et l’encombrement du type. Nouvel objet propose les variantes compatibles qui tiennent sur le rail.
+|Un circuit manque dans les choix d’alimentation d’un équipement |S’il possède des branches, choisissez une Branche.
+|Le champ Phase d’un circuit est absent |Renseignez une alimentation générale Triphasé si elle correspond à votre installation.
+|Un équipement ne peut pas être placé sur un plan |Vérifiez que sa pièce appartient au niveau du plan et qu’il n’y est pas déjà placé.
+|Les libellés rouges ne sont pas affichés |Activez le filtre facultatif de placement dans les plans.
+|Une valeur technique est en lecture seule sur un appareil modulaire |Modifiez son type dans le catalogue.
+|===

@@ -113,6 +113,14 @@ Create this diagram on a **Storey**. Import a PNG, JPEG or SVG background, then 
 
 ![Storey Floor Plan with equipment labels enabled](doc/images/representations/floor-plan.png)
 
+### Circuit Diagram
+
+**Experimental representation.** This diagram is expected to evolve, and future changes may cause existing circuit diagrams and their saved layouts to be lost. Limit its use for now and avoid investing time in diagrams you need to retain.
+
+Create this diagram on the **Dwelling** using **New Representation → Circuit Diagram** (French: **Logement → Nouvelle représentation → Schéma des circuits**). It shows storeys and rooms as freely arranged containers, the existing device pictograms, distribution boards and circuits. Solid links show supply and protection relationships; dashed purple links show functional controls and their independent channels. Positions are saved per representation. See the [circuit-diagram workflow](doc/circuit-diagram.md).
+
+![Circuit Diagram with storey and room containers](doc/images/representations/circuit-diagram.png)
+
 ## References
 
 - [Sirius Web 2026.9.0](https://github.com/eclipse-sirius/sirius-web/tree/v2026.9.0)

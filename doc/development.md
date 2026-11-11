@@ -153,6 +153,8 @@ The bilingual `terminal-catalog-drop.spec.ts` workflow creates outlets, controls
 
 The bilingual `rail-capacity.spec.ts` workflow verifies that the native New Object dialog remains available for a compact catalog variant when generic types no longer fit, then hides creation once the rail is full. It also checks drop rejection and persisted fractional module widths. `RailCapacityTest` covers menu/dialog consistency, stale choices and missing or incompatible catalog types.
 
+`CircuitDiagramTest` evaluates the circuit diagram's actual AQL descriptions against complete and incomplete models, including independent control channels, optional actuators and three-phase labels. The bilingual `circuit-diagram.spec.ts` checks native containment, supply/control links, existing pictograms, manual movement/resizing, saved layouts and live circuit/room edits. See the [circuit-diagram workflow](circuit-diagram.md).
+
 The [panel diagram workflow](distribution-board-layout.md) checks SVG alignment, module widths, drag-and-drop transfers and reopening of the constrained layout.
 
 The [table workflow](tables.md) also checks all four representation contexts and persistence of table edits.

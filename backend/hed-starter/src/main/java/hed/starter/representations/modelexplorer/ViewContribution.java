@@ -36,6 +36,8 @@ import hed.homeelectrical.DeviceKind;
 import hed.domain.Messages;
 import hed.starter.HedDomainIcons;
 import hed.starter.representations.CatalogDropService;
+import hed.starter.representations.diagrams.circuits.CircuitDiagram;
+import hed.starter.representations.diagrams.circuits.CircuitServices;
 import hed.starter.representations.diagrams.panel.PanelDiagram;
 import hed.starter.representations.diagrams.floorplan.FloorPlanDiagram;
 import hed.starter.representations.diagrams.floorplan.FloorPlanServices;
@@ -77,7 +79,8 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
 
     @Override
     public List<Class<?>> getServiceClasses(View view) {
-        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class, FloorPlanServices.class, ExplorerPlanPlacement.class);
+        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class, FloorPlanServices.class, ExplorerPlanPlacement.class,
+                CircuitServices.class);
     }
 
     @Override
@@ -168,6 +171,7 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
         this.tables.addTo(view);
         view.getDescriptions().add(new PanelDiagram(locale).create());
         view.getDescriptions().add(new FloorPlanDiagram(locale).create());
+        view.getDescriptions().add(new CircuitDiagram(locale).create());
     }
 
     @Override

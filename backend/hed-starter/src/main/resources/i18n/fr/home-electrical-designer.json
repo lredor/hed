@@ -13,6 +13,8 @@
     "showLabels": "Afficher les libellés",
     "placeholder": "Importez une image du plan (PNG, JPEG ou SVG).",
     "imageError": "Choisissez une image PNG, JPEG ou SVG valide de moins de 10 Mo, avec un rapport largeur/hauteur entre 1:5 et 10:1.",
-    "uploadError": "Le plan n’a pas pu être importé."
+    "uploadError": "Le plan n’a pas pu être importé.",
+    "removeEquipment": "Retirer du plan",
+    "removeConfirmation": "Seuls les éléments graphiques sélectionnés seront retirés de ce plan. Les équipements et leurs relations resteront dans le modèle. Vous pourrez les replacer depuis le Model Explorer."
   }
 }

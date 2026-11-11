@@ -13,6 +13,8 @@
     "showLabels": "Show equipment labels",
     "placeholder": "Import a floor plan image (PNG, JPEG or SVG).",
     "imageError": "Choose a valid PNG, JPEG or SVG image under 10 MB, with an aspect ratio between 1:5 and 10:1.",
-    "uploadError": "The floor plan could not be imported."
+    "uploadError": "The floor plan could not be imported.",
+    "removeEquipment": "Remove from plan",
+    "removeConfirmation": "Only the selected graphical elements will be removed from this floor plan. The corresponding devices and their connections will remain in the model. You can place them again from Model Explorer."
   }
 }

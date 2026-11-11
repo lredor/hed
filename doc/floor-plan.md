@@ -26,7 +26,7 @@ Drag the icon freely to position it along a wall or anywhere else on the image. 
 
 Labels are hidden by default. The header's **Show equipment labels** filter displays names just below the icons without changing node dimensions or positions. The preference is stored per diagram in this browser; a new representation starts with labels hidden. Hovering an icon shows its name even when labels are hidden.
 
-The contextual **Remove from plan** action removes only the selected graphical view. The device remains in its room and can be placed again. If a device is assigned to a room on another storey, its view disappears from this plan. Semantic editing continues through Properties and Model Explorer.
+The contextual **Remove from plan** action removes only the selected graphical view. The device remains in its room and can be placed again. Pressing **Delete** on plan equipment opens a **Remove from plan** confirmation explaining that the selected graphical elements will be removed while their devices and connections remain in the model. Cancelling retains the views. If a device is assigned to a room on another storey, its view disappears from this plan. Semantic editing continues through Properties and Model Explorer.
 
 ## Check placement from Model Explorer
 
@@ -37,6 +37,8 @@ Model Explorer keeps its usual labels by default. Enable **Highlight equipments 
 Backend contributions are in `hed.starter.representations.diagrams.floorplan`, and frontend rendering is in `frontend/src/representations/diagrams/floorplan`. The native View DSL uses an unsynchronized equipment node and Create View / Delete View operations. A custom style and React Flow converter draw the image and the compact pictograms, retaining native selection, drops and persisted positions. The canvas is fixed and nonselectable.
 
 Background assignments run in the editing-context event queue. The handler checks the uploaded image's project and supported media type before changing the Storey. Invalid commands leave the previous background untouched; read-only diagrams disable import and removal controls.
+
+`FloorPlanRemovalConfirmation` adapts the native confirmation context only while a floor-plan background is mounted. It preserves the original tool callback, dialog cancellation and user confirmation settings. Its representation factory delegates to the native diagram component, and the registry merge retains the other native representation factories. The Model Explorer's semantic deletion and the distribution-board diagram use their standard confirmation.
 
 Java tests cover storey eligibility, model defaults and project-owned atomic background assignments. Bilingual browser workflows cover SVG/PNG/JPEG import, replacement, removal and malformed-image rejection; equipment placement and movement; duplicate and wrong-storey drops; outside-label filtering; view removal without semantic deletion; room reassignment; independent layouts and persistence after reopening.
 

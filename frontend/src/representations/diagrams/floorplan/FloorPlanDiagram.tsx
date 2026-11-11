@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-import { memo, useContext, useRef, useState } from 'react';
+import { memo, useContext, useEffect, useRef, useState } from 'react';
 import { DocumentTransform, gql, useApolloClient } from '@apollo/client';
 import { Kind, visit } from 'graphql';
 import { ServerContext, useMultiToast } from '@eclipse-sirius/sirius-components-core';
@@ -28,6 +28,7 @@ import { Node, NodeProps, useReactFlow } from '@xyflow/react';
 import { useTranslation } from 'react-i18next';
 import './floor-plan.css';
 import { usePlanLabels } from './PlanLabelFilter';
+import { FloorPlanRemovalContext } from './FloorPlanRemovalConfirmation';
 
 interface PlanStyle extends GQLNodeStyle {
   backgroundNode: boolean;
@@ -217,6 +218,8 @@ const PlanNode = memo(({ id, data: raw }: NodeProps) => {
     client = useApolloClient(),
     { addErrorMessage } = useMultiToast();
   const [showLabels, setShowLabels] = usePlanLabels(data.planDiagramId);
+  const registerFloorPlan = useContext(FloorPlanRemovalContext);
+  useEffect(() => (plan.backgroundNode ? registerFloorPlan() : undefined), [plan.backgroundNode, registerFloorPlan]);
   const { onDrop, onDragOver } = useDrop(),
     { getNode } = useReactFlow();
   const input = useRef<HTMLInputElement>(null);

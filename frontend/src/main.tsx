@@ -15,7 +15,7 @@ import {
   navigationBarIconExtensionPoint,
   footerExtensionPoint,
 } from '@eclipse-sirius/sirius-web-application';
-import { ExtensionRegistry } from '@eclipse-sirius/sirius-components-core';
+import { ExtensionRegistry, representationFactoryExtensionPoint } from '@eclipse-sirius/sirius-components-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Tooltip from '@mui/material/Tooltip';
@@ -29,9 +29,14 @@ import {
   floorPlanDocumentTransform,
   floorPlanNodeRegistry,
 } from './representations/diagrams/floorplan/FloorPlanDiagram';
+import {
+  floorPlanConfirmationFactory,
+  FloorPlanConfirmationMergeStrategy,
+} from './representations/diagrams/floorplan/FloorPlanRemovalConfirmation';
 const httpOrigin = import.meta.env.VITE_BACKEND_URL || window.location.origin;
 const wsOrigin = httpOrigin.replace(/^http/, 'ws');
 const registry = new ExtensionRegistry();
+const registryMergeStrategy = new FloorPlanConfirmationMergeStrategy();
 function Brand() {
   const { t } = useTranslation('sirius-web-application', { keyPrefix: 'navigationBarIcon' });
   const label = t('backToHomepage');
@@ -75,8 +80,16 @@ registry.putData(diagramRendererReactFlowPropsCustomizerExtensionPoint, {
   identifier: 'hed-rail-drop',
   data: [usePanelRailDropProps],
 });
+registry.putData(representationFactoryExtensionPoint, {
+  identifier: 'hed-floor-plan-confirmation',
+  data: [floorPlanConfirmationFactory],
+});
 createRoot(document.getElementById('root')!).render(
-  <SiriusWebApplication httpOrigin={httpOrigin} wsOrigin={wsOrigin} extensionRegistry={registry}>
+  <SiriusWebApplication
+    httpOrigin={httpOrigin}
+    wsOrigin={wsOrigin}
+    extensionRegistry={registry}
+    extensionRegistryMergeStrategy={registryMergeStrategy}>
     <DiagramRepresentationConfiguration
       nodeTypeRegistry={{
         nodeConverters: [...panelNodeRegistry.nodeConverters, ...floorPlanNodeRegistry.nodeConverters],

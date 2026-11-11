@@ -282,8 +282,13 @@ public class HedJavaServices {
                 .anyMatch(kind -> canCreateHedObject(self, kind));
     }
 
+    /**
+     * Tests whether the selected semantic element owns an electrical table or diagram description.
+     * @param self the Model Explorer selection
+     * @return whether the native New Representation dialog can be offered
+     */
     public boolean canRepresentHedObject(Object self) {
-        return self instanceof Dwelling || self instanceof DistributionBoard || self instanceof Catalog;
+        return self instanceof Dwelling || self instanceof DistributionBoard || self instanceof Catalog || self instanceof Storey;
     }
 
     public Object getHedParent(Object self, IEditingContext context) {

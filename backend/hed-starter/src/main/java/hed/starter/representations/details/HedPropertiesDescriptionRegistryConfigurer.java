@@ -86,6 +86,10 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
             if (classifier instanceof EClass type && !type.isAbstract()) {
                 var groups = new LinkedHashMap<String, List<AbstractControlDescription>>();
                 for (var feature : type.getEAllStructuralFeatures()) {
+                    // Background metadata is updated atomically by the plan's image import tool.
+                    if (type == HomeElectricalPackage.Literals.STOREY && List.of("planImageId", "planWidth", "planHeight").contains(feature.getName())) {
+                        continue;
+                    }
                     if (type == HomeElectricalPackage.Literals.MODULAR_DEVICE && feature.getName().equals("description")) {
                         continue;
                     }

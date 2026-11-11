@@ -22,6 +22,9 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link hed.homeelectrical.Storey#getLevelNumber <em>Level Number</em>}</li>
  *   <li>{@link hed.homeelectrical.Storey#getRooms <em>Rooms</em>}</li>
+ *   <li>{@link hed.homeelectrical.Storey#getPlanImageId <em>Plan Image Id</em>}</li>
+ *   <li>{@link hed.homeelectrical.Storey#getPlanWidth <em>Plan Width</em>}</li>
+ *   <li>{@link hed.homeelectrical.Storey#getPlanHeight <em>Plan Height</em>}</li>
  * </ul>
  *
  * @see hed.homeelectrical.HomeElectricalPackage#getStorey()
@@ -62,5 +65,82 @@ public interface Storey extends NamedElement {
      * @generated
      */
     EList<Room> getRooms();
+
+    /**
+     * Returns the value of the '<em><b>Plan Image Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Identifier of this project's image used as the floor-plan background; absent until an image is imported.
+     * <!-- end-model-doc -->
+     * @return the value of the '<em>Plan Image Id</em>' attribute.
+     * @see #setPlanImageId(String)
+     * @see hed.homeelectrical.HomeElectricalPackage#getStorey_PlanImageId()
+     * @model
+     * @generated
+     */
+    String getPlanImageId();
+
+    /**
+     * Sets the value of the '{@link hed.homeelectrical.Storey#getPlanImageId <em>Plan Image Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Plan Image Id</em>' attribute.
+     * @see #getPlanImageId()
+     * @generated
+     */
+    void setPlanImageId(String value);
+
+    /**
+     * Returns the value of the '<em><b>Plan Width</b></em>' attribute.
+     * The default value is <code>"1200"</code>.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Floor-plan canvas width in diagram units. Image import normalizes the width to 1200.
+     * <!-- end-model-doc -->
+     * @return the value of the '<em>Plan Width</em>' attribute.
+     * @see #setPlanWidth(int)
+     * @see hed.homeelectrical.HomeElectricalPackage#getStorey_PlanWidth()
+     * @model default="1200"
+     * @generated
+     */
+    int getPlanWidth();
+
+    /**
+     * Sets the value of the '{@link hed.homeelectrical.Storey#getPlanWidth <em>Plan Width</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Plan Width</em>' attribute.
+     * @see #getPlanWidth()
+     * @generated
+     */
+    void setPlanWidth(int value);
+
+    /**
+     * Returns the value of the '<em><b>Plan Height</b></em>' attribute.
+     * The default value is <code>"800"</code>.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Image-area height in diagram units, excluding the toolbar. Import preserves the image aspect ratio.
+     * <!-- end-model-doc -->
+     * @return the value of the '<em>Plan Height</em>' attribute.
+     * @see #setPlanHeight(int)
+     * @see hed.homeelectrical.HomeElectricalPackage#getStorey_PlanHeight()
+     * @model default="800"
+     * @generated
+     */
+    int getPlanHeight();
+
+    /**
+     * Sets the value of the '{@link hed.homeelectrical.Storey#getPlanHeight <em>Plan Height</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Plan Height</em>' attribute.
+     * @see #getPlanHeight()
+     * @generated
+     */
+    void setPlanHeight(int value);
 
 } // Storey

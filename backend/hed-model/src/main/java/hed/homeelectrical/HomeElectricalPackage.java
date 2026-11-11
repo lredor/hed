@@ -347,13 +347,40 @@ public interface HomeElectricalPackage extends EPackage {
     int STOREY__ROOMS = NAMED_ELEMENT_FEATURE_COUNT + 1;
 
     /**
+     * The feature id for the '<em><b>Plan Image Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int STOREY__PLAN_IMAGE_ID = NAMED_ELEMENT_FEATURE_COUNT + 2;
+
+    /**
+     * The feature id for the '<em><b>Plan Width</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int STOREY__PLAN_WIDTH = NAMED_ELEMENT_FEATURE_COUNT + 3;
+
+    /**
+     * The feature id for the '<em><b>Plan Height</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int STOREY__PLAN_HEIGHT = NAMED_ELEMENT_FEATURE_COUNT + 4;
+
+    /**
      * The number of structural features of the '<em>Storey</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int STOREY_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 2;
+    int STOREY_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 5;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.impl.RoomImpl <em>Room</em>}' class.
@@ -2392,6 +2419,39 @@ public interface HomeElectricalPackage extends EPackage {
     EReference getStorey_Rooms();
 
     /**
+     * Returns the meta object for the attribute '{@link hed.homeelectrical.Storey#getPlanImageId <em>Plan Image Id</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Plan Image Id</em>'.
+     * @see hed.homeelectrical.Storey#getPlanImageId()
+     * @see #getStorey()
+     * @generated
+     */
+    EAttribute getStorey_PlanImageId();
+
+    /**
+     * Returns the meta object for the attribute '{@link hed.homeelectrical.Storey#getPlanWidth <em>Plan Width</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Plan Width</em>'.
+     * @see hed.homeelectrical.Storey#getPlanWidth()
+     * @see #getStorey()
+     * @generated
+     */
+    EAttribute getStorey_PlanWidth();
+
+    /**
+     * Returns the meta object for the attribute '{@link hed.homeelectrical.Storey#getPlanHeight <em>Plan Height</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Plan Height</em>'.
+     * @see hed.homeelectrical.Storey#getPlanHeight()
+     * @see #getStorey()
+     * @generated
+     */
+    EAttribute getStorey_PlanHeight();
+
+    /**
      * Returns the meta object for class '{@link hed.homeelectrical.Room <em>Room</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3275,6 +3335,30 @@ public interface HomeElectricalPackage extends EPackage {
          * @generated
          */
         EReference STOREY__ROOMS = eINSTANCE.getStorey_Rooms();
+
+        /**
+         * The meta object literal for the '<em><b>Plan Image Id</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute STOREY__PLAN_IMAGE_ID = eINSTANCE.getStorey_PlanImageId();
+
+        /**
+         * The meta object literal for the '<em><b>Plan Width</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute STOREY__PLAN_WIDTH = eINSTANCE.getStorey_PlanWidth();
+
+        /**
+         * The meta object literal for the '<em><b>Plan Height</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute STOREY__PLAN_HEIGHT = eINSTANCE.getStorey_PlanHeight();
 
         /**
          * The meta object literal for the '{@link hed.homeelectrical.impl.RoomImpl <em>Room</em>}' class.

@@ -70,6 +70,7 @@ The starter follows Ontology's separation of project setup and representation co
 | `hed.starter.representations.modelexplorer` | `ViewContribution`, `HedJavaServices`, `ExplorerMetadata` and `ExplorerRepresentations` describe the explorer and its saved representations; `HedDomainEditing` and `HedDomainLabels` provide editing and label services; `HedInitialDirectEditTreeItemLabelProvider` supplies the stored name when renaming an appliance. |
 | `hed.starter.representations.details` | `HedPropertiesDescriptionRegistryConfigurer` builds the properties pages. |
 | `hed.starter.representations.tables` | `HedTableDescriptions` builds equipment, circuit, board and catalog tables. |
+| `hed.starter.representations.diagrams.floorplan` | Storey floor plans, background-image assignment and existing-equipment placement. |
 
 The domain configuration remains in the starter because it also registers Sirius Web editing-context services, image paths and application locale. The model and edit modules remain independent of Spring and Sirius Web.
 
@@ -111,6 +112,10 @@ Circuit phase controls are available only when the dwelling's service connection
 
 The properties condition and the View DSL service share `HedDomain.hasThreePhaseSupply`. The table keeps its column description in place and returns no semantic candidates when the column is hidden, preserving the identifiers of existing representations.
 
+## Storey floor plans
+
+Create **Floor Plan** on a Storey from Model Explorer. The [floor-plan workflow](floor-plan.md) describes background-image import, 24 × 24 pictograms, optional outside labels and saved placement. The Java contribution lives in `representations.diagrams.floorplan`; its image action validates project ownership before mutation. Existing table and panel description positions are retained by appending the new description.
+
 ## Languages
 
 English is the default. For example, in PowerShell, enable French before launching the backend:
@@ -133,7 +138,7 @@ Browser checks cover project creation, catalog editing, native object creation, 
 ```powershell
 $env:HED_BASE_URL = 'http://localhost:8081'
 $env:HED_TEST_LOCALE = 'fr_FR'
-npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts rail-capacity.spec.ts circuit-phase.spec.ts panel.spec.ts
+npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts rail-capacity.spec.ts circuit-phase.spec.ts floor-plan.spec.ts floor-plan-images.spec.ts panel.spec.ts
 ```
 
 The protection workflow checks service-breaker inverse links, the read-only RCCB downstream list and persistence after reopening.

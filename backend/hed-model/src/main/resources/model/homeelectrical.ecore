@@ -110,6 +110,38 @@ SPDX-License-Identifier: EPL-2.0
             name="rooms"
             upperBound="-1"
             xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+            name="planImageId"
+            xsi:type="ecore:EAttribute">
+            <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+                <details
+                    key="documentation"
+                    value="Identifier of this project's image used as the floor-plan background; absent until an image is imported."/>
+            </eAnnotations>
+        </eStructuralFeatures>
+        <eStructuralFeatures
+            defaultValueLiteral="1200"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+            name="planWidth"
+            xsi:type="ecore:EAttribute">
+            <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+                <details
+                    key="documentation"
+                    value="Floor-plan canvas width in diagram units. Image import normalizes the width to 1200."/>
+            </eAnnotations>
+        </eStructuralFeatures>
+        <eStructuralFeatures
+            defaultValueLiteral="800"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+            name="planHeight"
+            xsi:type="ecore:EAttribute">
+            <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+                <details
+                    key="documentation"
+                    value="Image-area height in diagram units, excluding the toolbar. Import preserves the image aspect ratio."/>
+            </eAnnotations>
+        </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers eSuperTypes="#//NamedElement" name="Room" xsi:type="ecore:EClass">
         <eStructuralFeatures

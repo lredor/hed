@@ -38,6 +38,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getLevelNumber <em>Level Number</em>}</li>
  *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getRooms <em>Rooms</em>}</li>
+ *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getPlanImageId <em>Plan Image Id</em>}</li>
+ *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getPlanWidth <em>Plan Width</em>}</li>
+ *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getPlanHeight <em>Plan Height</em>}</li>
  * </ul>
  *
  * @generated
@@ -72,6 +75,66 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
      * @ordered
      */
     protected EList<Room> rooms;
+
+    /**
+     * The default value of the '{@link #getPlanImageId() <em>Plan Image Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPlanImageId()
+     * @generated
+     * @ordered
+     */
+    protected static final String PLAN_IMAGE_ID_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getPlanImageId() <em>Plan Image Id</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPlanImageId()
+     * @generated
+     * @ordered
+     */
+    protected String planImageId = PLAN_IMAGE_ID_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getPlanWidth() <em>Plan Width</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPlanWidth()
+     * @generated
+     * @ordered
+     */
+    protected static final int PLAN_WIDTH_EDEFAULT = 1200;
+
+    /**
+     * The cached value of the '{@link #getPlanWidth() <em>Plan Width</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPlanWidth()
+     * @generated
+     * @ordered
+     */
+    protected int planWidth = PLAN_WIDTH_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getPlanHeight() <em>Plan Height</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPlanHeight()
+     * @generated
+     * @ordered
+     */
+    protected static final int PLAN_HEIGHT_EDEFAULT = 800;
+
+    /**
+     * The cached value of the '{@link #getPlanHeight() <em>Plan Height</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPlanHeight()
+     * @generated
+     * @ordered
+     */
+    protected int planHeight = PLAN_HEIGHT_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -135,6 +198,78 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
      * @generated
      */
     @Override
+    public String getPlanImageId() {
+        return planImageId;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void setPlanImageId(String newPlanImageId) {
+        String oldPlanImageId = planImageId;
+        planImageId = newPlanImageId;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.STOREY__PLAN_IMAGE_ID, oldPlanImageId, planImageId));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public int getPlanWidth() {
+        return planWidth;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void setPlanWidth(int newPlanWidth) {
+        int oldPlanWidth = planWidth;
+        planWidth = newPlanWidth;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.STOREY__PLAN_WIDTH, oldPlanWidth, planWidth));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public int getPlanHeight() {
+        return planHeight;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void setPlanHeight(int newPlanHeight) {
+        int oldPlanHeight = planHeight;
+        planHeight = newPlanHeight;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.STOREY__PLAN_HEIGHT, oldPlanHeight, planHeight));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
             case HomeElectricalPackage.STOREY__ROOMS:
@@ -155,6 +290,12 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
                 return getLevelNumber();
             case HomeElectricalPackage.STOREY__ROOMS:
                 return getRooms();
+            case HomeElectricalPackage.STOREY__PLAN_IMAGE_ID:
+                return getPlanImageId();
+            case HomeElectricalPackage.STOREY__PLAN_WIDTH:
+                return getPlanWidth();
+            case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
+                return getPlanHeight();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -175,6 +316,15 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
                 getRooms().clear();
                 getRooms().addAll((Collection<? extends Room>) newValue);
                 return;
+            case HomeElectricalPackage.STOREY__PLAN_IMAGE_ID:
+                setPlanImageId((String) newValue);
+                return;
+            case HomeElectricalPackage.STOREY__PLAN_WIDTH:
+                setPlanWidth((Integer) newValue);
+                return;
+            case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
+                setPlanHeight((Integer) newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -193,6 +343,15 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
             case HomeElectricalPackage.STOREY__ROOMS:
                 getRooms().clear();
                 return;
+            case HomeElectricalPackage.STOREY__PLAN_IMAGE_ID:
+                setPlanImageId(PLAN_IMAGE_ID_EDEFAULT);
+                return;
+            case HomeElectricalPackage.STOREY__PLAN_WIDTH:
+                setPlanWidth(PLAN_WIDTH_EDEFAULT);
+                return;
+            case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
+                setPlanHeight(PLAN_HEIGHT_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -209,6 +368,12 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
                 return LEVEL_NUMBER_EDEFAULT == null ? levelNumber != null : !LEVEL_NUMBER_EDEFAULT.equals(levelNumber);
             case HomeElectricalPackage.STOREY__ROOMS:
                 return rooms != null && !rooms.isEmpty();
+            case HomeElectricalPackage.STOREY__PLAN_IMAGE_ID:
+                return PLAN_IMAGE_ID_EDEFAULT == null ? planImageId != null : !PLAN_IMAGE_ID_EDEFAULT.equals(planImageId);
+            case HomeElectricalPackage.STOREY__PLAN_WIDTH:
+                return planWidth != PLAN_WIDTH_EDEFAULT;
+            case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
+                return planHeight != PLAN_HEIGHT_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -227,6 +392,12 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
         StringBuilder result = new StringBuilder(super.toString());
         result.append(" (levelNumber: ");
         result.append(levelNumber);
+        result.append(", planImageId: ");
+        result.append(planImageId);
+        result.append(", planWidth: ");
+        result.append(planWidth);
+        result.append(", planHeight: ");
+        result.append(planHeight);
         result.append(')');
         return result.toString();
     }

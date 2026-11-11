@@ -18,7 +18,7 @@ Handwritten operations, validation, localized messages and samples live in `hed.
 ## Ownership and references
 
 - A dwelling owns one local catalog, storeys, field equipment, distribution boards, circuits and functional controls. Its service connection is optional and can contain a meter and a service circuit-breaker.
-- Storeys own rooms. A garage is normally a room, not a special storey type.
+- Storeys own rooms. A garage is normally a room, not a special storey type. A storey also owns the imported floor-plan image identifier and canvas dimensions; equipment positions remain representation data.
 - Field equipment belongs to the dwelling and optionally references a room, a final circuit and a branch of that circuit. Changing or deleting a room does not delete its equipment.
 - A distribution board owns its rails and modular devices. Each modular device must reference a rail from its own board. The rail's ordered device collection defines the physical sequence. Deleting a nonempty rail is rejected.
 - Final circuits feed field equipment. Distribution circuits feed secondary boards. Source board and protection may be unknown while designing.
@@ -185,6 +185,16 @@ Les attributs techniques sont stockés sur les sous-classes de `TechnicalElement
 For circuit-breakers, pole notation also distinguishes protected poles from a switched neutral; see [Schneider Electric's explanation of 1P+N / 2P and 3P+N / 4P](https://www.se.com/se/sv/faqs/FAQ000282727/). The model stores this manufacturer designation as text; it does not infer protection behavior or physical width from it.
 
 Pour les disjoncteurs, la notation des pôles distingue aussi les pôles protégés du neutre coupé. Le modèle conserve cette désignation du fabricant en texte libre ; il n'en déduit ni le comportement de protection ni l'encombrement physique.
+
+### Floor-plan attributes / Attributs du plan d’implantation
+
+These representation-specific Storey attributes are introduced with Floor Plan. They are maintained by its import action, rather than edited in Properties. / Ces attributs du niveau, propres au plan d’implantation, sont introduits avec cette représentation. Ils sont gérés par son action d’import plutôt que modifiés dans les propriétés.
+
+| Property | English name | Nom français | English definition | Définition française |
+| --- | --- | --- | --- | --- |
+| `Storey.planImageId` | Floor-plan image | Image du plan | Optional UUID of the native project image used as the background, shared by this storey's plans. | UUID facultatif de l’image du projet utilisée comme fond, partagée par les plans de ce niveau. |
+| `Storey.planWidth` | Plan width | Largeur du plan | Canvas width in diagram units, defaulting to 1200 and normalized to 1200 on image import. | Largeur en unités du diagramme, égale à 1200 par défaut et lors de l’import d’une image. |
+| `Storey.planHeight` | Plan height | Hauteur du plan | Image-area height excluding the toolbar, defaulting to 800; import preserves the image aspect ratio. | Hauteur de la zone d’image hors barre d’outils, égale à 800 par défaut ; l’import conserve les proportions de l’image. |
 
 ### References / Relations
 

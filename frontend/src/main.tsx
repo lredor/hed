@@ -25,6 +25,10 @@ import './style.css';
 import { panelDocumentTransform, panelNodeRegistry } from './representations/diagrams/panel/PanelDiagram';
 import { diagramRendererReactFlowPropsCustomizerExtensionPoint } from '@eclipse-sirius/sirius-components-diagrams';
 import { usePanelRailDropProps } from './representations/diagrams/panel/PanelRailDrop';
+import {
+  floorPlanDocumentTransform,
+  floorPlanNodeRegistry,
+} from './representations/diagrams/floorplan/FloorPlanDiagram';
 const httpOrigin = import.meta.env.VITE_BACKEND_URL || window.location.origin;
 const wsOrigin = httpOrigin.replace(/^http/, 'ws');
 const registry = new ExtensionRegistry();
@@ -57,13 +61,13 @@ function Footer() {
 registry.addComponent(navigationBarIconExtensionPoint, { identifier: 'hed-brand', Component: Brand });
 registry.addComponent(footerExtensionPoint, { identifier: 'hed-footer', Component: Footer });
 registry.putData(apolloClientOptionsConfigurersExtensionPoint, {
-  identifier: 'hed-panel-style',
+  identifier: 'hed-diagram-styles',
   data: [
     (options) => ({
       ...options,
       documentTransform: options.documentTransform
-        ? options.documentTransform.concat(panelDocumentTransform)
-        : panelDocumentTransform,
+        ? options.documentTransform.concat(panelDocumentTransform).concat(floorPlanDocumentTransform)
+        : panelDocumentTransform.concat(floorPlanDocumentTransform),
     }),
   ],
 });
@@ -73,6 +77,15 @@ registry.putData(diagramRendererReactFlowPropsCustomizerExtensionPoint, {
 });
 createRoot(document.getElementById('root')!).render(
   <SiriusWebApplication httpOrigin={httpOrigin} wsOrigin={wsOrigin} extensionRegistry={registry}>
-    <DiagramRepresentationConfiguration nodeTypeRegistry={panelNodeRegistry} />
+    <DiagramRepresentationConfiguration
+      nodeTypeRegistry={{
+        nodeConverters: [...panelNodeRegistry.nodeConverters, ...floorPlanNodeRegistry.nodeConverters],
+        nodeLayoutHandlers: [...panelNodeRegistry.nodeLayoutHandlers, ...floorPlanNodeRegistry.nodeLayoutHandlers],
+        nodeTypeContributions: [
+          ...panelNodeRegistry.nodeTypeContributions,
+          ...floorPlanNodeRegistry.nodeTypeContributions,
+        ],
+      }}
+    />
   </SiriusWebApplication>
 );

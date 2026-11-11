@@ -55,6 +55,9 @@ public class StoreyItemProvider extends NamedElementItemProvider {
             super.getPropertyDescriptors(object);
 
             addLevelNumberPropertyDescriptor(object);
+            addPlanImageIdPropertyDescriptor(object);
+            addPlanWidthPropertyDescriptor(object);
+            addPlanHeightPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -69,6 +72,42 @@ public class StoreyItemProvider extends NamedElementItemProvider {
         itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
                 getString("_UI_Storey_levelNumber_feature"), getString("_UI_PropertyDescriptor_description", "_UI_Storey_levelNumber_feature", "_UI_Storey_type"),
                 HomeElectricalPackage.Literals.STOREY__LEVEL_NUMBER, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Plan Image Id feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addPlanImageIdPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+                getString("_UI_Storey_planImageId_feature"), getString("_UI_PropertyDescriptor_description", "_UI_Storey_planImageId_feature", "_UI_Storey_type"),
+                HomeElectricalPackage.Literals.STOREY__PLAN_IMAGE_ID, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Plan Width feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addPlanWidthPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(), getString("_UI_Storey_planWidth_feature"),
+                getString("_UI_PropertyDescriptor_description", "_UI_Storey_planWidth_feature", "_UI_Storey_type"), HomeElectricalPackage.Literals.STOREY__PLAN_WIDTH, true, false, false,
+                ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Plan Height feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addPlanHeightPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(), getString("_UI_Storey_planHeight_feature"),
+                getString("_UI_PropertyDescriptor_description", "_UI_Storey_planHeight_feature", "_UI_Storey_type"), HomeElectricalPackage.Literals.STOREY__PLAN_HEIGHT, true, false, false,
+                ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null));
     }
 
     /**
@@ -137,6 +176,9 @@ public class StoreyItemProvider extends NamedElementItemProvider {
 
         switch (notification.getFeatureID(Storey.class)) {
             case HomeElectricalPackage.STOREY__LEVEL_NUMBER:
+            case HomeElectricalPackage.STOREY__PLAN_IMAGE_ID:
+            case HomeElectricalPackage.STOREY__PLAN_WIDTH:
+            case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
             case HomeElectricalPackage.STOREY__ROOMS:

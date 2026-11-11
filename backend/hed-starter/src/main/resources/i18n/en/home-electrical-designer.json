@@ -3,5 +3,16 @@
   "panel": {
     "empty": "Create DIN rails in Model Explorer to populate the board.",
     "modules": "modules"
+  },
+  "plan": {
+    "import": "Import floor plan",
+    "replace": "Replace floor plan",
+    "clear": "Remove background",
+    "loading": "Importing…",
+    "hint": "Drag equipment from the explorer onto the plan.",
+    "showLabels": "Show equipment labels",
+    "placeholder": "Import a floor plan image (PNG, JPEG or SVG).",
+    "imageError": "Choose a valid PNG, JPEG or SVG image under 10 MB, with an aspect ratio between 1:5 and 10:1.",
+    "uploadError": "The floor plan could not be imported."
   }
 }

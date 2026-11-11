@@ -37,6 +37,8 @@ import hed.domain.Messages;
 import hed.starter.HedDomainIcons;
 import hed.starter.representations.CatalogDropService;
 import hed.starter.representations.diagrams.panel.PanelDiagram;
+import hed.starter.representations.diagrams.floorplan.FloorPlanDiagram;
+import hed.starter.representations.diagrams.floorplan.FloorPlanServices;
 import hed.starter.representations.diagrams.panel.PanelServices;
 import hed.starter.representations.tables.HedTableDescriptions;
 
@@ -65,7 +67,7 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
 
     @Override
     public List<Class<?>> getServiceClasses(View view) {
-        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class);
+        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class, FloorPlanServices.class);
     }
 
     @Override
@@ -136,9 +138,11 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
         return String.join("/", segments);
     }
 
+    /** Appends new descriptions to retain the stable paths and identifiers of previously saved representations. */
     protected void contributeRepresentations(View view) {
         this.tables.addTo(view);
         view.getDescriptions().add(new PanelDiagram(locale).create());
+        view.getDescriptions().add(new FloorPlanDiagram(locale).create());
     }
 
     @Override

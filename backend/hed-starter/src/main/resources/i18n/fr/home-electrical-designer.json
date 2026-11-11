@@ -3,5 +3,16 @@
   "panel": {
     "empty": "Créez des rails DIN dans le Model Explorer pour composer le tableau.",
     "modules": "modules"
+  },
+  "plan": {
+    "import": "Importer un plan",
+    "replace": "Remplacer le plan",
+    "clear": "Retirer le fond",
+    "loading": "Import en cours…",
+    "hint": "Glissez les équipements depuis l’explorateur sur le plan.",
+    "showLabels": "Afficher les libellés",
+    "placeholder": "Importez une image du plan (PNG, JPEG ou SVG).",
+    "imageError": "Choisissez une image PNG, JPEG ou SVG valide de moins de 10 Mo, avec un rapport largeur/hauteur entre 1:5 et 10:1.",
+    "uploadError": "Le plan n’a pas pu être importé."
   }
 }

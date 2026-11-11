@@ -549,6 +549,36 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
      * @generated
      */
     @Override
+    public EAttribute getStorey_PlanImageId() {
+        return (EAttribute) storeyEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EAttribute getStorey_PlanWidth() {
+        return (EAttribute) storeyEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EAttribute getStorey_PlanHeight() {
+        return (EAttribute) storeyEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public EClass getRoom() {
         return roomEClass;
     }
@@ -1239,6 +1269,9 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         storeyEClass = createEClass(STOREY);
         createEAttribute(storeyEClass, STOREY__LEVEL_NUMBER);
         createEReference(storeyEClass, STOREY__ROOMS);
+        createEAttribute(storeyEClass, STOREY__PLAN_IMAGE_ID);
+        createEAttribute(storeyEClass, STOREY__PLAN_WIDTH);
+        createEAttribute(storeyEClass, STOREY__PLAN_HEIGHT);
 
         roomEClass = createEClass(ROOM);
         createEAttribute(roomEClass, ROOM__USAGE);
@@ -1428,6 +1461,12 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
                 IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getStorey_Rooms(), this.getRoom(), null, "rooms", null, 0, -1, Storey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
                 IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getStorey_PlanImageId(), ecorePackage.getEString(), "planImageId", null, 0, 1, Storey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+                !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getStorey_PlanWidth(), ecorePackage.getEInt(), "planWidth", "1200", 0, 1, Storey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+                !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getStorey_PlanHeight(), ecorePackage.getEInt(), "planHeight", "800", 0, 1, Storey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+                !IS_DERIVED, IS_ORDERED);
 
         initEClass(roomEClass, Room.class, "Room", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getRoom_Usage(), ecorePackage.getEString(), "usage", null, 0, 1, Room.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,

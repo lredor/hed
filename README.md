@@ -103,6 +103,12 @@ Create this diagram on a **DistributionBoard**. The SVG cabinet contains DIN rai
 
 ![Distribution Board Layout](doc/images/representations/distribution-board-layout.png)
 
+### Floor Plan
+
+Create this diagram on a **Storey**. Import a PNG, JPEG or SVG background, then drag existing equipment from that storey's rooms in Model Explorer onto the plan. Pictograms are frameless **24 × 24** nodes with free placement. Labels are hidden by default; a filter displays them outside the icons. Each representation saves its own layout. See the [floor-plan workflow](doc/floor-plan.md).
+
+![Storey Floor Plan with equipment labels enabled](doc/images/representations/floor-plan.png)
+
 ## References
 
 - [Sirius Web 2026.9.0](https://github.com/eclipse-sirius/sirius-web/tree/v2026.9.0)

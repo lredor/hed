@@ -245,6 +245,15 @@ SPDX-License-Identifier: EPL-2.0
             <genFeatures children="true" createChild="true" property="None">
                 <ecoreFeature href="homeelectrical.ecore#//Storey/rooms" xsi:type="ecore:EReference"/>
             </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//Storey/planImageId" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//Storey/planWidth" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//Storey/planHeight" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
         </genClasses>
         <genClasses>
             <ecoreClass href="homeelectrical.ecore#//Room"/>

@@ -28,6 +28,7 @@ import hed.domain.HedDomain;
 import hed.domain.Messages;
 import hed.domain.HedSamples;
 import hed.homeelectrical.DINRail;
+import hed.homeelectrical.CircuitBranch;
 import hed.homeelectrical.DeviceKind;
 import hed.homeelectrical.DeviceType;
 import hed.homeelectrical.Dwelling;
@@ -35,6 +36,7 @@ import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.Room;
 import hed.starter.HedDomainIcons;
 
+/** Adapts native creation and deletion to the HED domain, including virtual branch occurrences. */
 @Service
 public class HedDomainEditing extends IEditServiceDelegate.NoOp {
     private final HedJavaServices services;
@@ -45,6 +47,13 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
 
     private final IFeedbackMessageService feedback;
 
+    /**
+     * Creates the native editing delegate for domain objects and their explorer occurrences.
+     * @param services supplies creation eligibility and object resolution
+     * @param identity supplies catalog type identifiers
+     * @param locale selects creation labels and default names
+     * @param feedback reports rejected semantic changes
+     */
     public HedDomainEditing(HedJavaServices services, IIdentityService identity, Locale locale, IFeedbackMessageService feedback) {
         this.services = services;
         this.identity = identity;
@@ -54,6 +63,7 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
 
     @Override
     public boolean canHandle(Object object) {
+        object = BranchEquipmentLinks.semantic(object);
         return object instanceof EObject e && e.eClass().getEPackage() == HomeElectricalPackage.eINSTANCE;
     }
 
@@ -85,7 +95,7 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
             for (var type : home.getCatalog().getDeviceTypes()) {
                 var k = type.getKind();
                 if (HedDomain.modular(k) ? owner instanceof DINRail rail && HedDomain.canAddToRail(rail, type)
-                        : (owner instanceof Room || owner instanceof Dwelling) && k != DeviceKind.ENERGY_METER && k != DeviceKind.SERVICE_BREAKER) {
+                        : (owner instanceof Room || owner instanceof Dwelling || owner instanceof CircuitBranch) && k != DeviceKind.ENERGY_METER && k != DeviceKind.SERVICE_BREAKER) {
                     descriptions.add(new ChildCreationDescription("hed-type:" + identity.getId(type), HedDomain.label(type, locale), List.of(HedDomainIcons.of(type))));
                 }
             }
@@ -110,9 +120,12 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
                 if (parent instanceof DINRail rail && HedDomain.modular(type.getKind())) {
                     return Optional.of(HedDomain.addModularDevice(rail, type, locale));
                 }
-                if (parent instanceof Room || parent instanceof Dwelling) {
+                if (parent instanceof Room || parent instanceof Dwelling || parent instanceof CircuitBranch) {
                     if (HedDomain.modular(type.getKind()) || type.getKind() == DeviceKind.ENERGY_METER || type.getKind() == DeviceKind.SERVICE_BREAKER) {
                         return Optional.empty();
+                    }
+                    if (parent instanceof CircuitBranch branch) {
+                        return Optional.of(HedDomain.addEquipmentOnBranch(branch, type, locale));
                     }
                     var equipment = HedDomain.addEquipment(HedDomain.dwelling(parent), type, locale);
                     if (parent instanceof Room room) {
@@ -144,7 +157,7 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
     @Override
     public void delete(Object object) {
         try {
-            HedDomain.delete((EObject) object);
+            HedDomain.delete((EObject) BranchEquipmentLinks.semantic(object));
         } catch (IllegalArgumentException ex) {
             feedback.addFeedbackMessage(new Message(Messages.text(locale, ex.getMessage()), MessageLevel.ERROR));
         }

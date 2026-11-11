@@ -25,6 +25,7 @@ public final class HedDomainIcons {
     }
 
     public static String of(Object object) {
+        object = hed.starter.representations.modelexplorer.BranchEquipmentLinks.semantic(object);
         if (object instanceof HedJavaServices.ProjectRoot) {
             return path("folder-home-outline");
         }

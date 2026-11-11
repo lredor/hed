@@ -212,6 +212,10 @@ public final class HedDomain {
             throw new IllegalArgumentException("typeInUse");
         }
         var home = dwelling(object);
+        if (object instanceof FieldEquipment equipment && feature.equals("circuit") && value instanceof FinalCircuit circuit && !circuit.getBranches().isEmpty()
+                && (equipment.getBranch() == null || equipment.getBranch().getCircuit() != circuit)) {
+            throw new IllegalArgumentException("requiredBranch");
+        }
         boolean branchChange = object instanceof FieldEquipment && Set.of("circuit", "branch").contains(feature) || object instanceof CircuitBranch && Set.of("circuit", "equipment").contains(feature);
         if (branchChange) {
             var targets = value instanceof Collection<?> collection ? collection : value == null ? List.of() : List.of(value);
@@ -267,12 +271,24 @@ public final class HedDomain {
         if (object instanceof FieldEquipment equipment) {
             if (feature.equals("branch") && equipment.getBranch() != null) {
                 equipment.setCircuit(equipment.getBranch().getCircuit());
+            } else if (feature.equals("branch") && equipment.getCircuit() != null && !equipment.getCircuit().getBranches().isEmpty()) {
+                equipment.setCircuit(null);
             }
             if (feature.equals("circuit") && equipment.getBranch() != null && equipment.getBranch().getCircuit() != equipment.getCircuit()) {
                 equipment.setBranch(null);
             }
         }
         if (object instanceof CircuitBranch branch && Set.of("circuit", "equipment").contains(feature)) {
+            if (feature.equals("equipment")) {
+                for (var removed : (Collection<?>) old) {
+                    if (removed instanceof FieldEquipment equipment && equipment.getBranch() == null && equipment.getCircuit() == branch.getCircuit()) {
+                        equipment.setCircuit(null);
+                    }
+                }
+            } else if (branch.getCircuit().getBranches().size() == 1) {
+                // Moving the first branch onto a direct circuit must retain and group that circuit's existing devices.
+                branch.getEquipment().addAll(served(branch.getCircuit()).stream().filter(equipment -> equipment.getBranch() == null).toList());
+            }
             for (var equipment : branch.getEquipment()) {
                 equipment.setCircuit(branch.getCircuit());
             }
@@ -339,6 +355,21 @@ public final class HedDomain {
         set(branch, "equipment", members);
     }
 
+    /**
+     * Transfers a circuit's direct equipment into its newly attached first branch.
+     * @param branch the branch already contained in its circuit
+     * @throws IllegalArgumentException if the complete association is rejected
+     */
+    public static void initializeFirstBranch(CircuitBranch branch) {
+        var circuit = branch.getCircuit();
+        if (circuit != null && circuit.getBranches().size() == 1) {
+            var direct = served(circuit).stream().filter(equipment -> equipment.getBranch() == null).toList();
+            if (!direct.isEmpty()) {
+                assignToBranch(branch, direct);
+            }
+        }
+    }
+
     public static FieldEquipment addEquipmentOnBranch(CircuitBranch branch, DeviceType type, Locale locale) {
         var equipment = addEquipment(dwelling(branch), type, locale);
         try {
@@ -380,7 +411,14 @@ public final class HedDomain {
         if (object instanceof ControlChannel channel && channel.eContainer() instanceof ControlDevice device && device.getChannels().size() == 1) {
             throw new IllegalArgumentException("lastChannel");
         }
+        var branch = object instanceof CircuitBranch value ? value : null;
+        var circuit = branch == null ? null : branch.getCircuit();
+        var members = branch == null ? List.<FieldEquipment> of() : List.copyOf(branch.getEquipment());
         EcoreUtil.delete(object, true);
+        if (circuit != null && !circuit.getBranches().isEmpty()) {
+            // Retain direct assignments only when deleting the last branch restores direct mode.
+            members.stream().filter(equipment -> equipment.getBranch() == null && equipment.getCircuit() == circuit).forEach(equipment -> equipment.setCircuit(null));
+        }
     }
 
     public static List<FieldEquipment> served(FinalCircuit circuit) {

@@ -76,6 +76,9 @@ public final class HedValidation {
                 }
             }
             if (object instanceof FieldEquipment equipment) {
+                if (equipment.getCircuit() != null && !equipment.getCircuit().getBranches().isEmpty() && equipment.getBranch() == null) {
+                    error(issues, "requiredBranch", equipment);
+                }
                 if (equipment.getBranch() != null && equipment.getBranch().getCircuit() != equipment.getCircuit()) {
                     error(issues, "invalidBranch", equipment);
                 }

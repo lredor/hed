@@ -28,6 +28,8 @@ import hed.domain.HedDomain;
 import hed.domain.HedSamples;
 import hed.domain.HedValidation;
 import hed.homeelectrical.Circuit;
+import hed.homeelectrical.CircuitBranch;
+import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.ControlChannel;
 import hed.homeelectrical.DeviceKind;
 import hed.homeelectrical.DistributionBoard;
@@ -99,7 +101,7 @@ class CircuitDiagramTest {
 
     private void completeCoverage(Dwelling home, Projection projection) {
         var expected = HedDomain.contents(home).stream().filter(object -> object instanceof Storey || object instanceof Room || object instanceof DistributionBoard || object instanceof Circuit
-                || object instanceof Equipment || object instanceof ControlChannel || object instanceof ServiceConnection).toList();
+                || object instanceof CircuitBranch || object instanceof Equipment || object instanceof ControlChannel || object instanceof ServiceConnection).toList();
         assertEquals(new HashSet<>(expected), projection.nodes.keySet());
     }
 
@@ -175,5 +177,31 @@ class CircuitDiagramTest {
         var equipment = home.getEquipment().get(0);
         equipment.setName(null);
         assertEquals("", service.getHedCircuitNodeLabel(equipment));
+    }
+
+    @Test
+    void branchesReplaceDirectSupplyEdgesWithoutDuplicatingEquipmentOrChangingControlLinks() {
+        var home = HedSamples.example();
+        var circuit = (FinalCircuit) home.getCircuits().getFirst();
+        var branch = HedDomain.named(HedDomain.F.createCircuitBranch(), "Window side");
+        circuit.getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
+        var equipment = home.getEquipment().getFirst();
+        HedDomain.assignToBranch(branch, List.of(equipment));
+        var projection = new Projection(home);
+        completeCoverage(home, projection);
+        assertEquals(33, projection.nodes.size());
+        assertTrue(projection.connects(circuit, branch));
+        assertTrue(projection.connects(branch, equipment));
+        assertFalse(projection.connects(circuit, equipment));
+        assertTrue(projection.connects(home.getControlFunctions().getFirst().getChannels().getFirst(), equipment));
+        assertEquals("hed-circuits-branch", projection.nodes.get(branch).getName());
+        circuit.setSourceBoard(null);
+        var unattached = new Projection(home);
+        completeCoverage(home, unattached);
+        assertEquals("hed-circuits-unattached-branch", unattached.nodes.get(branch).getName());
+        assertTrue(unattached.connects(circuit, branch));
+        assertTrue(unattached.connects(branch, equipment));
+        assertEquals(List.of(branch), new CircuitServices(Locale.ENGLISH).getHedCircuitBranches(circuit));
     }
 }

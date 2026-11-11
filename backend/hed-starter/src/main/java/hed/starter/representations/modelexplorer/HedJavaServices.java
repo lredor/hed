@@ -31,9 +31,11 @@ import org.eclipse.sirius.components.representations.MessageLevel;
 import org.springframework.stereotype.Service;
 import org.eclipse.sirius.web.domain.boundedcontexts.representationdata.RepresentationMetadata;
 import hed.domain.Messages;
+import hed.domain.HedDomain;
 import hed.domain.HedValidation;
 import hed.homeelectrical.Catalog;
 import hed.homeelectrical.Circuit;
+import hed.homeelectrical.CircuitBranch;
 import hed.homeelectrical.ControlChannel;
 import hed.homeelectrical.ControlDevice;
 import hed.homeelectrical.ControlFunction;
@@ -53,6 +55,7 @@ import hed.homeelectrical.Room;
 import hed.homeelectrical.ServiceConnection;
 import hed.homeelectrical.Storey;
 import hed.starter.HedDomainIcons;
+import hed.starter.representations.CircuitEquipment;
 import hed.starter.project.ProjectNameProvider;
 import hed.starter.representations.tables.HedTableDescriptions;
 import org.eclipse.sirius.components.tables.ColumnFilter;
@@ -149,6 +152,8 @@ public class HedJavaServices {
             result.addAll(dwelling(room).getEquipment().stream().filter(e -> e.getRoom() == room).toList());
         } else if (self instanceof DINRail rail) {
             result.addAll(rail.getDevices());
+        } else if (self instanceof CircuitBranch branch) {
+            result.addAll(branch.getEquipment().stream().map(BranchEquipmentLinks.EquipmentLink::new).toList());
         } else if (self instanceof EObject object) {
             result.addAll(object.eContents());
         }
@@ -177,6 +182,9 @@ public class HedJavaServices {
     }
 
     public String getHedId(Object self) {
+        if (self instanceof BranchEquipmentLinks.EquipmentLink link) {
+            return BranchEquipmentLinks.id(link, identity);
+        }
         if (self instanceof RepresentationMetadata representation) {
             return representation.getRepresentationMetadataId().toString();
         }
@@ -190,6 +198,10 @@ public class HedJavaServices {
     }
 
     public Object getHedObject(String id, IEditingContext context) {
+        var link = BranchEquipmentLinks.find(context, id, identity);
+        if (link.isPresent()) {
+            return link.get().branch() == null ? link.get().equipment() : link.get();
+        }
         if (id.startsWith("hed-project:")) {
             var homeId = new String(Base64.getUrlDecoder().decode(id.substring("hed-project:".length())), StandardCharsets.UTF_8);
             return search.getObject(context, homeId).filter(Dwelling.class::isInstance).map(Dwelling.class::cast).map(ProjectRoot::new).orElse(null);
@@ -203,6 +215,9 @@ public class HedJavaServices {
     }
 
     public String getHedLabel(Object self) {
+        if (self instanceof BranchEquipmentLinks.EquipmentLink link) {
+            return label(link.equipment(), locale);
+        }
         if (self instanceof RepresentationMetadata representation) {
             return representation.getLabel();
         }
@@ -229,7 +244,7 @@ public class HedJavaServices {
 
     public String getHedKind(Object self) {
         return self instanceof RepresentationMetadata representation ? representation.getKind()
-                : self instanceof ProjectRoot ? "hed-project" : self instanceof Group ? "hed-group" : identity.getKind(self);
+                : self instanceof ProjectRoot ? "hed-project" : self instanceof Group ? "hed-group" : identity.getKind(BranchEquipmentLinks.semantic(self));
     }
 
     public String getHedIcon(Object self) {
@@ -248,7 +263,7 @@ public class HedJavaServices {
     }
 
     public boolean isHedSelectable(Object self) {
-        return self instanceof EObject || self instanceof RepresentationMetadata;
+        return self instanceof EObject || self instanceof RepresentationMetadata || self instanceof BranchEquipmentLinks.EquipmentLink;
     }
 
     public boolean isHedEditable(Object self) {
@@ -256,7 +271,7 @@ public class HedJavaServices {
     }
 
     public boolean isHedDeletable(Object self) {
-        return self instanceof RepresentationMetadata
+        return self instanceof BranchEquipmentLinks.EquipmentLink || self instanceof RepresentationMetadata
                 || self instanceof EObject && !(self instanceof Dwelling) && !(self instanceof Catalog) && !(self instanceof DINRail r && !r.getDevices().isEmpty())
                         && !(self instanceof DeviceType t && inUse(t)) && !(self instanceof ControlChannel c && ((ControlDevice) c.eContainer()).getChannels().size() == 1);
     }
@@ -296,6 +311,9 @@ public class HedJavaServices {
     }
 
     public Object getHedParent(Object self) {
+        if (self instanceof BranchEquipmentLinks.EquipmentLink link) {
+            return link.branch() != null ? link.branch() : getHedParent(link.equipment());
+        }
         if (self instanceof Dwelling home) {
             return new ProjectRoot(home);
         }
@@ -407,7 +425,7 @@ public class HedJavaServices {
             if (modular(deviceKind)) {
                 return parent instanceof DINRail rail && canAddToRail(rail, type(home, deviceKind));
             }
-            return deviceKind != DeviceKind.ENERGY_METER && deviceKind != DeviceKind.SERVICE_BREAKER && (parent instanceof Room || parent instanceof Dwelling);
+            return deviceKind != DeviceKind.ENERGY_METER && deviceKind != DeviceKind.SERVICE_BREAKER && (parent instanceof Room || parent instanceof Dwelling || parent instanceof CircuitBranch);
         } catch (IllegalArgumentException ex) {
             return false;
         }
@@ -447,12 +465,23 @@ public class HedJavaServices {
                 } else {
                     return self;
                 }
+                if (created instanceof CircuitBranch branch) {
+                    try {
+                        CircuitEquipment.initializeFirstBranch(branch);
+                    } catch (IllegalArgumentException exception) {
+                        org.eclipse.emf.ecore.util.EcoreUtil.remove(branch);
+                        throw exception;
+                    }
+                }
                 return created;
             }
             var deviceKind = DeviceKind.valueOf(kind);
             var deviceType = type(home, deviceKind);
             if (modular(deviceKind)) {
                 return addModularDevice((DINRail) parent, deviceType, locale);
+            }
+            if (parent instanceof CircuitBranch branch) {
+                return HedDomain.addEquipmentOnBranch(branch, deviceType, locale);
             }
             var equipment = addEquipment(home, deviceType, locale);
             if (parent instanceof Room room) {

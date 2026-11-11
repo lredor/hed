@@ -80,7 +80,7 @@ The domain configuration remains in the starter because it also registers Sirius
 2. Select an element in the explorer to edit its properties. Expand nodes individually or use **Expand all**.
 3. Use contextual **Create** actions for the default catalog categories, or **New object** to choose a compatible catalog type, including a user-defined type.
 4. Create a distribution board from **Electrical service area (GTL)**, a DIN rail within it, then modular appliances directly on that rail. Creation tools respect the remaining rail capacity. An occupied rail cannot be deleted.
-5. Create terminal equipment under a room, and select its supply circuit and optional branch in Properties. Final circuits contain their branch objects; equipment remains owned by the dwelling.
+5. Create terminal equipment under a room. In Properties, select a supply circuit without branches or choose a branch to derive its circuit. Final circuits contain their branch objects; equipment remains owned by the dwelling.
 6. Configure circuit source boards, protective devices and functional controls through reference selectors. Clear an incompatible protection before changing a circuit's source board.
 7. Rename through the Name property or the explorer, and delete through the explorer. Reopen the project to continue editing the persisted model.
 
@@ -153,7 +153,9 @@ The bilingual `terminal-catalog-drop.spec.ts` workflow creates outlets, controls
 
 The bilingual `rail-capacity.spec.ts` workflow verifies that the native New Object dialog remains available for a compact catalog variant when generic types no longer fit, then hides creation once the rail is full. It also checks drop rejection and persisted fractional module widths. `RailCapacityTest` covers menu/dialog consistency, stale choices and missing or incompatible catalog types.
 
-`CircuitDiagramTest` evaluates the circuit diagram's actual AQL descriptions against complete and incomplete models, including independent control channels, optional actuators and three-phase labels. The bilingual `circuit-diagram.spec.ts` checks native containment, supply/control links, existing pictograms, manual movement/resizing, saved layouts and live circuit/room edits. See the [circuit-diagram workflow](circuit-diagram.md).
+`CircuitDiagramTest` evaluates the circuit diagram's actual AQL descriptions against complete and incomplete models, including independent control channels, optional actuators, three-phase labels and circuit–branch–device supply paths. `BranchIntegrationTest` checks stable occurrence identifiers, semantic selection/rename/delete and atomic branch drops. The bilingual `circuit-branches.spec.ts` covers branch creation, associations, shared room/branch occurrences, circuit changes, deletion and persisted identities. The bilingual `circuit-diagram.spec.ts` checks native containment, supply/control links, existing pictograms, manual movement/resizing, saved layouts and live circuit/room edits. See the [circuit-diagram workflow](circuit-diagram.md).
+
+`CircuitEquipmentPropertiesTest` checks the final circuit's native multi-select: editable direct assignments without branches, a live read-only union with branches, rejection of stale or foreign selections, and return to direct editing after the last branch is removed. `BranchIntegrationTest` also verifies transfer of direct members into the first explorer-created branch. The bilingual `optional-circuit-branches.spec.ts` exercises both modes, first-branch transfer, redistribution between branches, deletion, reopening and independent room/supply relationships.
 
 The [panel diagram workflow](distribution-board-layout.md) checks SVG alignment, module widths, drag-and-drop transfers and reopening of the constrained layout.
 

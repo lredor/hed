@@ -102,6 +102,9 @@ public class ExplorerPlanPlacement implements IRepresentationRenderVariableCusto
      * @return whether the device or one of the item's room devices lacks a view on its current storey
      */
     public boolean isHedMissingFromFloorPlans(Object source, Map<String, Set<String>> placements, boolean enabled) {
+        if (source instanceof BranchEquipmentLinks.EquipmentLink link) {
+            return isHedMissingFromFloorPlans(link.equipment(), placements, enabled);
+        }
         if (!enabled) {
             return false;
         }

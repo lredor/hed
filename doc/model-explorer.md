@@ -79,6 +79,18 @@ Model Explorer validates the complete selection before creating anything. Only t
 
 Created devices are immediately available under the room and can then be dragged onto a Floor Plan of that storey. The plan's own drop operation places an existing device; direct catalog drops onto a floor plan remain rejected. Reopening retains device identities, their room assignments and their type references.
 
+## Circuit branches and associated devices
+
+Create a **Branch** below a **Final circuit** using its creation menu or **New Object**. Each branch groups devices supplied by that same circuit. Distribution circuits do not have branches.
+
+Branches are optional. On a final circuit without branches, **Associated equipment** in Details is an editable list of its directly supplied devices. Adding the first branch automatically assigns those existing devices to it, preserving their room, identity and supply circuit; subsequent branches start empty. Once at least one branch exists, the circuit's list becomes the read-only union of its branches' equipment. Edit each branch's list to distribute devices between branches. Removing the last branch retains direct supply assignments and makes the circuit's list editable again.
+
+Drag an existing room device onto a branch, or set its **Branch** in Properties, to associate it. The operation retains its room and identity and sets its supply circuit to the branch's circuit. A selection containing anything other than existing terminal devices is rejected before any association changes. Catalog types can still be dropped onto rooms or rails; use the branch's creation menu to create a new device directly on that branch, then assign its room in Properties.
+
+Associated devices remain visible in their rooms and also appear under their branch. These are two explorer occurrences of the same semantic device, with distinct stable tree identifiers. Selecting or renaming either occurrence edits that device. **Delete on either occurrence deletes the semantic device**, including its occurrence in the other part of the explorer. Removing a device from a branch clears its supply circuit. Deleting the branch itself retains its devices: they become unassigned if other branches remain; deleting the last branch keeps direct supply assignments. To reconnect a device to a circuit with branches, select a **Branch** or drag it onto one. The device's supply-circuit selector offers circuits without branches and its current branched circuit only. A stale form cannot bypass this rule. Moving a branch to another final circuit updates its members' supply circuit and groups existing direct equipment when it becomes that circuit's first branch.
+
+The Equipment Table includes a read-only **Branch** column. The Circuit Diagram shows **circuit → branch → device** while the device stays in its room container. The optional placement highlight applies consistently to both explorer occurrences; room, storey and dwelling propagation continues to follow room assignments.
+
 ## Optional floor-plan placement highlight
 
 Open the native **Filters** menu (the filter-list icon in the Model Explorer toolbar) and enable **Highlight equipments not in floor plans**. In French the checkbox is **Surligner les équipements absents des plans**. It is unchecked by default; reopening the page starts with the normal labels. The filter changes label colors and does not hide or reorder any items.

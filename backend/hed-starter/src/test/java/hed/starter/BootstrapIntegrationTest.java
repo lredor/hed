@@ -95,6 +95,7 @@ class BootstrapIntegrationTest {
         var circuit = (FinalCircuit) home.getCircuits().get(0);
         var branch = HedDomain.named(HedDomain.F.createCircuitBranch(), "Côté fenêtre");
         circuit.getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
         HedDomain.set(home.getEquipment().get(0), "branch", branch);
         var set = new ResourceSetImpl();
         set.getPackageRegistry().put(HomeElectricalPackage.eNS_URI, HomeElectricalPackage.eINSTANCE);

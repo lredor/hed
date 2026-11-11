@@ -29,11 +29,13 @@ import org.junit.jupiter.api.Test;
 import hed.domain.HedDomain;
 import hed.domain.HedSamples;
 import hed.homeelectrical.ElectricalLoad;
+import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.Outlet;
 import hed.homeelectrical.NamedElement;
 import hed.starter.representations.modelexplorer.HedJavaServices;
 import hed.starter.representations.tables.HedTableDescriptions;
 
+/** Checks table filtering, semantic edits and the boundary between editable and calculated cells. */
 class TableIntegrationTest {
     private HedJavaServices services(BootstrapIntegrationTest.Feedback feedback) {
         return new HedJavaServices(new BootstrapIntegrationTest.Identity(), new IObjectSearchService.NoOp(), feedback, Locale.ENGLISH, dwelling -> dwelling.getName());
@@ -192,5 +194,24 @@ class TableIntegrationTest {
             assertFalse(HedTableDescriptions.fieldsFor(table).contains("reference"));
             assertFalse(HedTableDescriptions.fieldsFor(table).contains("frenchName"));
         }
+    }
+
+    @Test
+    void equipmentTableDisplaysAndSearchesBranchNamesWithoutDuplicatingDevices() {
+        var home = HedSamples.example();
+        var branch = HedDomain.named(HedDomain.F.createCircuitBranch(), "Window side");
+        ((FinalCircuit) home.getCircuits().getFirst()).getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
+        var equipment = home.getEquipment().get(1);
+        HedDomain.assignToBranch(branch, List.of(equipment));
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        assertEquals("Window side", service.getHedCell(equipment, "branch"));
+        assertEquals(home.getEquipment().stream().filter(device -> device.getBranch() == branch).toList(), service.getHedRows(home, "equipment", "Window side", null, null));
+        assertEquals(home.getEquipment().size(), service.getHedRows(home, "equipment", "", null, null).size());
+        var view = new ViewBuilders().newView().build();
+        new HedTableDescriptions(Locale.ENGLISH).addTo(view);
+        var equipmentTable = (TableDescription) view.getDescriptions().getFirst();
+        var branchCell = equipmentTable.getCellDescriptions().stream().filter(cell -> cell.getName().equals("hed-cell-branch")).findFirst().orElseThrow();
+        assertInstanceOf(CellLabelWidgetDescription.class, branchCell.getCellWidgetDescription());
     }
 }

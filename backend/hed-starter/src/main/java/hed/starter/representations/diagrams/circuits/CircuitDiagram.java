@@ -62,7 +62,10 @@ public final class CircuitDiagram {
         var modular = pictogram("modular", "ModularDevice", "aql:self.devices", 24);
         var circuit = pictogram("circuit", "Circuit", "aql:self.getHedCircuitBoardCircuits()", 24);
         var unattached = pictogram("unattached-circuit", "Circuit", "aql:self.circuits->select(c | c.sourceBoard = null)", 24);
-        var board = container("board", "DistributionBoard", "aql:self.boards", "#fff7ed", modular, circuit);
+        var branch = pictogram("branch", "CircuitBranch", "aql:self.getHedCircuitBranches()", 24);
+        var unattachedBranch = pictogram("unattached-branch", "CircuitBranch", "aql:self.getHedCircuitBranches()", 24);
+        // Append branch descriptions to preserve the paths and IDs of existing saved nodes and edges.
+        var board = container("board", "DistributionBoard", "aql:self.boards", "#fff7ed", modular, circuit, branch);
         var meter = pictogram("meter", "EnergyMeter", "aql:self.meter", 24);
         var serviceBreaker = pictogram("service-breaker", "ServiceCircuitBreaker", "aql:self.mainBreaker", 24);
         var supply = container("supply", "ServiceConnection", "aql:self.serviceConnection", "#f8fafc", meter, serviceBreaker);
@@ -76,7 +79,7 @@ public final class CircuitDiagram {
         edges.add(edge("residual-protection", "ModularDevice", "aql:self.boards.devices", "aql:self.upstreamRccb", "aql:self", new NodeDescription[] { modular }, new NodeDescription[] { modular },
                 false, ""));
         edges.add(edge("circuit-protection", "Circuit", "aql:self.circuits", "aql:self.protectiveDevice", "aql:self", new NodeDescription[] { modular }, circuits, false, ""));
-        edges.add(edge("circuit-equipment", "FieldEquipment", "aql:self.equipment", "aql:self.circuit", "aql:self", circuits, terminals, false, ""));
+        edges.add(edge("circuit-equipment", "FieldEquipment", "aql:self.equipment->select(e | e.branch = null)", "aql:self.circuit", "aql:self", circuits, terminals, false, ""));
         edges.add(edge("board-feeder", "DistributionCircuit", "aql:self.circuits->filter(homeelectrical::DistributionCircuit)", "aql:self", "aql:self.targetBoard", circuits,
                 new NodeDescription[] { board }, false, ""));
         edges.add(edge("direct-control", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator = null)", "aql:self.channels", "aql:self.targets", new NodeDescription[] { channel },
@@ -85,11 +88,14 @@ public final class CircuitDiagram {
                 new NodeDescription[] { modular }, true, "aql:self.name"));
         edges.add(edge("actuator-target", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator <> null)", "aql:self.actuator", "aql:self.targets", new NodeDescription[] { modular },
                 terminals, true, "aql:self.name"));
+        NodeDescription[] branches = { branch, unattachedBranch };
+        edges.add(edge("circuit-branch", "CircuitBranch", "aql:self.circuits->filter(homeelectrical::FinalCircuit).branches", "aql:self.circuit", "aql:self", circuits, branches, false, ""));
+        edges.add(edge("branch-equipment", "FieldEquipment", "aql:self.equipment->select(e | e.branch <> null)", "aql:self.branch", "aql:self", branches, terminals, false, ""));
         return b.newDiagramDescription().name(Messages.text(locale, "diagram.circuits")).domainType("homeelectrical::Dwelling").preconditionExpression("aql:true")
                 .titleExpression(Messages.text(locale, "diagram.circuits")).iconExpression(HedDomainIcons.concept("Circuit")).description(Messages.text(locale, "diagram.circuits.description"))
                 .endUserDocumentation(Messages.text(locale, "diagram.circuits.description")).style(b.newDiagramStyleDescription().background(color("#ffffff")).build())
-                .layoutOption(DiagramLayoutOption.AUTO_UNTIL_MANUAL).arrangeLayoutDirection(ArrangeLayoutDirection.RIGHT).nodeDescriptions(storey, board, supply, unlocated, unattached)
-                .edgeDescriptions(edges.toArray(EdgeDescription[]::new)).build();
+                .layoutOption(DiagramLayoutOption.AUTO_UNTIL_MANUAL).arrangeLayoutDirection(ArrangeLayoutDirection.RIGHT)
+                .nodeDescriptions(storey, board, supply, unlocated, unattached, unattachedBranch).edgeDescriptions(edges.toArray(EdgeDescription[]::new)).build();
     }
 
     private UserColor color(String value) {

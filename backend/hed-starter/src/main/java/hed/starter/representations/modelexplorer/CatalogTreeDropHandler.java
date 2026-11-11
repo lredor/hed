@@ -25,11 +25,14 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import hed.domain.Messages;
+import hed.domain.HedDomain;
+import hed.homeelectrical.CircuitBranch;
+import hed.homeelectrical.FieldEquipment;
 import hed.homeelectrical.DINRail;
 import hed.homeelectrical.Room;
 import hed.starter.representations.CatalogDropService;
 
-/** Creates modular or terminal devices from catalog types dropped onto rails or rooms in the domain explorer. */
+/** Creates devices from catalog drops onto rails/rooms and associates existing terminal devices with circuit branches. */
 @Service
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CatalogTreeDropHandler implements IDropTreeItemHandler {
@@ -44,7 +47,7 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
     /**
      * Creates the drop handler restricted to the HED explorer projection.
      *
-     * @param search resolves the selected catalog types and destination rail or room
+     * @param search resolves catalog types or existing devices and the destination rail, room or branch
      * @param descriptions identifies the domain explorer description
      * @param drops validates and creates the complete selection
      * @param locale selects explorer and rejection messages
@@ -65,13 +68,18 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
     @Override
     public IStatus handle(IEditingContext context, Tree tree, DropTreeItemInput input) {
         try {
-            // An indexed drop targets a gap between rows; creation requires a rail or room as the target.
+            // Indexed drops target gaps; creation or branch assignment requires a semantic destination.
             if (input.index() >= 0) {
                 throw new IllegalArgumentException("drop.catalogTarget");
             }
             var target = search.getObject(context, input.targetElementId()).orElse(null);
             var sources = input.droppedElementIds().stream().map(id -> search.getObject(context, id).orElse(null)).toList();
-            if (target instanceof Room room) {
+            if (target instanceof CircuitBranch branch) {
+                if (sources.isEmpty() || sources.stream().anyMatch(source -> !(source instanceof FieldEquipment))) {
+                    throw new IllegalArgumentException("drop.branchEquipment");
+                }
+                HedDomain.assignToBranch(branch, sources.stream().map(FieldEquipment.class::cast).toList());
+            } else if (target instanceof Room room) {
                 drops.createInRoom(room, sources);
             } else if (target instanceof DINRail) {
                 drops.create(target, sources);

@@ -65,6 +65,10 @@ Creation menus respect the remaining rail capacity, including compact custom cat
 
 See [reordering rails and mounted devices](doc/explorer-reordering.md) for Model Explorer movement commands.
 
+Create branches below final circuits and associate existing devices by dragging them onto a branch or editing Properties. Devices retain their room and also appear under their branch. The Circuit Diagram shows their supply through that branch, and the Equipment Table includes a Branch column. See [circuit branches and associated devices](doc/model-explorer.md#circuit-branches-and-associated-devices).
+
+Branches are optional. A final circuit's **Associated equipment** list in Details is editable without branches and becomes the read-only union of branch members when branches exist. The first branch receives the circuit's existing devices; removing the last branch restores direct editing. Circuits with branches require association through a branch. Removing equipment from a branch, or deleting its branch while others remain, clears its supply assignment and retains the device and its room.
+
 The explorer's native **Filters** menu includes **Highlight equipments not in floor plans**, disabled by default. Enable it to show room equipment missing from every floor plan of its storey in red, along with its room, storey and dwelling. The parent labels remain red when collapsed. See [the optional placement highlight](doc/model-explorer.md#optional-floor-plan-placement-highlight).
 
 ### Model pictograms

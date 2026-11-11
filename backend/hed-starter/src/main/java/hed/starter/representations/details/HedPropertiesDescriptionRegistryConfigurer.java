@@ -57,10 +57,12 @@ import hed.homeelectrical.DistributionCircuit;
 import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.ElectricalLoad;
 import hed.homeelectrical.Equipment;
+import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.ServiceCircuitBreaker;
 import hed.starter.HedDomainIcons;
+import hed.starter.representations.CircuitEquipment;
 
 /** Builds localized properties pages with controls filtered by device kind and supply configuration. */
 @Service
@@ -109,6 +111,9 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                         groups.computeIfAbsent("technical", k -> new ArrayList<>()).add(IfDescription.newIfDescription("hed.visible.ModularDevice." + feature.getName())
                                 .targetObjectIdProvider(vm -> identity.getId(self(vm))).predicate(vm -> applicable(self(vm), feature)).controlDescriptions(List.of(specification)).build());
                     }
+                }
+                if (type == HomeElectricalPackage.Literals.FINAL_CIRCUIT) {
+                    groups.computeIfAbsent("connections", k -> new ArrayList<>()).add(circuitEquipment());
                 }
                 groups.computeIfAbsent("validation", k -> new ArrayList<>()).add(validation(type));
                 var groupDescriptions = new ArrayList<GroupDescription>();
@@ -194,6 +199,9 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
     }
 
     private boolean allowed(EObject owner, String feature, EObject candidate) {
+        if (owner instanceof hed.homeelectrical.FieldEquipment equipment && feature.equals("circuit") && candidate instanceof FinalCircuit circuit) {
+            return circuit.getBranches().isEmpty() || equipment.getBranch() != null && equipment.getBranch().getCircuit() == circuit;
+        }
         if (owner instanceof Equipment e && feature.equals("deviceType")) {
             return HedDomain.compatible(e, (DeviceType) candidate);
         }
@@ -231,7 +239,11 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
     }
 
     private Object selected(EObject owner, EStructuralFeature feature, String selectedId) {
-        return options(owner, feature).stream().filter(v -> id(v).equals(selectedId)).findFirst().filter(v -> !v.equals("")).orElse(null);
+        var selection = options(owner, feature).stream().filter(value -> id(value).equals(selectedId)).findFirst();
+        if (selection.isEmpty()) {
+            throw new IllegalArgumentException(owner instanceof hed.homeelectrical.FieldEquipment && feature.getName().equals("circuit") ? "requiredBranch" : "foreignReference");
+        }
+        return selection.get().equals("") ? null : selection.get();
     }
 
     private AbstractControlDescription control(EClass type, EStructuralFeature feature) {
@@ -260,6 +272,28 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
         return TextfieldDescription.newTextfieldDescription(widgetId).idProvider(vm -> widgetId).targetObjectIdProvider(target).labelProvider(title)
                 .valueProvider(vm -> Objects.toString(self(vm).eGet(feature), "")).newValueHandler((vm, value) -> update(() -> HedDomain.setText(self(vm), name, value)))
                 .diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
+    }
+
+    /** Shows editable direct assignments until branches make the equipment list derived. */
+    private MultiSelectDescription circuitEquipment() {
+        String widgetId = "hed.FinalCircuit.equipment";
+        return MultiSelectDescription.newMultiSelectDescription(widgetId).idProvider(vm -> widgetId).targetObjectIdProvider(vm -> identity.getId(self(vm)))
+                .labelProvider(vm -> Messages.text(locale, "feature.equipment")).optionsProvider(vm -> {
+                    var home = HedDomain.dwelling(self(vm));
+                    return home == null ? List.of() : List.copyOf(home.getEquipment());
+                }).optionIdProvider(vm -> id(vm.get("candidate", Object.class).orElse(null))).optionLabelProvider(vm -> label(vm.get("candidate", Object.class).orElse(null)))
+                .optionIconURLProvider(vm -> icons(vm.get("candidate", Object.class).orElse(null))).styleProvider(vm -> MultiSelectStyle.newMultiSelectStyle().fontSize(14).showIcon(true).build())
+                .valuesProvider(vm -> CircuitEquipment.getAssociatedEquipment((FinalCircuit) self(vm)).stream().map(this::id).toList())
+                .isReadOnlyProvider(vm -> !((FinalCircuit) self(vm)).getBranches().isEmpty()).newValuesHandler((vm, ids) -> update(() -> {
+                    var home = HedDomain.dwelling(self(vm));
+                    if (home == null) {
+                        throw new IllegalArgumentException("foreignReference");
+                    }
+                    var devices = ids.stream().map(
+                            selectedId -> home.getEquipment().stream().filter(device -> id(device).equals(selectedId)).findFirst().orElseThrow(() -> new IllegalArgumentException("foreignReference")))
+                            .toList();
+                    CircuitEquipment.setAssociatedEquipment((FinalCircuit) self(vm), devices);
+                })).diagnosticsProvider(vm -> List.of()).kindProvider(Object::toString).messageProvider(Object::toString).build();
     }
 
     private TextfieldDescription validation(EClass type) {

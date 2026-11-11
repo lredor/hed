@@ -17,7 +17,7 @@ Solid grey arrows show recorded supply and protection relationships:
 - The meter supplies the service circuit-breaker within its service connection.
 - The service circuit-breaker supplies devices through their explicit `upstreamServiceBreaker` references; an RCCB supplies the devices referencing it through `upstreamRccb`.
 - A circuit's protective device connects to that circuit. Circuit nodes show the name, conductor section when provided, and phase only with a three-phase general supply.
-- Final circuits connect to equipment assigned through `FieldEquipment.circuit`, including control devices when their circuit is explicitly assigned.
+- Final circuits connect to their branches, then each branch connects to its assigned equipment. Branch nodes appear inside the source board, or at diagram level when the circuit has no source board. Equipment stays in its room and appears only once. Direct circuit links are used only by circuits without branches, including control devices when their circuit is explicitly assigned.
 - Distribution circuits connect to their target distribution board.
 
 Dashed purple arrows show functional controls and carry the control function's name. A direct control connects each participating channel to each controlled load or outlet. If the function declares an actuator, the diagram instead shows **channels → actuator → controlled equipment**. Several commands for the same light, double switches, switched outlets and shutters use the existing model relationships without inferring an additional electrical connection.
@@ -26,7 +26,11 @@ Click a node or edge to edit its underlying object through Properties. For examp
 
 ## Model coverage
 
-The current metamodel already supplies the required logical information: `Circuit.sourceBoard`, `protectiveDevice`, `phase`, `conductorSectionMm2`, `DistributionCircuit.targetBoard`, `FieldEquipment.room`/`circuit`, `ControlDevice.channels`, `ControlFunction.channels`/`targets`/`actuator`, and the two upstream protection references on modular devices. No metamodel or existing-data migration is required for this representation.
+Create branches below final circuits in Model Explorer and associate existing devices by dragging them onto a branch or editing **Branch** in Properties. A branch exposes its name, parent supply circuit and associated equipment. The Equipment Table also shows the branch. Associations update the diagram immediately without changing room assignments or functional control links. See [branches in Model Explorer](model-explorer.md#circuit-branches-and-associated-devices).
+
+Branches are optional: Details lets you edit the circuit's **Associated equipment** directly while it has no branches. The first branch receives these existing devices. With branches, the same circuit field displays their combined equipment in read-only mode. Deleting the last branch restores editable direct assignments. The diagram shows direct supply links without branches and supply paths through a branch for devices assigned to one.
+
+The current metamodel already supplies the required logical information: `Circuit.sourceBoard`, `protectiveDevice`, `phase`, `conductorSectionMm2`, `FinalCircuit.branches`, `CircuitBranch.circuit`/`equipment`, `DistributionCircuit.targetBoard`, `FieldEquipment.room`/`circuit`/`branch`, `ControlDevice.channels`, `ControlFunction.channels`/`targets`/`actuator`, and the two upstream protection references on modular devices. No metamodel or existing-data migration is required for this representation.
 
 This logical view does not record the physical sequence of outlets along a cable, cable routes, conductor-by-conductor terminals or junction boxes. In particular, outlets on one circuit are shown connected to the same circuit node; no daisy-chain order is invented from their graphical position. Existing missing-assignment warnings remain accessible in Properties. Display in this schematic does not count as placement on a storey's Floor Plan for the explorer's red-label indicator.
 

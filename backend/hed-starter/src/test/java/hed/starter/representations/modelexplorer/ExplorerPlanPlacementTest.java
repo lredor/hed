@@ -96,7 +96,9 @@ class ExplorerPlanPlacementTest {
         fixture.saved.put(UUID.randomUUID().toString(), fixture.plan("saved", fixture.id(storey), fixture.node(fixture.id(equipment), false)));
         var render = fixture.render(true);
         assertFalse(fixture.missing(equipment, render));
+        assertFalse(fixture.missing(new BranchEquipmentLinks.EquipmentLink(equipment), render));
         assertTrue(fixture.missing(fixture.home.getEquipment().get(1), render));
+        assertTrue(fixture.missing(new BranchEquipmentLinks.EquipmentLink(fixture.home.getEquipment().get(1)), render));
         assertTrue(fixture.missing(equipment.getRoom(), render));
         assertFalse(fixture.missing(fixture.home.getCatalog().getDeviceTypes().getFirst(), render));
         assertFalse(fixture.missing(fixture.home.getBoards().getFirst().getDevices().getFirst(), render));

@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 import hed.domain.HedDomain;
 import hed.domain.Messages;
 import hed.homeelectrical.Circuit;
+import hed.homeelectrical.CircuitBranch;
+import hed.homeelectrical.Dwelling;
+import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.ControlChannel;
 import hed.homeelectrical.ControlDevice;
 import hed.homeelectrical.DistributionBoard;
@@ -57,6 +60,25 @@ public class CircuitServices {
     public List<Circuit> getHedCircuitBoardCircuits(DistributionBoard board) {
         var home = HedDomain.dwelling(board);
         return home == null ? List.of() : home.getCircuits().stream().filter(circuit -> circuit.getSourceBoard() == board).toList();
+    }
+
+    /**
+     * Collects branches for a final circuit, its source board, or the dwelling's circuits without a source board.
+     * @param owner a diagram container or final circuit
+     * @return branches in model order; unrelated owners produce an empty list
+     */
+    public List<CircuitBranch> getHedCircuitBranches(EObject owner) {
+        if (owner instanceof FinalCircuit circuit) {
+            return List.copyOf(circuit.getBranches());
+        }
+        if (owner instanceof DistributionBoard board) {
+            return getHedCircuitBoardCircuits(board).stream().filter(FinalCircuit.class::isInstance).map(FinalCircuit.class::cast).flatMap(circuit -> circuit.getBranches().stream()).toList();
+        }
+        if (owner instanceof Dwelling home) {
+            return home.getCircuits().stream().filter(FinalCircuit.class::isInstance).map(FinalCircuit.class::cast).filter(circuit -> circuit.getSourceBoard() == null)
+                    .flatMap(circuit -> circuit.getBranches().stream()).toList();
+        }
+        return List.of();
     }
 
     /**

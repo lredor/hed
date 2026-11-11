@@ -10,6 +10,7 @@
 package hed.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,6 +34,7 @@ class CircuitBranchTest {
     private CircuitBranch branch(FinalCircuit circuit, String name) {
         var branch = named(F.createCircuitBranch(), name);
         circuit.getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
         return branch;
     }
 
@@ -60,7 +62,7 @@ class CircuitBranchTest {
     }
 
     @Test
-    void changingCircuitDetachesAnIncompatibleBranchAndRemovingTheBranchKeepsTheCircuit() {
+    void changingCircuitDetachesAnIncompatibleBranchAndRemovingTheBranchDisconnectsTheEquipment() {
         var home = HedSamples.example();
         var a = (FinalCircuit) home.getCircuits().get(0);
         var b = (FinalCircuit) home.getCircuits().get(1);
@@ -69,13 +71,13 @@ class CircuitBranchTest {
         set(equipment, "branch", branch);
         set(equipment, "circuit", b);
         assertNull(equipment.getBranch());
-        assertTrue(branch.getEquipment().isEmpty());
+        assertFalse(branch.getEquipment().contains(equipment));
         assertSame(b, equipment.getCircuit());
         set(equipment, "branch", branch);
         assertSame(a, equipment.getCircuit());
         set(equipment, "branch", null);
-        assertSame(a, equipment.getCircuit());
-        assertTrue(branch.getEquipment().isEmpty());
+        assertNull(equipment.getCircuit());
+        assertFalse(branch.getEquipment().contains(equipment));
     }
 
     @Test
@@ -111,6 +113,7 @@ class CircuitBranchTest {
         var three = home.getEquipment().get(2);
         assignToBranch(a, List.of(one, two));
         assignToBranch(b, List.of(three));
+        var originalMembers = List.copyOf(a.getEquipment());
         var foreign = HedSamples.example().getEquipment().get(0);
         var foreignCircuit = foreign.getCircuit();
         assertThrows(IllegalArgumentException.class, () -> assignToBranch(b, List.of(two, foreign)));
@@ -119,7 +122,7 @@ class CircuitBranchTest {
         assertNull(foreign.getBranch());
         one.setRatedPowerW(-1d);
         assertThrows(IllegalArgumentException.class, () -> assignToBranch(b, List.of(two)));
-        assertEquals(List.of(one, two), a.getEquipment());
+        assertEquals(originalMembers, a.getEquipment());
         assertEquals(List.of(three), b.getEquipment());
         assertSame(a, two.getBranch());
         assertSame(circuit, two.getCircuit());
@@ -128,7 +131,7 @@ class CircuitBranchTest {
         assertSame(circuit, a.getCircuit());
         assertEquals(List.of(a, b), circuit.getBranches());
         assertTrue(otherCircuit.getBranches().isEmpty());
-        assertEquals(List.of(one, two), a.getEquipment());
+        assertEquals(originalMembers, a.getEquipment());
     }
 
     @Test
@@ -172,8 +175,9 @@ class CircuitBranchTest {
         var branch = branch((FinalCircuit) home.getCircuits().get(0), "A");
         var before = List.copyOf(home.getEquipment());
         home.getEquipment().get(0).setRatedPowerW(-1d);
+        var members = List.copyOf(branch.getEquipment());
         assertThrows(IllegalArgumentException.class, () -> addEquipmentOnBranch(branch, type(home, DeviceKind.OUTLET), Locale.FRENCH));
         assertEquals(before, home.getEquipment());
-        assertTrue(branch.getEquipment().isEmpty());
+        assertEquals(members, branch.getEquipment());
     }
 }

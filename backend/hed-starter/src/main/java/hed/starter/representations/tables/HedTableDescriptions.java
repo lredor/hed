@@ -28,7 +28,7 @@ import hed.starter.HedDomainIcons;
 /** Editable tables sharing domain services with the explorer and properties. */
 @Service
 public class HedTableDescriptions {
-    private static final Map<String, List<String>> FIELDS = Map.of("equipment", List.of("name", "room", "category", "deviceType", "circuit", "controls", "ratedPowerW", "issues"), "circuits",
+    private static final Map<String, List<String>> FIELDS = Map.of("equipment", List.of("name", "room", "category", "deviceType", "circuit", "controls", "ratedPowerW", "issues", "branch"), "circuits",
             List.of("name", "sourceBoard", "usage", "phase", "protectiveDevice", "upstreamRccb", "conductorSectionMm2", "served", "issues"), "board",
             List.of("name", "labelText", "rail", "order", "category", "ratedCurrentA", "residualCurrentMa", "residualType", "widthModules", "protectedCircuits", "issues", "upstreamProtection"),
             "catalog", List.of("name", "kind", "ratedCurrentA", "ratedPowerW", "widthModules", "residualCurrentMa", "manufacturer", "productReference"));

@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -42,7 +43,7 @@ test('create all four tables, filter and edit values, and reopen persisted table
     await item(projectName).waitFor();
     await item(projectName).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).last().click();
-    await item('Bedroom light').waitFor();
+    await item(sampleName('bedroomLight')).waitFor();
     await expect(item(messages['class.Dwelling'])).toBeVisible();
   };
   const openTable = async (element: string, table: string) => {
@@ -80,9 +81,9 @@ test('create all four tables, filter and edit values, and reopen persisted table
     await expand();
     await openTable(messages['class.Dwelling'], 'equipment');
     const equipmentUrl = page.url();
-    await expect(editable('Ceiling light')).toBeVisible();
+    await expect(editable(sampleName('ceilingLight'))).toBeVisible();
     const equipmentRowCount = await page.getByRole('row').count();
-    await search().fill('Sofa outlet');
+    await search().fill(sampleName('sofaOutlet'));
     await expect(page.getByRole('row')).toHaveCount(2);
     await search().fill('');
     await expect(page.getByRole('row')).toHaveCount(equipmentRowCount);
@@ -106,7 +107,7 @@ test('create all four tables, filter and edit values, and reopen persisted table
       sortedNames.reverse();
     }
     await expect.poll(readNames).toEqual(sortedNames);
-    await editable('Ceiling light').fill(equipmentName);
+    await editable(sampleName('ceilingLight')).fill(equipmentName);
     await page.keyboard.press('Tab');
     await expect(editable(equipmentName)).toBeVisible();
     await page.reload();
@@ -115,8 +116,8 @@ test('create all four tables, filter and edit values, and reopen persisted table
     await expect(editable(equipmentName)).toBeVisible();
     await expand();
     await openTable(messages['class.Dwelling'], 'circuits');
-    await expect(editable('Living room outlets')).toBeVisible();
-    await openTable('Main distribution board', 'board');
+    await expect(editable(sampleName('livingRoomOutlets'))).toBeVisible();
+    await openTable(sampleName('mainBoard'), 'board');
     await expect(editable('ID1')).toBeVisible();
     const rccb = page
       .getByRole('row')
@@ -140,7 +141,7 @@ test('create all four tables, filter and edit values, and reopen persisted table
     await expect(editable(typeName)).toBeVisible();
     await page.goto(equipmentUrl);
     await search().waitFor();
-    await search().fill('Sofa outlet');
+    await search().fill(sampleName('sofaOutlet'));
     await expect(page.getByRole('table').getByRole('cell', { name: typeName, exact: true })).toBeVisible();
     expect(errors).toEqual([]);
   } finally {

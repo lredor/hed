@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -102,7 +103,7 @@ test('create a Canva panel diagram, reorder and transfer devices, and reopen the
     expect(projectId).toBeTruthy();
     await expand();
     for (const name of ['Rail 2', 'Rail 3']) {
-      await more('Main distribution board');
+      await more(sampleName('mainBoard'));
       await page
         .getByRole('button', { name: `${messages['action.create']} ${messages['class.DINRail']}`, exact: true })
         .click();
@@ -125,11 +126,11 @@ test('create a Canva panel diagram, reorder and transfer devices, and reopen the
     await page.getByRole('textbox', { name: messages['feature.name'], exact: true }).fill('Q9');
     await page.keyboard.press('Tab');
     await item('Q9').waitFor();
-    await item('Row 1').click();
+    await item(sampleName('row')).click();
     const capacity = page.getByRole('textbox', { name: messages['feature.capacityModules'], exact: true });
     await capacity.fill('6');
     await capacity.press('Tab');
-    await more('Main distribution board');
+    await more(sampleName('mainBoard'));
     await page.getByRole('menuitem', { name: messages['action.newRepresentation'], exact: true }).last().click();
     const dialog = page.getByRole('dialog');
     await dialog.getByRole('combobox').click();
@@ -168,21 +169,21 @@ test('create a Canva panel diagram, reorder and transfer devices, and reopen the
     rccbUrl.searchParams.set('residualType', 'AC');
     const typeAC = await (await request.get(rccbUrl.toString())).text();
     expect(typeAC).toMatch(/>Type AC<\/text>/);
-    await expect(rail('Row 1').locator('.hed-rail-capacity')).toHaveText(/^6 \/ 6 /);
+    await expect(rail(sampleName('row')).locator('.hed-rail-capacity')).toHaveText(/^6 \/ 6 /);
     const appended = page.waitForResponse(
       (response) =>
         response.url().endsWith('/api/graphql') && response.request().postDataJSON()?.operationName === 'dropNodes'
     );
-    await drag(component('Q1'), rail('Row 1'), true);
+    await drag(component('Q1'), rail(sampleName('row')), true);
     expect((await (await appended).json()).data.dropNodes.__typename).toBe('SuccessPayload');
     await expect(component('Q1')).toHaveAttribute('data-order', '4');
     await page.reload();
     await expect(component('Q1')).toHaveAttribute('data-order', '4');
-    await expect(rail('Row 1').locator('.hed-rail-capacity')).toHaveText(/^6 \/ 6 /);
+    await expect(rail(sampleName('row')).locator('.hed-rail-capacity')).toHaveText(/^6 \/ 6 /);
     await drag(component('Q1'), component('Q2'));
     await expect(component('Q1')).toHaveAttribute('data-order', '1');
     await expand();
-    await item('Row 1').click();
+    await item(sampleName('row')).click();
     await capacity.fill('13');
     await capacity.press('Tab');
     await drag(component('Q1'), component('Q3'));
@@ -191,7 +192,7 @@ test('create a Canva panel diagram, reorder and transfer devices, and reopen the
     await expect(component('Q1')).toHaveAttribute('data-order', '3');
     await expand();
     await expect(item('Panel layout').locator('xpath=ancestor::li[2]').locator('p').first()).toHaveText(
-      'Main distribution board'
+      sampleName('mainBoard')
     );
     await more('Q1');
     await page.getByRole('button', { name: messages['action.moveLeft'], exact: true }).click();
@@ -208,7 +209,7 @@ test('create a Canva panel diagram, reorder and transfer devices, and reopen the
     await component('Q1').click();
     await expect(page.getByRole('textbox', { name: messages['feature.name'], exact: true })).toHaveValue('Q1');
     await expect(page.getByRole('textbox', { name: messages['feature.labelText'], exact: true })).toHaveValue(
-      'Ground floor lighting'
+      sampleName('groundFloorLighting')
     );
     await expect(page.getByTestId(messages['feature.rail']).getByRole('combobox')).toContainText('Rail 2');
     await expect(page.getByTestId(messages['feature.upstreamRccb']).getByRole('combobox')).toContainText('ID1');

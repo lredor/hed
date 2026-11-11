@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName, samplePattern } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -33,7 +34,7 @@ test('edit direct circuit equipment or display the read-only union of optional b
   test.setTimeout(120000);
   page.setDefaultTimeout(15000);
   const projectName = `E2E optional branches ${randomUUID()}`;
-  const circuit = 'Living room outlets';
+  const circuit = sampleName('livingRoomOutlets');
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   let projectId: string | undefined;
@@ -87,37 +88,37 @@ test('edit direct circuit equipment or display the read-only union of optional b
     await expand();
     await item(circuit).click();
     await expect(equipment()).toBeEnabled();
-    await expect(equipment()).toHaveText('Sofa outlet');
-    await toggleEquipment('Ceiling light');
-    await expect(equipment()).toContainText('Ceiling light');
-    await expect(equipment()).toContainText('Sofa outlet');
+    await expect(equipment()).toHaveText(sampleName('sofaOutlet'));
+    await toggleEquipment(sampleName('ceilingLight'));
+    await expect(equipment()).toContainText(sampleName('ceilingLight'));
+    await expect(equipment()).toContainText(sampleName('sofaOutlet'));
     await page.reload();
     await expand();
     await item(circuit).click();
     await expect(equipment()).toBeEnabled();
-    await expect(equipment()).toContainText('Ceiling light');
+    await expect(equipment()).toContainText(sampleName('ceilingLight'));
     await createBranch('Window side');
     await expect(equipment()).toBeEnabled();
-    await expect(equipment()).toContainText('Ceiling light');
-    await expect(equipment()).toContainText('Sofa outlet');
+    await expect(equipment()).toContainText(sampleName('ceilingLight'));
+    await expect(equipment()).toContainText(sampleName('sofaOutlet'));
     await item(circuit).click();
     await expect(equipment()).toBeDisabled();
-    await expect(equipment()).toContainText('Ceiling light');
-    await expect(equipment()).toContainText('Sofa outlet');
+    await expect(equipment()).toContainText(sampleName('ceilingLight'));
+    await expect(equipment()).toContainText(sampleName('sofaOutlet'));
     await createBranch('Door side');
-    await toggleEquipment('Sofa outlet');
-    await expect(equipment()).toHaveText('Sofa outlet');
+    await toggleEquipment(sampleName('sofaOutlet'));
+    await expect(equipment()).toHaveText(sampleName('sofaOutlet'));
     await item(circuit).click();
     await expect(equipment()).toBeDisabled();
-    await expect(equipment()).toContainText('Ceiling light');
-    await expect(equipment()).toContainText('Sofa outlet');
-    expect(((await equipment().textContent()) ?? '').match(/Sofa outlet/g)).toHaveLength(1);
-    await item('Bedroom light').click();
+    await expect(equipment()).toContainText(sampleName('ceilingLight'));
+    await expect(equipment()).toContainText(sampleName('sofaOutlet'));
+    expect(((await equipment().textContent()) ?? '').match(samplePattern('sofaOutlet', false, 'g'))).toHaveLength(1);
+    await item(sampleName('bedroomLight')).click();
     const supply = page.getByTestId(messages['feature.circuit']).getByRole('combobox');
     await supply.click();
     await expect(page.getByRole('option').filter({ hasText: new RegExp(`^${escape(circuit)}$`) })).toHaveCount(0);
     await page.keyboard.press('Escape');
-    await expect(supply).toHaveText('Bedroom lighting');
+    await expect(supply).toHaveText(sampleName('bedroomLighting'));
     await page.getByTestId(messages['feature.branch']).getByRole('combobox').click();
     await page
       .getByRole('option')
@@ -134,23 +135,23 @@ test('edit direct circuit equipment or display the read-only union of optional b
     await expand();
     await item(circuit).click();
     await expect(equipment()).toBeDisabled();
-    await expect(equipment()).toContainText('Ceiling light');
+    await expect(equipment()).toContainText(sampleName('ceilingLight'));
     await deleteBranch('Window side');
     await item(circuit).click();
     await expect(equipment()).toBeDisabled();
-    await expect(equipment()).toHaveText('Sofa outlet');
+    await expect(equipment()).toHaveText(sampleName('sofaOutlet'));
     await deleteBranch('Door side');
     await item(circuit).click();
     await expect(equipment()).toBeEnabled();
-    await expect(equipment()).toHaveText('Sofa outlet');
-    await toggleEquipment('Sofa outlet');
-    await expect(equipment()).not.toContainText('Sofa outlet');
-    await item('Sofa outlet').click();
+    await expect(equipment()).toHaveText(sampleName('sofaOutlet'));
+    await toggleEquipment(sampleName('sofaOutlet'));
+    await expect(equipment()).not.toContainText(sampleName('sofaOutlet'));
+    await item(sampleName('sofaOutlet')).click();
     await expect(page.getByTestId(messages['feature.circuit']).getByRole('combobox')).toHaveText(
       messages['unassigned']
     );
-    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText('Living room');
-    await item('Ceiling light').click();
+    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText(sampleName('livingRoom'));
+    await item(sampleName('ceilingLight')).click();
     await expect(page.getByTestId(messages['feature.circuit']).getByRole('combobox')).toHaveText(
       messages['unassigned']
     );

@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { test, expect } from '@playwright/test';
+import { channelName, sampleName, samplePattern } from './sample';
 import { randomUUID } from 'node:crypto';
 
 test('show logical circuits inside storeys and rooms and retain freely arranged native nodes', async ({
@@ -98,7 +99,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.keyboard.press('Escape');
     await expect
       .poll(() =>
-        item('Sofa outlet').evaluate((element) => {
+        item(sampleName('sofaOutlet')).evaluate((element) => {
           const text = document.createTreeWalker(element, NodeFilter.SHOW_TEXT).nextNode();
           return getComputedStyle(text!.parentElement!).color;
         })
@@ -107,36 +108,36 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.getByTestId('tree-filter-menu-icon').click();
     await highlight.uncheck();
     await page.keyboard.press('Escape');
-    await expect(node('Sofa outlet')).toBeVisible();
-    await expect(node('Ground floor')).toBeVisible();
-    await expect(node('Living room')).toBeVisible();
-    expect(semantic('Living room').parent).toBe(semantic('Ground floor').id);
-    expect(semantic('Sofa outlet').parent).toBe(semantic('Living room').id);
-    expect(semantic('Q1').parent).toBe(semantic('Main distribution board').id);
-    expect(semantic('Ground floor lighting').parent).toBe(semantic('Main distribution board').id);
-    expect(link(semantic('Q1'), semantic('Ground floor lighting'))).toBeTruthy();
-    expect(link(semantic('Living room outlets'), semantic('Sofa outlet'))).toBeTruthy();
-    expect(link(semantic('Garage board supply'), semantic('Garage distribution board'))).toBeTruthy();
-    const channels = flat().filter((candidate) => candidate.parent === semantic('Entrance double switch').id);
+    await expect(node(sampleName('sofaOutlet'))).toBeVisible();
+    await expect(node(sampleName('groundFloor'))).toBeVisible();
+    await expect(node(sampleName('livingRoom'))).toBeVisible();
+    expect(semantic(sampleName('livingRoom')).parent).toBe(semantic(sampleName('groundFloor')).id);
+    expect(semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('livingRoom')).id);
+    expect(semantic('Q1').parent).toBe(semantic(sampleName('mainBoard')).id);
+    expect(semantic(sampleName('groundFloorLighting')).parent).toBe(semantic(sampleName('mainBoard')).id);
+    expect(link(semantic('Q1'), semantic(sampleName('groundFloorLighting')))).toBeTruthy();
+    expect(link(semantic(sampleName('livingRoomOutlets')), semantic(sampleName('sofaOutlet')))).toBeTruthy();
+    expect(link(semantic(sampleName('garageBoardSupply')), semantic(sampleName('garageBoard')))).toBeTruthy();
+    const channels = flat().filter((candidate) => candidate.parent === semantic(sampleName('doubleSwitch')).id);
     expect(channels).toHaveLength(2);
     expect(
       link(
-        channels.find((channel) => channel.targetObjectLabel === 'Channel 1'),
-        semantic('Ceiling light')
+        channels.find((channel) => channel.targetObjectLabel === channelName(1)),
+        semantic(sampleName('ceilingLight'))
       ).style.lineStyle
     ).toBe('Dash');
     expect(
       link(
-        channels.find((channel) => channel.targetObjectLabel === 'Channel 2'),
-        semantic('Sofa outlet')
+        channels.find((channel) => channel.targetObjectLabel === channelName(2)),
+        semantic(sampleName('sofaOutlet'))
       ).style.lineStyle
     ).toBe('Dash');
-    expect(semantic('Sofa outlet').style.imageURL).toBe('/api/images/hed/mdi/power-socket-fr.svg');
-    expect(semantic('Living room').style.__typename).toBe('RectangularNodeStyle');
-    expect(semantic('Sofa outlet').type).toBe('node:image');
-    expect(semantic('Sofa outlet').defaultWidth).toBe(24);
+    expect(semantic(sampleName('sofaOutlet')).style.imageURL).toBe('/api/images/hed/mdi/power-socket-fr.svg');
+    expect(semantic(sampleName('livingRoom')).style.__typename).toBe('RectangularNodeStyle');
+    expect(semantic(sampleName('sofaOutlet')).type).toBe('node:image');
+    expect(semantic(sampleName('sofaOutlet')).defaultWidth).toBe(24);
     await expect.poll(() => diagram.layoutData?.nodeLayoutData.length ?? 0).toBe(32);
-    expect((await request.get(semantic('Sofa outlet').style.imageURL)).ok()).toBe(true);
+    expect((await request.get(semantic(sampleName('sofaOutlet')).style.imageURL)).ok()).toBe(true);
     const roots = await Promise.all(
       diagram.nodes.map((root: any) => page.locator(`.react-flow__node[data-id="${root.id}"]`).boundingBox())
     );
@@ -160,13 +161,13 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
           })
         ).toBe(true);
       }
-    const before = await position('Sofa outlet'),
-      box = await node('Sofa outlet').boundingBox();
+    const before = await position(sampleName('sofaOutlet')),
+      box = await node(sampleName('sofaOutlet')).boundingBox();
     const saved = page.waitForResponse(
       (response) =>
         response.url().endsWith('/api/graphql') && (response.request().postData() ?? '').includes('layoutDiagram')
     );
-    const roomBox = await node('Living room').boundingBox(),
+    const roomBox = await node(sampleName('livingRoom')).boundingBox(),
       dx = box!.x > roomBox!.x + roomBox!.width / 2 ? -25 : 25,
       dy = box!.y > roomBox!.y + roomBox!.height / 2 ? -18 : 18;
     await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
@@ -174,13 +175,13 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.mouse.move(box!.x + box!.width / 2 + dx, box!.y + box!.height / 2 + dy, { steps: 12 });
     await page.mouse.up();
     await saved;
-    await expect.poll(async () => Math.abs((await position('Sofa outlet')).x - before.x)).toBeGreaterThan(5);
-    const moved = await position('Sofa outlet');
-    await node('Living room').click({ position: { x: 8, y: 8 } });
-    const handle = node('Living room').locator('.react-flow__resize-control.handle.bottom.right');
+    await expect.poll(async () => Math.abs((await position(sampleName('sofaOutlet'))).x - before.x)).toBeGreaterThan(5);
+    const moved = await position(sampleName('sofaOutlet'));
+    await node(sampleName('livingRoom')).getByText(sampleName('livingRoom'), { exact: true }).click();
+    const handle = node(sampleName('livingRoom')).locator('.react-flow__resize-control.handle.bottom.right');
     await expect(handle).toBeVisible();
     const grip = await handle.boundingBox(),
-      size = await node('Living room').boundingBox();
+      size = await node(sampleName('livingRoom')).boundingBox();
     const resized = page.waitForResponse(
       (response) =>
         response.url().endsWith('/api/graphql') && (response.request().postData() ?? '').includes('layoutDiagram')
@@ -190,13 +191,17 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.mouse.move(grip!.x + grip!.width / 2 + 35, grip!.y + grip!.height / 2 + 20, { steps: 12 });
     await page.mouse.up();
     await resized;
-    await expect.poll(async () => (await node('Living room').boundingBox())!.width).toBeGreaterThan(size!.width + 15);
+    await expect
+      .poll(async () => (await node(sampleName('livingRoom')).boundingBox())!.width)
+      .toBeGreaterThan(size!.width + 15);
     await page.reload();
-    await expect(node('Sofa outlet')).toBeVisible();
-    await expect.poll(() => position('Sofa outlet')).toEqual(moved);
+    await expect(node(sampleName('sofaOutlet'))).toBeVisible();
+    await expect.poll(() => position(sampleName('sofaOutlet'))).toEqual(moved);
     await expect.poll(() => diagram.edges.length).toBe(23);
-    await node('Sofa outlet').click();
-    await expect(page.getByRole('textbox', { name: /^(Name|Nom)$/, exact: true })).toHaveValue('Sofa outlet');
+    await node(sampleName('sofaOutlet')).click();
+    await expect(page.getByRole('textbox', { name: /^(Name|Nom)$/, exact: true })).toHaveValue(
+      sampleName('sofaOutlet')
+    );
     // Existing Properties edits update both semantic links and room containment.
     await page
       .getByTestId(/^(Supply circuit|Circuit d’alimentation)$/)
@@ -204,23 +209,25 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
       .click();
     await page
       .getByRole('option')
-      .filter({ hasText: /^Ground floor lighting$/ })
+      .filter({ hasText: samplePattern('groundFloorLighting') })
       .click();
-    await expect.poll(() => !!link(semantic('Ground floor lighting'), semantic('Sofa outlet'))).toBe(true);
-    expect(link(semantic('Living room outlets'), semantic('Sofa outlet'))).toBeUndefined();
+    await expect
+      .poll(() => !!link(semantic(sampleName('groundFloorLighting')), semantic(sampleName('sofaOutlet'))))
+      .toBe(true);
+    expect(link(semantic(sampleName('livingRoomOutlets')), semantic(sampleName('sofaOutlet')))).toBeUndefined();
     await page
       .getByTestId(/^(Room|Pièce)$/)
       .getByRole('combobox')
       .click();
     await page
       .getByRole('option')
-      .filter({ hasText: /^Bedroom$/ })
+      .filter({ hasText: samplePattern('bedroom') })
       .click();
-    await expect.poll(() => semantic('Sofa outlet').parent).toBe(semantic('Bedroom').id);
+    await expect.poll(() => semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('bedroom')).id);
     await expect.poll(() => flat().length).toBe(32);
     await page.reload();
-    await expect(node('Sofa outlet')).toBeVisible();
-    await expect.poll(() => semantic('Sofa outlet').parent).toBe(semantic('Bedroom').id);
+    await expect(node(sampleName('sofaOutlet'))).toBeVisible();
+    await expect.poll(() => semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('bedroom')).id);
     await page.screenshot({ path: '../.cache/circuit-diagram-checked.png' });
     expect(errors).toEqual([]);
   } finally {

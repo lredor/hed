@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -66,7 +67,7 @@ test('reorder rails and mounted devices from Model Explorer and reopen the saved
     );
     await item('Q1').click();
     await expect(page.getByTestId(messages['feature.upstreamRccb']).getByRole('combobox')).toContainText('ID1');
-    await more('Main distribution board');
+    await more(sampleName('mainBoard'));
     await page
       .getByRole('button', { name: `${messages['action.create']} ${messages['class.DINRail']}`, exact: true })
       .click();
@@ -74,20 +75,20 @@ test('reorder rails and mounted devices from Model Explorer and reopen the saved
     await item(messages['new.DINRail']).click();
     await page.getByRole('textbox', { name: messages['feature.name'], exact: true }).fill('Second rail');
     await page.keyboard.press('Tab');
-    await expect(railLabels()).toHaveText(['Row 1', 'Second rail', 'Row 1']);
+    await expect(railLabels()).toHaveText([sampleName('row'), 'Second rail', sampleName('row')]);
     await more('Second rail');
     await expect(page.getByRole('button', { name: messages['action.moveDown'], exact: true })).toHaveCount(0);
     await page.getByRole('button', { name: messages['action.moveUp'], exact: true }).click();
-    await expect(railLabels()).toHaveText(['Second rail', 'Row 1', 'Row 1']);
+    await expect(railLabels()).toHaveText(['Second rail', sampleName('row'), sampleName('row')]);
     await page.reload();
     await expand();
     await expect(deviceLabels()).toHaveText(
       ['ID1', 'Q2', 'Q1', 'Q3', 'Q5', 'Q4'].map((name) => new RegExp(`^${name} - .+$`))
     );
-    await expect(railLabels()).toHaveText(['Second rail', 'Row 1', 'Row 1']);
+    await expect(railLabels()).toHaveText(['Second rail', sampleName('row'), sampleName('row')]);
     await item('Q1').click();
     await expect(page.getByTestId(messages['feature.upstreamRccb']).getByRole('combobox')).toContainText('ID1');
-    await item('Ground floor lighting').click();
+    await item(sampleName('groundFloorLighting')).click();
     await expect(page.getByTestId(messages['feature.protectiveDevice']).getByRole('combobox')).toContainText('Q1');
   } finally {
     if (projectId) {

@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -56,7 +57,7 @@ test('explain that Delete removes floor-plan views and preserve equipment and co
   const expand = async () => {
     await item(projectName).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).last().click();
-    await expect(item('Sofa outlet')).toBeVisible();
+    await expect(item(sampleName('sofaOutlet'))).toBeVisible();
   };
   const background = page.getByTestId('floor-plan-background');
   const devices = page.locator('[data-testid^="floor-plan-equipment-"]');
@@ -85,7 +86,7 @@ test('explain that Delete removes floor-plan views and preserve equipment and co
     expect(projectId).toBeTruthy();
     await item(projectName).waitFor();
     await expand();
-    await item('Ground floor').locator('../..').getByRole('button').click();
+    await item(sampleName('groundFloor')).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.newRepresentation'], exact: true }).last().click();
     const dialog = page.getByRole('dialog');
     await dialog.getByRole('combobox').click();
@@ -94,27 +95,29 @@ test('explain that Delete removes floor-plan views and preserve equipment and co
     await dialog.getByRole('textbox').fill('View-only removal');
     await dialog.getByRole('button', { name: french ? 'Créer' : 'Create', exact: true }).click();
     await expect(background).toBeVisible();
-    await place('Sofa outlet', 0.3);
-    await place('Ceiling light', 0.65);
-    const outletId = await device('Sofa outlet').getAttribute('data-semantic-id');
-    const lightId = await device('Ceiling light').getAttribute('data-semantic-id');
-    await device('Sofa outlet').click();
+    await place(sampleName('sofaOutlet'), 0.3);
+    await place(sampleName('ceilingLight'), 0.65);
+    const outletId = await device(sampleName('sofaOutlet')).getAttribute('data-semantic-id');
+    const lightId = await device(sampleName('ceilingLight')).getAttribute('data-semantic-id');
+    await device(sampleName('sofaOutlet')).click();
     await page.keyboard.press('Delete');
     await expect(confirmation).toContainText(translations.plan.removeConfirmation);
     await expect(confirmation.getByRole('heading')).toHaveText(translations.plan.removeEquipment);
     await confirmation.getByRole('button', { name: /^(Annuler|Cancel)$/, exact: true }).click();
     await expect(devices).toHaveCount(2);
-    await device('Sofa outlet').click();
+    await device(sampleName('sofaOutlet')).click();
     await page.keyboard.press('Delete');
     await confirm();
     await expect(devices).toHaveCount(1);
     await expand();
-    await item('Sofa outlet').click();
-    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText('Living room');
-    await expect(page.getByTestId(messages['feature.circuit']).getByRole('combobox')).toHaveText('Living room outlets');
+    await item(sampleName('sofaOutlet')).click();
+    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText(sampleName('livingRoom'));
+    await expect(page.getByTestId(messages['feature.circuit']).getByRole('combobox')).toHaveText(
+      sampleName('livingRoomOutlets')
+    );
     expect(new URL(page.url()).searchParams.get('selection')).toBe(outletId);
     // Semantic deletion from Model Explorer keeps the standard warning, even while a floor plan is open.
-    await item('Sofa outlet').locator('../..').getByRole('button').click();
+    await item(sampleName('sofaOutlet')).locator('../..').getByRole('button').click();
     await page
       .getByRole('menuitem', { name: french ? 'Supprimer' : 'Delete', exact: true })
       .last()
@@ -122,28 +125,28 @@ test('explain that Delete removes floor-plan views and preserve equipment and co
     await expect(confirmation).not.toContainText(translations.plan.removeConfirmation);
     await expect(confirmation).toContainText(french ? 'éléments sélectionnés' : 'delete the selected element');
     await confirmation.getByRole('button', { name: /^(Annuler|Cancel)$/, exact: true }).click();
-    await place('Sofa outlet', 0.3);
-    await device('Sofa outlet').click();
-    await device('Ceiling light').click({ modifiers: ['Control'] });
+    await place(sampleName('sofaOutlet'), 0.3);
+    await device(sampleName('sofaOutlet')).click();
+    await device(sampleName('ceilingLight')).click({ modifiers: ['Control'] });
     await expect(page.locator('.react-flow__node.selected').filter({ has: devices })).toHaveCount(2);
     await page.keyboard.press('Delete');
     await confirm();
     await expect(devices).toHaveCount(0);
     await expand();
-    await expect(item('Sofa outlet')).toBeVisible();
-    await expect(item('Ceiling light')).toBeVisible();
-    await item('Ceiling light').click();
-    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText('Living room');
+    await expect(item(sampleName('sofaOutlet'))).toBeVisible();
+    await expect(item(sampleName('ceilingLight'))).toBeVisible();
+    await item(sampleName('ceilingLight')).click();
+    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText(sampleName('livingRoom'));
     await expect(page.getByTestId(messages['feature.circuit']).getByRole('combobox')).toHaveText(
-      'Ground floor lighting'
+      sampleName('groundFloorLighting')
     );
     expect(new URL(page.url()).searchParams.get('selection')).toBe(lightId);
-    await place('Sofa outlet', 0.4);
+    await place(sampleName('sofaOutlet'), 0.4);
     await page.reload();
     await expect(devices).toHaveCount(1);
-    await expect(device('Sofa outlet')).toHaveAttribute('data-semantic-id', outletId!);
+    await expect(device(sampleName('sofaOutlet'))).toHaveAttribute('data-semantic-id', outletId!);
     await expand();
-    await expect(item('Ceiling light')).toBeVisible();
+    await expect(item(sampleName('ceilingLight'))).toBeVisible();
     expect(errors).toEqual([]);
   } finally {
     if (projectId) {

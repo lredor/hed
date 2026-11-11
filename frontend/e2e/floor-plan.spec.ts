@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { test, expect } from '@playwright/test';
+import { sampleName, samplePattern } from './sample';
 import { randomUUID } from 'node:crypto';
 
 test('import a storey plan, place existing equipment, move it and reopen the saved layout', async ({
@@ -70,7 +71,7 @@ test('import a storey plan, place existing equipment, move it and reopen the sav
     projectId = page.url().match(/\/projects\/([^/]+)/)?.[1];
     await item(projectName).waitFor();
     await expand();
-    await item('Ground floor').locator('../..').getByRole('button').click();
+    await item(sampleName('groundFloor')).locator('../..').getByRole('button').click();
     await page
       .getByRole('menuitem', { name: /^(New representation|Nouvelle représentation)$/ })
       .last()
@@ -88,45 +89,45 @@ test('import a storey plan, place existing equipment, move it and reopen the sav
     await upload('ground-floor.svg', '#f8fafc');
     const imageURL = await background.locator('.hed-floor-plan-image').getAttribute('src');
     expect((await request.get(imageURL!)).ok()).toBe(true);
-    await drop(item('Sofa outlet'), 0.28, 0.48);
-    await expect(device('Sofa outlet')).toBeVisible();
-    const placed = await position('Sofa outlet');
+    await drop(item(sampleName('sofaOutlet')), 0.28, 0.48);
+    await expect(device(sampleName('sofaOutlet'))).toBeVisible();
+    const placed = await position(sampleName('sofaOutlet'));
     expect(Math.abs(placed.x - 1200 * 0.28)).toBeLessThan(65);
     expect(Math.abs(placed.y - 748 * 0.48)).toBeLessThan(65);
-    await drop(item('Entrance double switch'), 0.63, 0.42);
+    await drop(item(sampleName('doubleSwitch')), 0.63, 0.42);
     await expect(equipment).toHaveCount(2);
     const labels = background.getByRole('checkbox', { name: /^(Show equipment labels|Afficher les libellés)$/ });
     await expect(labels).not.toBeChecked();
-    await expect(device('Sofa outlet').locator('.hed-floor-equipment-label')).toBeHidden();
+    await expect(device(sampleName('sofaOutlet')).locator('.hed-floor-equipment-label')).toBeHidden();
     const dimensions = () =>
-      device('Sofa outlet').evaluate((element) => {
+      device(sampleName('sofaOutlet')).evaluate((element) => {
         const box = element.closest('.react-flow__node') as HTMLElement;
         return { width: box.style.width, height: box.style.height };
       });
     await expect.poll(dimensions).toEqual({ width: '24px', height: '24px' });
-    const beforeLabels = await position('Sofa outlet');
+    const beforeLabels = await position(sampleName('sofaOutlet'));
     await labels.check();
-    await expect(device('Sofa outlet').locator('.hed-floor-equipment-label')).toBeVisible();
-    const bounds = await device('Sofa outlet').boundingBox(),
-      labelBounds = await device('Sofa outlet').locator('.hed-floor-equipment-label').boundingBox();
+    await expect(device(sampleName('sofaOutlet')).locator('.hed-floor-equipment-label')).toBeVisible();
+    const bounds = await device(sampleName('sofaOutlet')).boundingBox(),
+      labelBounds = await device(sampleName('sofaOutlet')).locator('.hed-floor-equipment-label').boundingBox();
     expect(labelBounds!.y).toBeGreaterThanOrEqual(bounds!.y + bounds!.height);
 
     await expect.poll(dimensions).toEqual({ width: '24px', height: '24px' });
-    expect(await position('Sofa outlet')).toEqual(beforeLabels);
+    expect(await position(sampleName('sofaOutlet'))).toEqual(beforeLabels);
     await page.reload();
     await expect(labels).toBeChecked();
-    await expect(device('Sofa outlet').locator('.hed-floor-equipment-label')).toBeVisible();
-    await expect.poll(() => position('Sofa outlet')).toEqual(beforeLabels);
+    await expect(device(sampleName('sofaOutlet')).locator('.hed-floor-equipment-label')).toBeVisible();
+    await expect.poll(() => position(sampleName('sofaOutlet'))).toEqual(beforeLabels);
     await labels.uncheck();
-    await expect(device('Sofa outlet').locator('.hed-floor-equipment-label')).toBeHidden();
+    await expect(device(sampleName('sofaOutlet')).locator('.hed-floor-equipment-label')).toBeHidden();
     await expand();
     const ids = await equipment.evaluateAll((elements) =>
       elements.map((element) => element.getAttribute('data-semantic-id')).sort()
     );
-    await drop(item('Sofa outlet'), 0.5, 0.5);
+    await drop(item(sampleName('sofaOutlet')), 0.5, 0.5);
     await expect(equipment).toHaveCount(2);
     await expect(page.locator('img[alt*="entity=Outlet"]')).toHaveCount(1);
-    await drop(item('Bedroom light'), 0.7, 0.7);
+    await drop(item(sampleName('bedroomLight')), 0.7, 0.7);
     await expect(page.getByText(/^(Drop existing equipment|Déposez un équipement existant)/).first()).toBeVisible();
     await expect(equipment).toHaveCount(2);
     const type = page
@@ -137,8 +138,8 @@ test('import a storey plan, place existing equipment, move it and reopen the sav
       .first();
     await drop(type, 0.7, 0.7);
     await expect(equipment).toHaveCount(2);
-    const before = await position('Sofa outlet'),
-      box = await device('Sofa outlet').boundingBox();
+    const before = await position(sampleName('sofaOutlet')),
+      box = await device(sampleName('sofaOutlet')).boundingBox();
     const saved = page.waitForResponse(
       (response) =>
         response.url().endsWith('/api/graphql') && (response.request().postData() ?? '').includes('layoutDiagram')
@@ -148,11 +149,13 @@ test('import a storey plan, place existing equipment, move it and reopen the sav
     await page.mouse.move(box!.x + box!.width / 2 + 70, box!.y + box!.height / 2 + 45, { steps: 15 });
     await page.mouse.up();
     await saved;
-    await expect.poll(async () => Math.abs((await position('Sofa outlet')).x - before.x)).toBeGreaterThan(20);
-    const moved = await position('Sofa outlet');
+    await expect
+      .poll(async () => Math.abs((await position(sampleName('sofaOutlet'))).x - before.x))
+      .toBeGreaterThan(20);
+    const moved = await position(sampleName('sofaOutlet'));
     await page.reload();
     await expect(equipment).toHaveCount(2);
-    await expect.poll(() => position('Sofa outlet')).toEqual(moved);
+    await expect.poll(() => position(sampleName('sofaOutlet'))).toEqual(moved);
     await expect(background.locator('.hed-floor-plan-image')).toHaveAttribute('src', imageURL!);
 
     expect(
@@ -162,45 +165,45 @@ test('import a storey plan, place existing equipment, move it and reopen the sav
     ).toEqual(ids);
     await upload('replacement.svg', '#e0f2fe');
     await expect(background.locator('.hed-floor-plan-image')).not.toHaveAttribute('src', imageURL!);
-    await expect.poll(() => position('Sofa outlet')).toEqual(moved);
+    await expect.poll(() => position(sampleName('sofaOutlet'))).toEqual(moved);
     await background.getByRole('button', { name: /^(Remove background|Retirer le fond)$/ }).click();
     await expect(background.locator('.hed-floor-plan-image')).toHaveCount(0);
     await expect(equipment).toHaveCount(2);
-    await expect.poll(() => position('Sofa outlet')).toEqual(moved);
+    await expect.poll(() => position(sampleName('sofaOutlet'))).toEqual(moved);
     await page.reload();
     await expect(equipment).toHaveCount(2);
     await expect(background.locator('.hed-floor-plan-image')).toHaveCount(0);
     await upload('final.svg', '#f8fafc');
-    await device('Entrance double switch').click({ button: 'right' });
+    await device(sampleName('doubleSwitch')).click({ button: 'right' });
     await page
       .getByRole('button', { name: /^(Remove from plan|Retirer du plan)$/, exact: true })
       .last()
       .click();
     await expect(equipment).toHaveCount(1);
     await expand();
-    await expect(item('Entrance double switch')).toBeVisible();
+    await expect(item(sampleName('doubleSwitch'))).toBeVisible();
     await labels.check();
-    await drop(item('Entrance double switch'), 0.65, 0.6);
+    await drop(item(sampleName('doubleSwitch')), 0.65, 0.6);
     await expect(equipment).toHaveCount(2);
-    await expect(device('Entrance double switch').locator('.hed-floor-equipment-label')).toBeVisible();
-    await device('Sofa outlet').click();
+    await expect(device(sampleName('doubleSwitch')).locator('.hed-floor-equipment-label')).toBeVisible();
+    await device(sampleName('sofaOutlet')).click();
     await page
       .getByTestId(/^(Room|Pièce)$/)
       .getByRole('combobox')
       .click();
     await page
       .getByRole('option')
-      .filter({ hasText: /^Bedroom$/ })
+      .filter({ hasText: samplePattern('bedroom') })
       .click();
     await expect(equipment).toHaveCount(1);
     await page.reload();
     await expect(equipment).toHaveCount(1);
-    await expect(device('Entrance double switch')).toBeVisible();
+    await expect(device(sampleName('doubleSwitch'))).toBeVisible();
     await labels.check();
     const firstPlanURL = page.url(),
       sharedImage = await background.locator('.hed-floor-plan-image').getAttribute('src');
     await expand();
-    await item('Ground floor').locator('../..').getByRole('button').click();
+    await item(sampleName('groundFloor')).locator('../..').getByRole('button').click();
     await page
       .getByRole('menuitem', { name: /^(New representation|Nouvelle représentation)$/ })
       .last()
@@ -218,7 +221,7 @@ test('import a storey plan, place existing equipment, move it and reopen the sav
     await expect(labels).not.toBeChecked();
     await page.goto(firstPlanURL);
     await expect(equipment).toHaveCount(1);
-    await expect(device('Entrance double switch')).toBeVisible();
+    await expect(device(sampleName('doubleSwitch'))).toBeVisible();
     await expect(labels).toBeChecked();
     expect(errors).toEqual([]);
   } finally {

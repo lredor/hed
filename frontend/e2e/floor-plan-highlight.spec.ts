@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { channelName, sampleName, samplePattern } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -50,7 +51,7 @@ test('highlight unplaced room equipment only when its native explorer filter is 
   const expand = async () => {
     await item(projectName).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).last().click();
-    await expect(item('Sofa outlet')).toBeVisible();
+    await expect(item(sampleName('sofaOutlet'))).toBeVisible();
   };
   const filter = async (enabled?: boolean) => {
     await page.getByTestId('tree-filter-menu-icon').click();
@@ -64,7 +65,7 @@ test('highlight unplaced room equipment only when its native explorer filter is 
   };
   const background = page.getByTestId('floor-plan-background');
   const nodes = page.locator('[data-testid^="floor-plan-equipment-"]');
-  const createPlan = async (label: string, storey = 'Ground floor') => {
+  const createPlan = async (label: string, storey = sampleName('groundFloor')) => {
     await item(storey).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.newRepresentation'], exact: true }).last().click();
     const dialog = page.getByRole('dialog');
@@ -79,9 +80,11 @@ test('highlight unplaced room equipment only when its native explorer filter is 
   };
   const place = async () => {
     const box = await background.boundingBox();
-    await item('Sofa outlet').dragTo(background, { targetPosition: { x: box!.width * 0.35, y: box!.height * 0.4 } });
+    await item(sampleName('sofaOutlet')).dragTo(background, {
+      targetPosition: { x: box!.width * 0.35, y: box!.height * 0.4 },
+    });
     await expect(nodes).toHaveCount(1);
-    await expect.poll(() => color('Sofa outlet')).not.toBe(red);
+    await expect.poll(() => color(sampleName('sofaOutlet'))).not.toBe(red);
   };
   const room = page.getByTestId(messages['feature.room']).getByRole('combobox');
   const selectRoom = async (label: string) => {
@@ -100,19 +103,25 @@ test('highlight unplaced room equipment only when its native explorer filter is 
     expect(projectId).toBeTruthy();
     await item(projectName).waitFor();
     await expand();
-    const normal = await color('Sofa outlet');
+    const normal = await color(sampleName('sofaOutlet'));
     expect(normal).not.toBe(red);
     await filter();
     const count = await page.locator('img[alt*="entity=Outlet"]').count();
     await filter(true);
-    await expect.poll(() => color('Sofa outlet')).toBe(red);
-    await expect.poll(() => color('Entrance double switch')).toBe(red);
-    for (const parent of ['Living room', 'Ground floor', 'Bedroom', 'First floor', messages['class.Dwelling']]) {
+    await expect.poll(() => color(sampleName('sofaOutlet'))).toBe(red);
+    await expect.poll(() => color(sampleName('doubleSwitch'))).toBe(red);
+    for (const parent of [
+      sampleName('livingRoom'),
+      sampleName('groundFloor'),
+      sampleName('bedroom'),
+      sampleName('firstFloor'),
+      messages['class.Dwelling'],
+    ]) {
       await expect.poll(() => color(parent)).toBe(red);
     }
     expect(await color(projectName)).not.toBe(red);
-    expect(await color('Garage')).not.toBe(red);
-    expect(await color('Channel 1')).not.toBe(red);
+    expect(await color(sampleName('garage'))).not.toBe(red);
+    expect(await color(channelName(1))).not.toBe(red);
     const catalogType = page
       .locator('img[alt*="entity=DeviceType"]')
       .locator('../..')
@@ -122,9 +131,9 @@ test('highlight unplaced room equipment only when its native explorer filter is 
     await expect(page.locator('img[alt*="entity=Outlet"]')).toHaveCount(count);
     // Parent colors come from semantic room assignments, even when their children are not rendered.
     for (const [parent, child] of [
-      ['Living room', 'Sofa outlet'],
-      ['Ground floor', 'Living room'],
-      [messages['class.Dwelling'], 'Ground floor'],
+      [sampleName('livingRoom'), sampleName('sofaOutlet')],
+      [sampleName('groundFloor'), sampleName('livingRoom')],
+      [messages['class.Dwelling'], sampleName('groundFloor')],
     ]) {
       await page.getByTestId(`${parent}-toggle`).click();
       await expect(item(child)).not.toBeVisible();
@@ -136,7 +145,7 @@ test('highlight unplaced room equipment only when its native explorer filter is 
     await expect.poll(() => color(messages['class.Dwelling'])).toBe(red);
     await expand();
     await filter(false);
-    await expect.poll(() => color('Sofa outlet')).toBe(normal);
+    await expect.poll(() => color(sampleName('sofaOutlet'))).toBe(normal);
     await filter(true);
     const first = await createPlan('Highlight plan one');
     await place();
@@ -154,7 +163,7 @@ test('highlight unplaced room equipment only when its native explorer filter is 
       await other.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).last().click();
       const control = other
         .locator('p')
-        .filter({ hasText: /^Entrance double switch$/ })
+        .filter({ hasText: samplePattern('doubleSwitch') })
         .first();
       await expect(control).toBeVisible();
       expect(
@@ -164,7 +173,7 @@ test('highlight unplaced room equipment only when its native explorer filter is 
       await expect(
         other.getByRole('checkbox', { name: messages['explorer.highlightUnplaced'], exact: true })
       ).not.toBeChecked();
-      await expect.poll(() => color('Entrance double switch')).toBe(red);
+      await expect.poll(() => color(sampleName('doubleSwitch'))).toBe(red);
     } finally {
       await other.close();
     }
@@ -179,62 +188,62 @@ test('highlight unplaced room equipment only when its native explorer filter is 
     await nodes.first().click({ button: 'right' });
     await page.getByRole('button', { name: messages['plan.removeEquipment'], exact: true }).last().click();
     await expect(nodes).toHaveCount(0);
-    await expect.poll(() => color('Sofa outlet')).not.toBe(red);
+    await expect.poll(() => color(sampleName('sofaOutlet'))).not.toBe(red);
     // The only remaining placement is now in the other saved plan.
     await item('Highlight plan two').locator('../..').getByRole('button').click();
     const deletion = french ? 'Supprimer' : 'Delete';
     await page.getByRole('menuitem', { name: deletion, exact: true }).last().click();
     await page.getByRole('dialog').getByRole('button', { name: deletion, exact: true }).click();
     await expect(item('Highlight plan two')).toHaveCount(0);
-    await expect.poll(() => color('Sofa outlet')).toBe(red);
+    await expect.poll(() => color(sampleName('sofaOutlet'))).toBe(red);
     await item('Highlight plan one').click();
     await expect(background).toBeVisible();
     await place();
     await nodes.first().click();
-    await selectRoom('Bedroom');
+    await selectRoom(sampleName('bedroom'));
     await expect(nodes).toHaveCount(0);
     await expand();
-    await expect.poll(() => color('Sofa outlet')).toBe(red);
-    await item('Sofa outlet').click();
+    await expect.poll(() => color(sampleName('sofaOutlet'))).toBe(red);
+    await item(sampleName('sofaOutlet')).click();
     await selectRoom(messages['unassigned']);
     await expand();
-    await expect.poll(() => color('Sofa outlet')).not.toBe(red);
+    await expect.poll(() => color(sampleName('sofaOutlet'))).not.toBe(red);
     await page.reload();
     await expect(background).toBeVisible();
     await expand();
     await filter();
-    await expect.poll(() => color('Entrance double switch')).not.toBe(red);
+    await expect.poll(() => color(sampleName('doubleSwitch'))).not.toBe(red);
     await filter(true);
-    await expect.poll(() => color('Entrance double switch')).toBe(red);
-    await expect.poll(() => color('Sofa outlet')).not.toBe(red);
+    await expect.poll(() => color(sampleName('doubleSwitch'))).toBe(red);
+    await expect.poll(() => color(sampleName('sofaOutlet'))).not.toBe(red);
     // Clear one storey, then the entire dwelling; an unlocated device never makes a parent red.
     const remaining = [
-      'Ceiling light',
-      'Living room shutter',
-      'Entrance double switch',
-      'Second lighting control',
-      'Shutter control',
+      sampleName('ceilingLight'),
+      sampleName('livingRoomShutter'),
+      sampleName('doubleSwitch'),
+      sampleName('secondControl'),
+      sampleName('shutterControl'),
     ];
     for (let index = 0; index < remaining.length; index++) {
       await item(remaining[index]).dragTo(background, { targetPosition: { x: 100 + index * 80, y: 180 } });
       await expect(nodes).toHaveCount(index + 1);
     }
-    await expect.poll(() => color('Living room')).not.toBe(red);
-    await expect.poll(() => color('Ground floor')).not.toBe(red);
+    await expect.poll(() => color(sampleName('livingRoom'))).not.toBe(red);
+    await expect.poll(() => color(sampleName('groundFloor'))).not.toBe(red);
     await expect.poll(() => color(messages['class.Dwelling'])).toBe(red);
-    await createPlan('Highlight upper plan', 'First floor');
-    await item('Bedroom light').dragTo(background, { targetPosition: { x: 200, y: 180 } });
+    await createPlan('Highlight upper plan', sampleName('firstFloor'));
+    await item(sampleName('bedroomLight')).dragTo(background, { targetPosition: { x: 200, y: 180 } });
     await expect(nodes).toHaveCount(1);
-    for (const parent of ['Bedroom', 'First floor', messages['class.Dwelling']]) {
+    for (const parent of [sampleName('bedroom'), sampleName('firstFloor'), messages['class.Dwelling']]) {
       await expect.poll(() => color(parent)).not.toBe(red);
     }
     await nodes.first().click({ button: 'right' });
     await page.getByRole('button', { name: messages['plan.removeEquipment'], exact: true }).last().click();
     await expect(nodes).toHaveCount(0);
-    for (const parent of ['Bedroom', 'First floor', messages['class.Dwelling']]) {
+    for (const parent of [sampleName('bedroom'), sampleName('firstFloor'), messages['class.Dwelling']]) {
       await expect.poll(() => color(parent)).toBe(red);
     }
-    expect(await color('Ground floor')).not.toBe(red);
+    expect(await color(sampleName('groundFloor'))).not.toBe(red);
     expect(await color(projectName)).not.toBe(red);
     expect(errors).toEqual([]);
   } finally {

@@ -34,11 +34,19 @@ import static hed.domain.HedDomain.modular;
 import static hed.domain.HedDomain.named;
 import static hed.domain.HedDomain.type;
 
+/** Creates editable example data in its creation language; stored names are never translated afterward. */
 public final class HedSamples {
+    /** @param name the dwelling name to retain verbatim
+     * @return an empty dwelling with an English catalog
+     */
     public static Dwelling empty(String name) {
         return empty(name, Locale.ENGLISH);
     }
 
+    /** @param name the dwelling name to retain verbatim
+     * @param locale selects initial catalog names
+     * @return an empty dwelling with its own editable catalog
+     */
     public static Dwelling empty(String name, Locale locale) {
         var home = named(F.createDwelling(), name);
         var catalog = named(F.createCatalog(), Messages.text(locale, "class.Catalog"));
@@ -54,103 +62,107 @@ public final class HedSamples {
         return home;
     }
 
+    /** @return a new, independent example installation with English names */
     public static Dwelling example() {
         return example(Locale.ENGLISH);
     }
 
+    /** @param locale selects initial names, channels and label text throughout the sample
+     * @return a new example installation whose names remain ordinary editable user data
+     */
     public static Dwelling example(Locale locale) {
-        var home = empty("Sample home", locale);
-        var ground = named(F.createStorey(), "Ground floor");
+        var home = empty(Messages.text(locale, "sample.home"), locale);
+        var ground = named(F.createStorey(), Messages.text(locale, "sample.groundFloor"));
         ground.setLevelNumber(0);
         home.getStoreys().add(ground);
-        var first = named(F.createStorey(), "First floor");
+        var first = named(F.createStorey(), Messages.text(locale, "sample.firstFloor"));
         first.setLevelNumber(1);
         home.getStoreys().add(first);
-        var living = named(F.createRoom(), "Living room");
-        var garage = named(F.createRoom(), "Garage");
-        var bedroom = named(F.createRoom(), "Bedroom");
+        var living = named(F.createRoom(), Messages.text(locale, "sample.livingRoom"));
+        var garage = named(F.createRoom(), Messages.text(locale, "sample.garage"));
+        var bedroom = named(F.createRoom(), Messages.text(locale, "sample.bedroom"));
         ground.getRooms().addAll(List.of(living, garage));
         first.getRooms().add(bedroom);
-        var main = named(F.createDistributionBoard(), "Main distribution board");
+        var main = named(F.createDistributionBoard(), Messages.text(locale, "sample.mainBoard"));
         main.setRoom(garage);
         home.getBoards().add(main);
-        var secondary = named(F.createDistributionBoard(), "Garage distribution board");
+        var secondary = named(F.createDistributionBoard(), Messages.text(locale, "sample.garageBoard"));
         secondary.setRoom(garage);
         home.getBoards().add(secondary);
-        var row = named(F.createDINRail(), "Row 1");
+        var row = named(F.createDINRail(), Messages.text(locale, "sample.row"));
         main.getRails().add(row);
-        var row2 = named(F.createDINRail(), "Row 1");
+        var row2 = named(F.createDINRail(), Messages.text(locale, "sample.row"));
         secondary.getRails().add(row2);
         var rccb = addModularDevice(row, modularType(home, DeviceKind.RCCB, 63d, 2d, 30d, "A", null));
-        rccb.setLabelText("Ground floor");
+        rccb.setLabelText(Messages.text(locale, "sample.groundFloor"));
         rccb.setName("ID1");
-        var lights = circuit(home, main, row, rccb, "Q1", "Ground floor lighting", CircuitUse.LIGHTING, 16d);
-        var sockets = circuit(home, main, row, rccb, "Q2", "Living room outlets", CircuitUse.SOCKET_OUTLETS, 20d);
-        var shutters = circuit(home, main, row, rccb, "Q3", "Roller shutters", CircuitUse.SHUTTERS, 16d);
-        var upper = circuit(home, secondary, row2, null, "Q4", "Bedroom lighting", CircuitUse.LIGHTING, 10d);
+        var lights = circuit(home, main, row, rccb, "Q1", Messages.text(locale, "sample.groundFloorLighting"), CircuitUse.LIGHTING, 16d);
+        var sockets = circuit(home, main, row, rccb, "Q2", Messages.text(locale, "sample.livingRoomOutlets"), CircuitUse.SOCKET_OUTLETS, 20d);
+        var shutters = circuit(home, main, row, rccb, "Q3", Messages.text(locale, "sample.rollerShutters"), CircuitUse.SHUTTERS, 16d);
+        var upper = circuit(home, secondary, row2, null, "Q4", Messages.text(locale, "sample.bedroomLighting"), CircuitUse.LIGHTING, 10d);
         var rcbo = upper.getProtectiveDevice();
         rcbo.setDeviceType(modularType(home, DeviceKind.RCBO, 10d, 2d, 30d, "A", "C"));
-        var feeder = named(F.createDistributionCircuit(), "Garage board supply");
+        var feeder = named(F.createDistributionCircuit(), Messages.text(locale, "sample.garageBoardSupply"));
         feeder.setSourceBoard(main);
         feeder.setTargetBoard(secondary);
         var breaker = addModularDevice(row, modularType(home, DeviceKind.MCB, 32d, 1d, null, null, "C"));
-        breaker.setLabelText("Garage board supply");
+        breaker.setLabelText(Messages.text(locale, "sample.garageBoardSupply"));
         breaker.setName("Q5");
         breaker.setUpstreamRccb(rccb);
         feeder.setProtectiveDevice(breaker);
         home.getCircuits().add(feeder);
-        var light = (ElectricalLoad) addEquipment(home, type(home, DeviceKind.LUMINAIRE));
-        light.setName("Ceiling light");
+        var light = (ElectricalLoad) addEquipment(home, type(home, DeviceKind.LUMINAIRE), locale);
+        light.setName(Messages.text(locale, "sample.ceilingLight"));
         light.setRoom(living);
         light.setCircuit(lights);
         light.setRatedPowerW(12d);
-        var outlet = (Outlet) addEquipment(home, type(home, DeviceKind.OUTLET));
-        outlet.setName("Sofa outlet");
+        var outlet = (Outlet) addEquipment(home, type(home, DeviceKind.OUTLET), locale);
+        outlet.setName(Messages.text(locale, "sample.sofaOutlet"));
         outlet.setRoom(living);
         outlet.setCircuit(sockets);
-        var shutter = (ElectricalLoad) addEquipment(home, type(home, DeviceKind.SHUTTER_MOTOR));
-        shutter.setName("Living room shutter");
+        var shutter = (ElectricalLoad) addEquipment(home, type(home, DeviceKind.SHUTTER_MOTOR), locale);
+        shutter.setName(Messages.text(locale, "sample.livingRoomShutter"));
         shutter.setRoom(living);
         shutter.setCircuit(shutters);
-        var bedroomLight = addEquipment(home, type(home, DeviceKind.LUMINAIRE));
-        bedroomLight.setName("Bedroom light");
+        var bedroomLight = addEquipment(home, type(home, DeviceKind.LUMINAIRE), locale);
+        bedroomLight.setName(Messages.text(locale, "sample.bedroomLight"));
         bedroomLight.setRoom(bedroom);
         bedroomLight.setCircuit(upper);
-        var doubleSwitch = (ControlDevice) addEquipment(home, type(home, DeviceKind.SWITCH));
-        doubleSwitch.setName("Entrance double switch");
+        var doubleSwitch = (ControlDevice) addEquipment(home, type(home, DeviceKind.SWITCH), locale);
+        doubleSwitch.setName(Messages.text(locale, "sample.doubleSwitch"));
         doubleSwitch.setRoom(living);
         doubleSwitch.setCircuit(lights);
-        doubleSwitch.getChannels().add(named(F.createControlChannel(), "Channel 2"));
-        var second = (ControlDevice) addEquipment(home, type(home, DeviceKind.SWITCH));
-        second.setName("Second lighting control");
+        doubleSwitch.getChannels().add(named(F.createControlChannel(), Messages.text(locale, "channel.defaultName", 2)));
+        var second = (ControlDevice) addEquipment(home, type(home, DeviceKind.SWITCH), locale);
+        second.setName(Messages.text(locale, "sample.secondControl"));
         second.setRoom(living);
         second.setCircuit(lights);
-        var lighting = named(F.createControlFunction(), "Living room lighting");
+        var lighting = named(F.createControlFunction(), Messages.text(locale, "sample.livingRoomLighting"));
         lighting.getChannels().addAll(List.of(doubleSwitch.getChannels().get(0), second.getChannels().get(0)));
         lighting.getTargets().add(light);
         home.getControlFunctions().add(lighting);
-        var socketControl = named(F.createControlFunction(), "Switched outlet");
+        var socketControl = named(F.createControlFunction(), Messages.text(locale, "sample.switchedOutlet"));
         socketControl.getChannels().add(doubleSwitch.getChannels().get(1));
         socketControl.getTargets().add(outlet);
         home.getControlFunctions().add(socketControl);
-        var shutterSwitch = (ControlDevice) addEquipment(home, type(home, DeviceKind.SHUTTER_CONTROL));
-        shutterSwitch.setName("Shutter control");
+        var shutterSwitch = (ControlDevice) addEquipment(home, type(home, DeviceKind.SHUTTER_CONTROL), locale);
+        shutterSwitch.setName(Messages.text(locale, "sample.shutterControl"));
         shutterSwitch.setRoom(living);
         shutterSwitch.setCircuit(shutters);
-        var shutterFunction = named(F.createControlFunction(), "Living room shutter control");
+        var shutterFunction = named(F.createControlFunction(), Messages.text(locale, "sample.shutterFunction"));
         shutterFunction.setMode(ControlMode.SHUTTER);
         shutterFunction.getChannels().add(shutterSwitch.getChannels().get(0));
         shutterFunction.getTargets().add(shutter);
         home.getControlFunctions().add(shutterFunction);
-        var connection = named(F.createServiceConnection(), "Service connection");
+        var connection = named(F.createServiceConnection(), Messages.text(locale, "sample.serviceConnection"));
         connection.setPhase(SupplyPhase.SINGLE_PHASE);
         connection.setSubscribedPowerKva(9d);
         home.setServiceConnection(connection);
         var meter = F.createEnergyMeter();
-        initialize(meter, type(home, DeviceKind.ENERGY_METER));
+        initialize(meter, type(home, DeviceKind.ENERGY_METER), locale);
         connection.setMeter(meter);
         var serviceBreaker = F.createServiceCircuitBreaker();
-        initialize(serviceBreaker, type(home, DeviceKind.SERVICE_BREAKER));
+        initialize(serviceBreaker, type(home, DeviceKind.SERVICE_BREAKER), locale);
         connection.setMainBreaker(serviceBreaker);
         rccb.setUpstreamServiceBreaker(serviceBreaker);
         return home;

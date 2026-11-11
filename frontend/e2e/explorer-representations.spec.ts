@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -45,7 +46,7 @@ test('show saved tables under their semantic owners and retain native open, rena
   const expand = async () => {
     await item(projectName).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).last().click();
-    await item('Bedroom light').waitFor();
+    await item(sampleName('bedroomLight')).waitFor();
     await expect(item(messages['class.Dwelling'])).toBeVisible();
   };
   const create = async (owner: string, table: string, label: string) => {
@@ -80,7 +81,7 @@ test('show saved tables under their semantic owners and retain native open, rena
     await expand();
     const equipmentUrl = await create(messages['class.Dwelling'], 'equipment', 'Equipment overview');
     await create(messages['class.Dwelling'], 'circuits', 'Circuit overview');
-    await create('Main distribution board', 'board', 'Board overview');
+    await create(sampleName('mainBoard'), 'board', 'Board overview');
     const catalogUrl = await create(messages['class.Catalog'], 'catalog', 'Catalog overview');
     await item('Equipment overview').click();
     await page.waitForURL((url) => url.pathname === new URL(equipmentUrl).pathname);

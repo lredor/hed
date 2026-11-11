@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -42,7 +43,7 @@ test('create terminal devices from catalog types on a room and retain assignment
       .locator('p')
       .filter({ hasText: new RegExp(`^${escape(label)}$`) })
       .first();
-  const room = () => item('Living room').locator('xpath=ancestor::li[1]');
+  const room = () => item(sampleName('livingRoom')).locator('xpath=ancestor::li[1]');
   const roomItem = (label: string) =>
     room()
       .locator('p')
@@ -57,13 +58,13 @@ test('create terminal devices from catalog types on a room and retain assignment
   const expand = async () => {
     await item(projectName).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).last().click();
-    await expect(item('Living room')).toBeVisible();
+    await expect(item(sampleName('livingRoom'))).toBeVisible();
     await expect(typeItem('OUTLET')).toBeVisible();
   };
   const name = page.getByRole('textbox', { name: messages['feature.name'], exact: true });
   const current = page.getByRole('textbox', { name: messages['feature.ratedCurrentA'], exact: true });
   const checkReferences = async (kind: string) => {
-    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText('Living room');
+    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText(sampleName('livingRoom'));
     await expect(page.getByTestId(messages['feature.deviceType']).getByRole('combobox')).toHaveText(
       messages[`kind.${kind}`]
     );
@@ -108,11 +109,11 @@ test('create terminal devices from catalog types on a room and retain assignment
     await current.fill('16');
     await current.press('Tab');
     await expect(current).toHaveValue('16.0');
-    await drop('OUTLET', 'Living room');
+    await drop('OUTLET', sampleName('livingRoom'));
     const outletId = await renameCreated('OUTLET', 'ROOM-OUTLET-1');
     await expect(current).toHaveValue('16.0');
     await expect(room().locator('img[alt*="entity=Outlet"]')).toHaveCount(originalOutlets + 1);
-    await drop('OUTLET', 'Living room');
+    await drop('OUTLET', sampleName('livingRoom'));
     const secondId = await renameCreated('OUTLET', 'ROOM-OUTLET-2');
     expect(secondId).not.toBe(outletId);
     await expect(room().locator('img[alt*="entity=Outlet"]')).toHaveCount(originalOutlets + 2);
@@ -123,7 +124,7 @@ test('create terminal devices from catalog types on a room and retain assignment
     await channels.fill('2');
     await channels.press('Tab');
     await expect(channels).toHaveValue('2');
-    await drop('PUSH_BUTTON', 'Living room');
+    await drop('PUSH_BUTTON', sampleName('livingRoom'));
     await renameCreated('PUSH_BUTTON', 'ROOM-BUTTON');
     const button = () => roomItem('ROOM-BUTTON').locator('xpath=ancestor::li[1]');
     for (const index of [1, 2]) {
@@ -133,17 +134,17 @@ test('create terminal devices from catalog types on a room and retain assignment
           .filter({ hasText: new RegExp(`^${escape(messages['channel.defaultName'].replace('{0}', String(index)))}$`) })
       ).toBeVisible();
     }
-    await drop('LUMINAIRE', 'Living room');
+    await drop('LUMINAIRE', sampleName('livingRoom'));
     await renameCreated('LUMINAIRE', 'ROOM-LIGHT');
-    const wrongType = await drop('MCB', 'Living room');
+    const wrongType = await drop('MCB', sampleName('livingRoom'));
     expect(wrongType.messages).toContainEqual(expect.objectContaining({ body: messages['drop.terminalType'] }));
-    const wrongTarget = await drop('OUTLET', 'Ground floor');
+    const wrongTarget = await drop('OUTLET', sampleName('groundFloor'));
     expect(wrongTarget.messages).toContainEqual(expect.objectContaining({ body: messages['drop.catalogTarget'] }));
     await expect(room().locator('img[alt*="entity=Outlet"]')).toHaveCount(originalOutlets + 2);
     await expect(page.locator('img[alt*="entity=DeviceType"]')).toHaveCount(catalogCount);
 
     // Room creation and floor-plan placement must refer to the same semantic device.
-    await item('Ground floor').locator('../..').getByRole('button').click();
+    await item(sampleName('groundFloor')).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.newRepresentation'], exact: true }).last().click();
     const dialog = page.getByRole('dialog');
     await dialog.getByRole('combobox').click();

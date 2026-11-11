@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -49,7 +50,7 @@ test('create, edit and reopen a dwelling with catalog names, category icons and 
     await item(projectName).waitFor();
     await more(projectName);
     await page.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).click();
-    await item('Bedroom light').waitFor();
+    await item(sampleName('bedroomLight')).waitFor();
   };
   try {
     await page.goto('/');
@@ -67,7 +68,7 @@ test('create, edit and reopen a dwelling with catalog names, category icons and 
     await name.fill(typeName);
     await name.press('Tab');
     await item(typeName).waitFor();
-    await more('Living room');
+    await more(sampleName('livingRoom'));
     await page.getByRole('menuitem', { name: messages['action.newObject'], exact: true }).click();
     const dialog = page.getByRole('dialog');
     await expect(dialog.getByRole('combobox')).toContainText(typeName);
@@ -81,7 +82,11 @@ test('create, edit and reopen a dwelling with catalog names, category icons and 
     await name.press('Tab');
     await item(equipmentName).waitFor();
     await page.getByTestId(messages['feature.circuit']).getByRole('combobox').click();
-    await page.getByRole('option').filter({ hasText: 'Living room outlets' }).first().click();
+    await page
+      .getByRole('option')
+      .filter({ hasText: sampleName('livingRoomOutlets') })
+      .first()
+      .click();
     await expect(page.getByRole('textbox', { name: messages['validation'], exact: true })).toHaveValue(
       messages['consistent']
     );
@@ -90,10 +95,12 @@ test('create, edit and reopen a dwelling with catalog names, category icons and 
     await expand();
     await item(equipmentName).click();
     await expect(name).toHaveValue(equipmentName);
-    await expect(page.getByTestId(messages['feature.circuit']).getByRole('combobox')).toHaveText('Living room outlets');
-    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText('Living room');
+    await expect(page.getByTestId(messages['feature.circuit']).getByRole('combobox')).toHaveText(
+      sampleName('livingRoomOutlets')
+    );
+    await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText(sampleName('livingRoom'));
 
-    await more('Ground floor');
+    await more(sampleName('groundFloor'));
     await page
       .getByRole('button', { name: `${messages['action.create']} ${messages['class.Room']}`, exact: true })
       .click();

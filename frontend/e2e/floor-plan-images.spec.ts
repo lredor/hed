@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { test, expect } from '@playwright/test';
+import { sampleName } from './sample';
 import { randomUUID } from 'node:crypto';
 
 test('import PNG and JPEG plans and retain the background when an invalid image is rejected', async ({
@@ -35,7 +36,7 @@ test('import PNG and JPEG plans and retain the background when an invalid image 
       .getByRole('menuitem', { name: /^(Expand all|Développer tout)$/ })
       .last()
       .click();
-    await item('Ground floor').locator('../..').getByRole('button').click();
+    await item(sampleName('groundFloor')).locator('../..').getByRole('button').click();
     await page
       .getByRole('menuitem', { name: /^(New representation|Nouvelle représentation)$/ })
       .last()

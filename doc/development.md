@@ -127,7 +127,7 @@ java -jar backend/hed-application/target/hed-application-0.1.0-SNAPSHOT.jar
 
 Domain labels and messages are in the model's `i18n/hed-messages*.properties`. Frontend additions use `i18n/{en,fr}/home-electrical-designer.json` through Sirius Web's namespace discovery.
 
-A new project's default catalog names use its creation language. There is only one editable name per type. Stored catalog, equipment and circuit names remain unchanged when the application language changes. New equipment takes the current name of its selected catalog type. The sample's descriptive object names are ordinary example data; the catalog and interface use the selected language.
+A new project's default catalog names use its creation language. There is only one editable name per type. Stored catalog, equipment and circuit names remain unchanged when the application language changes. New equipment takes the current name of its selected catalog type. The sample also initializes its storeys, rooms, boards, circuits, equipment, channels, controls and label text in that language. Those names remain ordinary editable example data afterward.
 
 ## Validation
 

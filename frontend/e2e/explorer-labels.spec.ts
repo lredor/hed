@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
+import { sampleName } from './sample';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -54,7 +55,7 @@ test('show device name and catalog type, rename only the name and preserve store
     await item(projectName).waitFor();
     await item(projectName).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).last().click();
-    await item('Bedroom light').waitFor();
+    await item(sampleName('bedroomLight')).waitFor();
   };
   const rename = async (label: string) => {
     await item(label).locator('../..').getByRole('button').click();
@@ -87,7 +88,7 @@ test('show device name and catalog type, rename only the name and preserve store
     await item(newName).click();
     await expect(name).toHaveValue(newName);
     await expect(page.getByRole('textbox', { name: messages['feature.labelText'], exact: true })).toHaveValue(
-      'Ground floor lighting'
+      sampleName('groundFloorLighting')
     );
     await expect(type).toContainText(typeName);
     const catalogType = page
@@ -117,7 +118,7 @@ test('show device name and catalog type, rename only the name and preserve store
       .click();
     await expect(page.locator('input:focus')).toHaveValue('');
     await page.keyboard.press('Escape');
-    await expect(item('Sofa outlet')).toHaveText('Sofa outlet');
+    await expect(item(sampleName('sofaOutlet'))).toHaveText(sampleName('sofaOutlet'));
     await expect(item(messages['class.Dwelling'])).toHaveText(messages['class.Dwelling']);
     expect(errors).toEqual([]);
   } finally {

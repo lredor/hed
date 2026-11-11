@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import hed.homeelectrical.DeviceKind;
 import hed.domain.Messages;
 import hed.starter.HedDomainIcons;
+import hed.starter.representations.CatalogDropService;
 import hed.starter.representations.diagrams.panel.PanelDiagram;
 import hed.starter.representations.diagrams.panel.PanelServices;
 import hed.starter.representations.tables.HedTableDescriptions;
@@ -64,7 +65,7 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
 
     @Override
     public List<Class<?>> getServiceClasses(View view) {
-        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class);
+        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class);
     }
 
     @Override

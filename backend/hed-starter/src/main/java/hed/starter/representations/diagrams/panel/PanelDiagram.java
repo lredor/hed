@@ -22,10 +22,20 @@ import hed.starter.HedDomainIcons;
 public final class PanelDiagram {
     private final Locale locale;
 
+    /**
+     * Creates the distribution-board diagram definition builder.
+     *
+     * @param locale the language used for the diagram title
+     */
     public PanelDiagram(Locale locale) {
         this.locale = locale;
     }
 
+    /**
+     * Defines the cabinet, ordered rails and modular devices, including native move, delete and catalog-drop tools.
+     *
+     * @return the diagram description available on a distribution board
+     */
     public DiagramDescription create() {
         var b = new DiagramBuilders();
         var operations = new ViewBuilders();
@@ -47,6 +57,8 @@ public final class PanelDiagram {
         return b.newDiagramDescription().name(Messages.text(locale, "diagram.panel")).domainType("homeelectrical::DistributionBoard").preconditionExpression("aql:true")
                 .titleExpression(Messages.text(locale, "diagram.panel")).iconExpression(HedDomainIcons.path("view-dashboard-outline"))
                 .style(b.newDiagramStyleDescription().background(operations.newFixedColor().name("hed-panel-background").value("#ffffff").build()).build()).layoutOption(DiagramLayoutOption.NONE)
-                .nodeDescriptions(board).minimapVisible(false).build();
+                .nodeDescriptions(board).minimapVisible(false).palette(b.newDiagramPalette().dropTool(b.newDropTool().name("hed-panel-create-from-catalog")
+                        .body(operations.newChangeContext().expression("aql:self.dropHedCatalogType(selectedNode, editingContext)").build()).build()).build())
+                .build();
     }
 }

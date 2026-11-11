@@ -24,6 +24,7 @@ import {
   convertInsideLabel,
   convertOutsideLabels,
   useDropNodeStyle,
+  useDrop,
 } from '@eclipse-sirius/sirius-components-diagrams';
 import { Node, NodeProps } from '@xyflow/react';
 import { useTranslation } from 'react-i18next';
@@ -226,11 +227,12 @@ class PanelLayoutHandler implements INodeLayoutHandler<NodeData> {
   }
 }
 
-const PanelNode = memo(({ data: raw, selected, dragging }: NodeProps) => {
+const PanelNode = memo(({ id, data: raw, selected, dragging }: NodeProps) => {
   const data = raw as PanelData;
   const panel = data.panel;
   const { httpOrigin } = useContext(ServerContext);
   const { t } = useTranslation('home-electrical-designer');
+  const { onDrop, onDragOver } = useDrop();
   const { style: dropStyle } = useDropNodeStyle(
     data.isDropNodeTarget,
     data.isDragNodeSource,
@@ -247,7 +249,9 @@ const PanelNode = memo(({ data: raw, selected, dragging }: NodeProps) => {
       data-semantic-id={data.targetObjectId}
       data-order={panel.order}
       data-panel-role={panel.role}
-      aria-label={data.targetObjectLabel}>
+      aria-label={data.targetObjectLabel}
+      onDragOver={onDragOver}
+      onDrop={(event) => onDrop(event, id)}>
       {panel.role === 'board' ? (
         <>
           <img className="hed-cabinet-image" src={httpOrigin + panel.imageURL} alt="" draggable={false} />

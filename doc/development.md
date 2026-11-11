@@ -66,6 +66,7 @@ The starter follows Ontology's separation of project setup and representation co
 | --- | --- |
 | `hed.starter` | `HedDomainConfiguration` connects EMF, validation, locale and image paths to Sirius Web; `HedDomainIcons` supplies shared pictograms. |
 | `hed.starter.project` | `ProjectTemplates` advertises the available project templates; `ProjectInitializer` creates their semantic content; `ProjectNames` resolves the native project name for the explorer root. |
+| `hed.starter.representations` | `CatalogDropService` shares catalog-to-rail creation and validation between explorer and diagram drops. |
 | `hed.starter.representations.modelexplorer` | `ViewContribution`, `HedJavaServices`, `ExplorerMetadata` and `ExplorerRepresentations` describe the explorer and its saved representations; `HedDomainEditing` and `HedDomainLabels` provide editing and label services; `HedInitialDirectEditTreeItemLabelProvider` supplies the stored name when renaming an appliance. |
 | `hed.starter.representations.details` | `HedPropertiesDescriptionRegistryConfigurer` builds the properties pages. |
 | `hed.starter.representations.tables` | `HedTableDescriptions` builds equipment, circuit, board and catalog tables. |
@@ -96,6 +97,8 @@ Format Java classes with one statement per line and the Sirius formatter profile
 
 Name public AQL services with a leading verb and the `Hed` qualifier: `getHedChildren`, `hasHedChildren`, `isHedSelectable`, `canCreateHedObject` and `createHedObject`, for example. Keep Java callers and AQL expressions consistent with these names.
 
+Document each new class, public constructor and public method that does not override or implement an inherited contract with Javadoc. Explain its purpose and document parameters, return values and rejection conditions where applicable. Add comments for non-obvious decisions or invariants. Apply this convention to new work; previously reviewed classes can be documented in a separate pass.
+
 ## Protection relationships
 
 Select an RCCB in Model Explorer and use **Upstream service circuit-breaker** in Properties to connect it to the main service breaker. The service breaker's **Devices directly downstream** selection is the inverse relationship and updates automatically. An RCCB also displays its directly supplied modular devices as a read-only list, calculated from their **Upstream RCCB** assignments.
@@ -124,7 +127,7 @@ Browser checks cover project creation, catalog editing, native object creation, 
 ```powershell
 $env:HED_BASE_URL = 'http://localhost:8081'
 $env:HED_TEST_LOCALE = 'fr_FR'
-npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts panel.spec.ts
+npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts panel.spec.ts
 ```
 
 The protection workflow checks service-breaker inverse links, the read-only RCCB downstream list and persistence after reopening.

@@ -47,31 +47,39 @@ The project root, GTL and category groups are navigation objects. They do not ad
 | Storey / Room | Rooms / terminal equipment assigned to that room |
 | GTL | Distribution boards and one service connection |
 | Service connection | Energy meter and service circuit-breaker, when the catalog contains a compatible type |
-| Distribution board / DIN rail | DIN rails / compatible modular appliances within the rail capacity |
+| Distribution board / DIN rail | DIN rails / compatible modular devices within the rail capacity |
 | Circuits / Final circuit | Final or distribution circuits / branches |
 | Catalog category | A device type initialized in that category |
 
-Use **New object** on a room or rail to choose a compatible catalog type, or a contextual **Create** action to use the default type for a category. A board cannot create an unmounted appliance, and an occupied rail cannot be deleted.
+Use **New object** on a room or rail to choose a compatible catalog type, or a contextual **Create** action to use the default type for a category. A board cannot create an unmounted modular device, and an occupied rail cannot be deleted.
 
 Distribution board catalog types include modular apparatus, energy meters and service circuit-breakers. All other types appear under Terminal equipment. Creating a type from the distribution board category initializes it as MCB; creating one from the terminal category initializes it as Outlet. Editing its **Category** immediately moves the same type to the corresponding navigation group, retaining its name, identity and semantic catalog ownership.
 
+## Create modular devices from the catalog
+
+Drag a modular **Device type** from the catalog onto a **DIN rail** in Model Explorer, or onto a rail in the **Distribution Board Layout**. In the diagram, dropping onto an existing modular device uses its rail. Each accepted type creates a new modular device at the end of the rail, preserving the modular devices already mounted there. Its initial name is the type's current stored name. The type remains in the catalog; repeated drops create distinct modular devices sharing that type's specifications.
+
+Model Explorer accepts one or several selected modular types. It validates the entire selection, including its combined module width, before creating anything. Drop onto the rail itself; a gap between explorer rows is reserved for ordering and cannot create modular devices. Diagram drops use Sirius Web's native per-object tool and check each type before appending its modular device.
+
+Only modular types from the same dwelling are accepted. Terminal equipment, energy meters and service circuit-breakers cannot be mounted by this tool. A full rail, a foreign type, a board or the diagram background is rejected with a translated message. Configure circuit and upstream protection assignments afterward in Properties. Reopening retains modular device identities, their catalog references and rail order.
+
 ## Modular device labels
 
-An appliance mounted on a DIN rail is displayed as **Name - Device type name**, for example `Q1 - MCB C16 A`. Its name is the model's single local identifier. If the name is empty or contains only whitespace, the explorer displays the catalog type name alone. Without a catalog type, the usual object label is retained.
+A modular device mounted on a DIN rail is displayed as **Name - Device type name**, for example `Q1 - MCB C16 A`. Its name is the model's single local identifier. If the name is empty or contains only whitespace, the explorer displays the catalog type name alone. Without a catalog type, the usual object label is retained.
 
-The type's name is stored user data, initialized in the project's creation language. The explorer does not translate it when the application language changes. Renaming a catalog type updates the suffix on all associated appliances without changing their stored names.
+The type's name is stored user data, initialized in the project's creation language. The explorer does not translate it when the application language changes. Renaming a catalog type updates the suffix on all associated modular devices without changing their stored names.
 
 This composite label is specific to Model Explorer. Properties, reference selections, table cells/row headers and panel captions retain their existing labels. A printed cabinet label remains in the separate `labelText` field. Terminal equipment and the other named elements keep their usual explorer labels, apart from the fixed localized Dwelling navigation label.
 
 ## Rename
 
-Use **Rename** on an appliance to edit only its stored name. The inline editor starts with that name, including an empty value, rather than the composite label. A name containing a hyphen is preserved as entered. Confirming the edit uses Sirius Web's native rename action and updates the `name` attribute; it does not change the catalog type or cabinet label text.
+Use **Rename** on a modular device to edit only its stored name. The inline editor starts with that name, including an empty value, rather than the composite label. A name containing a hyphen is preserved as entered. Confirming the edit uses Sirius Web's native rename action and updates the `name` attribute; it does not change the catalog type or cabinet label text.
 
 The initial edit-label provider handles modular devices and delegates all other elements and saved representations to the standard Sirius Web provider. Renaming and moving an object preserve its identity and electrical references.
 
 ## Ordering and pictograms
 
-See [reordering rails and appliances](explorer-reordering.md) for the contextual movement commands and [model pictograms](icons.md) for the shared icon selection.
+See [reordering rails and modular devices](explorer-reordering.md) for the contextual movement commands and [model pictograms](icons.md) for the shared icon selection.
 
 ## Implementation and verification
 
@@ -79,4 +87,6 @@ See [reordering rails and appliances](explorer-reordering.md) for the contextual
 
 `ProjectNames` in `hed.starter.project` resolves the project through Sirius Web's editing-context and project services. Virtual nodes have stable IDs derived from their semantic owner, so expansion and parent lookup do not depend on translated labels. Integration tests cover project/group identity, displayed parent/child consistency, catalog classification, contextual creation and saved representations. The bilingual `explorer-hierarchy.spec.ts` scenario checks the hierarchy, category changes, board/rail creation, occupied-rail deletion protection and persistence.
 
-Integration tests also cover composite/fallback labels, retained names in other contexts, raw edit values and delegation. The bilingual `explorer-labels.spec.ts` browser scenario checks renaming an appliance, propagation of a catalog type rename, persistence after reopening and editing an unnamed appliance.
+Integration tests also cover composite/fallback labels, retained names in other contexts, raw edit values and delegation. The bilingual `explorer-labels.spec.ts` browser scenario checks renaming a modular device, propagation of a catalog type rename, persistence after reopening and editing an unnamed modular device.
+
+`CatalogDropService` in `hed.starter.representations` shares creation and validation between the two views. `CatalogTreeDropHandler` is restricted to the domain explorer through the native [tree drop API](https://github.com/eclipse-sirius/sirius-web/blob/v2026.9.0/packages/trees/backend/sirius-components-collaborative-trees/src/main/java/org/eclipse/sirius/components/collaborative/trees/api/IDropTreeItemHandler.java). The bilingual `catalog-drop.spec.ts` checks both routes, invalid targets/types, full-rail rejection, catalog-owned ratings and persistence.

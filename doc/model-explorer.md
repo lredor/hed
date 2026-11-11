@@ -79,6 +79,18 @@ Model Explorer validates the complete selection before creating anything. Only t
 
 Created devices are immediately available under the room and can then be dragged onto a Floor Plan of that storey. The plan's own drop operation places an existing device; direct catalog drops onto a floor plan remain rejected. Reopening retains device identities, their room assignments and their type references.
 
+## Optional floor-plan placement highlight
+
+Open the native **Filters** menu (the filter-list icon in the Model Explorer toolbar) and enable **Highlight equipments not in floor plans**. In French the checkbox is **Surligner les équipements absents des plans**. It is unchecked by default; reopening the page starts with the normal labels. The filter changes label colors and does not hide or reorder any items.
+
+When enabled, equipment assigned to a room is shown in red until it has a graphical view in at least one **Floor Plan** targeting that room's storey. Saved plans that are not open also count. Placing a device restores its usual label; removing its last view or deleting its last containing plan makes it red again. A view in another plan of the same storey still counts. A view left on a former storey does not count after the device's room changes.
+
+The red highlight propagates to each affected **Room**, **Storey** and **Dwelling**, even when these items are collapsed. It clears when all their room equipment has been placed. Empty rooms and storeys retain their usual labels. The project root, navigation groups, catalog types, control channels, modular devices and equipment without a room also retain their usual labels.
+
+Disabling the filter restores all normal labels immediately. The preference belongs to the current explorer, so another tab can leave it disabled independently. It does not change the model, plan layout or the diagram's separate **Show equipment labels** option.
+
+`FloorPlanPlacementFilterProvider` contributes the default-off checkbox through Sirius Web 2026.9.0's [native tree-filter API](https://github.com/eclipse-sirius/sirius-web/blob/v2026.9.0/packages/trees/backend/sirius-components-collaborative-trees/src/main/java/org/eclipse/sirius/components/collaborative/trees/api/ITreeFilterProvider.java). The View DSL has no filter declaration in this version; the platform passes active filter identifiers to the tree renderer. `ExplorerPlanPlacement` uses them to prepare an immutable snapshot for that render only when requested, with live diagrams taking precedence over saved versions. It reuses the explorer's metadata snapshot when available. Parent labels inspect semantic room assignments against that same snapshot, independently of the expanded tree items. The disabled filter performs no placement-specific diagram reads and preserves the original label fragments. No placement flag is stored in the semantic model.
+
 ## Modular device labels
 
 A modular device mounted on a DIN rail is displayed as **Name - Device type name**, for example `Q1 - MCB C16 A`. Its name is the model's single local identifier. If the name is empty or contains only whitespace, the explorer displays the catalog type name alone. Without a catalog type, the usual object label is retained.

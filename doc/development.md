@@ -138,12 +138,14 @@ Browser checks cover project creation, catalog editing, native object creation, 
 ```powershell
 $env:HED_BASE_URL = 'http://localhost:8081'
 $env:HED_TEST_LOCALE = 'fr_FR'
-npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts terminal-catalog-drop.spec.ts rail-capacity.spec.ts circuit-phase.spec.ts floor-plan.spec.ts floor-plan-images.spec.ts panel.spec.ts
+npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts terminal-catalog-drop.spec.ts rail-capacity.spec.ts circuit-phase.spec.ts floor-plan.spec.ts floor-plan-images.spec.ts floor-plan-highlight.spec.ts panel.spec.ts
 ```
 
 The protection workflow checks service-breaker inverse links, the read-only RCCB downstream list and persistence after reopening.
 
 `CircuitPhaseVisibilityTest` checks both circuit kinds and the always-visible supply selector. The bilingual `circuit-phase.spec.ts` workflow checks missing/unknown/single/three-phase supplies, live table-column updates and retention of hidden L2/L3 assignments across reopening.
+
+`ExplorerPlanPlacementTest` checks the native filter’s default-off scope, closed/live plan accounting, disabled-query avoidance, independent render snapshots and propagation to rooms, storeys and the dwelling. The bilingual `floor-plan-highlight.spec.ts` checks collapsed parents, clearing their highlight after the last placement, toggling without hiding items, two explorer tabs, multiple plans, last-placement deletion, room reassignment and reset to the default after reopening.
 
 The bilingual `terminal-catalog-drop.spec.ts` workflow creates outlets, controls and loads by dropping their catalog types onto a room, checks localized names and control channels, rejects invalid drops and places the resulting device on a storey Floor Plan. `CatalogDropTest` checks whole-selection validation before any room equipment is created.
 

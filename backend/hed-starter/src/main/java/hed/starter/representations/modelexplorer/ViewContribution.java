@@ -42,6 +42,7 @@ import hed.starter.representations.diagrams.floorplan.FloorPlanServices;
 import hed.starter.representations.diagrams.panel.PanelServices;
 import hed.starter.representations.tables.HedTableDescriptions;
 
+/** Contributes stable View DSL descriptions and the localized domain explorer to each editing context. */
 @Service
 public class ViewContribution implements IEditingContextProcessor, IJavaServiceProvider, IExplorerTreeDescriptionProvider {
     private final ITreeIdProvider ids;
@@ -56,6 +57,15 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
 
     private org.eclipse.sirius.components.view.tree.TreeDescription explorerDescription;
 
+    /**
+     * Creates the application's explorer and representation contribution.
+     *
+     * @param ids resolves native tree description identifiers
+     * @param descriptions finds the converted runtime descriptions
+     * @param viewDescriptions maps runtime identifiers to their View DSL descriptions
+     * @param tables contributes the electrical tables in their stable order
+     * @param locale selects representation, explorer and tool labels
+     */
     public ViewContribution(ITreeIdProvider ids, IRepresentationDescriptionSearchService descriptions, IViewRepresentationDescriptionSearchService viewDescriptions, HedTableDescriptions tables,
             Locale locale) {
         this.ids = ids;
@@ -67,7 +77,7 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
 
     @Override
     public List<Class<?>> getServiceClasses(View view) {
-        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class, FloorPlanServices.class);
+        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class, FloorPlanServices.class, ExplorerPlanPlacement.class);
     }
 
     @Override
@@ -78,6 +88,11 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
         }
     }
 
+    /**
+     * Builds the domain view with deterministic description identifiers and an optional placement label style.
+     *
+     * @return the view in its own native JSON resource
+     */
     public View createView() {
         var tb = new TreeBuilders();
         var vb = new ViewBuilders();
@@ -107,8 +122,13 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
                 .hasChildrenExpression("aql:self.hasHedChildren(hedRepresentations)").treeItemIdExpression("aql:self.getHedId()").treeItemObjectExpression("aql:id.getHedObject(editingContext)")
                 .treeItemIconExpression("aql:self.getHedIcon()").kindExpression("aql:self.getHedKind()").parentExpression("aql:self.getHedParent(editingContext)")
                 .selectableExpression("aql:self.isHedSelectable()").editableExpression("aql:self.isHedEditable()").deletableExpression("aql:self.isHedDeletable()")
-                .treeItemLabelDescriptions(tb.newTreeItemLabelDescription().name("hed-label").preconditionExpression("aql:true")
-                        .children(tb.newTreeItemLabelFragmentDescription().labelExpression("aql:self.getHedExplorerLabel()").build()).build())
+                .treeItemLabelDescriptions(
+                        tb.newTreeItemLabelDescription().name("hed-label").preconditionExpression("aql:not self.isHedMissingFromFloorPlans(hedPlanPlacements, hedHighlightUnplaced)")
+                                .children(tb.newTreeItemLabelFragmentDescription().labelExpression("aql:self.getHedExplorerLabel()").build()).build(),
+                        tb.newTreeItemLabelDescription().name("hed-label-unplaced").preconditionExpression("aql:self.isHedMissingFromFloorPlans(hedPlanPlacements, hedHighlightUnplaced)")
+                                .children(tb.newTreeItemLabelFragmentDescription().labelExpression("aql:self.getHedExplorerLabel()")
+                                        .style(vb.newTextStyleDescription().name("hed-plan-placement").foregroundColorExpression(ExplorerPlanPlacement.UNPLACED_COLOR).build()).build())
+                                .build())
                 .contextMenuEntries(actions.toArray(TreeItemContextMenuEntry[]::new)).build();
         var view = vb.newView().build();
         view.getDescriptions().add(tree);
@@ -122,6 +142,11 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
         return view;
     }
 
+    /**
+     * Returns the native identifier once this contribution has created the explorer description.
+     *
+     * @return the explorer description identifier, or an empty string before initialization
+     */
     public String explorerDescriptionId() {
         return this.explorerDescription == null ? "" : this.ids.getId(this.explorerDescription);
     }

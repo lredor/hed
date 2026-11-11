@@ -28,6 +28,10 @@ Labels are hidden by default. The header's **Show equipment labels** filter disp
 
 The contextual **Remove from plan** action removes only the selected graphical view. The device remains in its room and can be placed again. If a device is assigned to a room on another storey, its view disappears from this plan. Semantic editing continues through Properties and Model Explorer.
 
+## Check placement from Model Explorer
+
+Model Explorer keeps its usual labels by default. Enable **Highlight equipments not in floor plans** from its native **Filters** menu to color room equipment red when it has no view in any plan of its current storey. The red highlight also marks its room, storey and dwelling, including collapsed items, until all their room equipment is placed. The French label is **Surligner les équipements absents des plans**. Saved plans that are closed also count. This option is independent of the plan’s own outside-label checkbox; see [the placement highlight workflow](model-explorer.md#optional-floor-plan-placement-highlight).
+
 ## Implementation and validation
 
 Backend contributions are in `hed.starter.representations.diagrams.floorplan`, and frontend rendering is in `frontend/src/representations/diagrams/floorplan`. The native View DSL uses an unsynchronized equipment node and Create View / Delete View operations. A custom style and React Flow converter draw the image and the compact pictograms, retaining native selection, drops and persisted positions. The canvas is fixed and nonselectable.

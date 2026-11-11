@@ -81,7 +81,7 @@ Create this table on a **Dwelling**. It lists terminal equipment, rooms, catalog
 
 ### Circuit Table
 
-Create this table on a **Dwelling**. It shows circuit uses, source boards, protective devices, conductor cross-sections and served equipment. Names and conductor cross-sections can be edited inline.
+Create this table on a **Dwelling**. It shows circuit uses, source boards, protective devices, conductor cross-sections and served equipment. Names and conductor cross-sections can be edited inline. The **Phase / supply** column and circuit phase selectors appear only for an explicitly three-phase general supply; hidden values are retained.
 
 ![Circuit Table](doc/images/representations/circuit-table.png)
 

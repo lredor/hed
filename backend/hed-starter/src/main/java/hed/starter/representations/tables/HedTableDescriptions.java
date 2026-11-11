@@ -35,14 +35,30 @@ public class HedTableDescriptions {
 
     private final Locale locale;
 
+    /**
+     * Creates the localized table description contribution.
+     *
+     * @param locale the language of table titles and column headers
+     */
     public HedTableDescriptions(Locale locale) {
         this.locale = locale;
     }
 
+    /**
+     * Lists potential columns in their declared order, before context-dependent visibility is evaluated.
+     *
+     * @param table the equipment, circuits, board or catalog table key
+     * @return its ordered field keys, or an empty list for an unknown key
+     */
     public static List<String> fieldsFor(String table) {
         return FIELDS.getOrDefault(table, List.of());
     }
 
+    /**
+     * Appends the four electrical table descriptions in a stable order.
+     *
+     * @param view the view receiving equipment, circuit, board and catalog tables
+     */
     public void addTo(View view) {
         view.getDescriptions().add(table("equipment", "Dwelling", Set.of("name", "ratedPowerW")));
         view.getDescriptions().add(table("circuits", "Dwelling", Set.of("name", "conductorSectionMm2")));
@@ -50,13 +66,16 @@ public class HedTableDescriptions {
         view.getDescriptions().add(table("catalog", "Catalog", Set.of("name", "ratedCurrentA", "ratedPowerW", "widthModules", "residualCurrentMa", "manufacturer", "productReference")));
     }
 
+    /** Builds a table whose circuit phase column is instantiated only for an explicit three-phase supply. */
     private TableDescription table(String table, String rootType, Set<String> editable) {
         var builders = new TableBuilders();
         var operations = new ViewBuilders();
         var columns = new ArrayList<ColumnDescription>();
         var cells = new ArrayList<CellDescription>();
         for (String field : fieldsFor(table)) {
-            columns.add(builders.newColumnDescription().name("hed-column-" + field).semanticCandidatesExpression("aql:'" + field + "'").headerLabelExpression(Messages.text(locale, "feature." + field))
+            // Empty candidates hide the runtime column while keeping the description's stable identifier.
+            String candidates = table.equals("circuits") && field.equals("phase") ? "aql:if self.hasHedThreePhaseSupply() then 'phase' else Sequence{} endif" : "aql:'" + field + "'";
+            columns.add(builders.newColumnDescription().name("hed-column-" + field).semanticCandidatesExpression(candidates).headerLabelExpression(Messages.text(locale, "feature." + field))
                     .initialWidthExpression("180").isResizableExpression("aql:true").isSortableExpression("aql:true").build());
             CellWidgetDescription widget = editable.contains(field)
                     ? builders.newCellTextfieldWidgetDescription().body(operations.newChangeContext().expression("aql:self.editHedCell('" + field + "',newValue)").build()).build()

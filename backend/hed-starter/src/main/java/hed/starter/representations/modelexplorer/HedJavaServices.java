@@ -66,6 +66,7 @@ import static hed.domain.HedDomain.canReorder;
 import static hed.domain.HedDomain.delete;
 import static hed.domain.HedDomain.dwelling;
 import static hed.domain.HedDomain.get;
+import static hed.domain.HedDomain.hasThreePhaseSupply;
 import static hed.domain.HedDomain.inUse;
 import static hed.domain.HedDomain.initialize;
 import static hed.domain.HedDomain.kind;
@@ -234,6 +235,16 @@ public class HedJavaServices {
     public String getHedIcon(Object self) {
         return self instanceof RepresentationMetadata representation ? representation.getIconURLs().stream().map(icon -> icon.url()).findFirst().orElse(HedDomainIcons.path("table-large"))
                 : HedDomainIcons.of(self);
+    }
+
+    /**
+     * Exposes the dwelling's explicit supply arrangement to conditional View DSL representations.
+     *
+     * @param self the dwelling or one of its contained semantic elements
+     * @return whether its service connection exists and is explicitly three-phase
+     */
+    public boolean hasHedThreePhaseSupply(EObject self) {
+        return hasThreePhaseSupply(self);
     }
 
     public boolean isHedSelectable(Object self) {

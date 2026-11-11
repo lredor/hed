@@ -62,12 +62,19 @@ import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.ServiceCircuitBreaker;
 import hed.starter.HedDomainIcons;
 
+/** Builds localized properties pages with controls filtered by device kind and supply configuration. */
 @Service
 public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDescriptionRegistryConfigurer {
     private final IIdentityService identity;
 
     private final Locale locale;
 
+    /**
+     * Creates the properties description contribution.
+     *
+     * @param identity supplies stable identifiers for semantic targets
+     * @param locale selects property labels and validation messages
+     */
     public HedPropertiesDescriptionRegistryConfigurer(IIdentityService identity, Locale locale) {
         this.identity = identity;
         this.locale = locale;
@@ -114,9 +121,11 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
         return vm.get(VariableManager.SELF, EObject.class).orElseThrow();
     }
 
+    /** Evaluates control visibility without changing values stored on the selected model element. */
     private boolean applicable(EObject object, EStructuralFeature feature) {
         var kind = object instanceof DeviceType type ? type.getKind() : object instanceof Equipment e ? HedDomain.kind(e) : null;
         return switch (feature.getName()) {
+            case "phase" -> !(object instanceof Circuit) || HedDomain.hasThreePhaseSupply(object);
             case "widthModules" -> object instanceof ModularDevice || HedDomain.modular(kind);
             case "residualCurrentMa", "residualType" -> EnumSet.of(DeviceKind.RCCB, DeviceKind.RCBO, DeviceKind.SERVICE_BREAKER).contains(kind);
             case "tripCurve" -> EnumSet.of(DeviceKind.MCB, DeviceKind.RCBO).contains(kind);

@@ -105,6 +105,12 @@ Select an RCCB in Model Explorer and use **Upstream service circuit-breaker** in
 
 MCBs reference their upstream RCCB; circuits reference their overcurrent protective device. A modular device can have either an upstream RCCB or a direct service-breaker supply. Clear the current assignment before selecting the other supply. Domain validation rejects conflicting assignments and cycles.
 
+## Circuit phase visibility
+
+Circuit phase controls are available only when the dwelling's service connection explicitly uses a three-phase supply. The Circuit Table uses the same condition for its Phase / supply column. Missing, unknown and single-phase supply configurations hide both presentations while retaining the recorded circuit assignments. The service connection's own selector remains visible so the supply can always be changed.
+
+The properties condition and the View DSL service share `HedDomain.hasThreePhaseSupply`. The table keeps its column description in place and returns no semantic candidates when the column is hidden, preserving the identifiers of existing representations.
+
 ## Languages
 
 English is the default. For example, in PowerShell, enable French before launching the backend:
@@ -127,10 +133,12 @@ Browser checks cover project creation, catalog editing, native object creation, 
 ```powershell
 $env:HED_BASE_URL = 'http://localhost:8081'
 $env:HED_TEST_LOCALE = 'fr_FR'
-npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts rail-capacity.spec.ts panel.spec.ts
+npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts rail-capacity.spec.ts circuit-phase.spec.ts panel.spec.ts
 ```
 
 The protection workflow checks service-breaker inverse links, the read-only RCCB downstream list and persistence after reopening.
+
+`CircuitPhaseVisibilityTest` checks both circuit kinds and the always-visible supply selector. The bilingual `circuit-phase.spec.ts` workflow checks missing/unknown/single/three-phase supplies, live table-column updates and retention of hidden L2/L3 assignments across reopening.
 
 The bilingual `rail-capacity.spec.ts` workflow verifies that the native New Object dialog remains available for a compact catalog variant when generic types no longer fit, then hides creation once the rail is full. It also checks drop rejection and persisted fractional module widths. `RailCapacityTest` covers menu/dialog consistency, stale choices and missing or incompatible catalog types.
 

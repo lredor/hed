@@ -57,6 +57,8 @@ Create a distribution board from the GTL, then rails on the board and modular de
 
 Drag a modular device type from the catalog onto a DIN rail in Model Explorer or the Distribution Board Layout to append a new modular device. The type stays in the catalog and the rail must have enough capacity. See [catalog drops](doc/model-explorer.md#create-modular-devices-from-the-catalog).
 
+Drag a **Terminal equipment** type from the catalog onto a **Room** in Model Explorer to create an outlet, control device or load assigned to that room. Its initial name is the catalog type's current stored name. See [terminal equipment catalog drops](doc/model-explorer.md#create-terminal-equipment-from-the-catalog).
+
 Rail-mounted modular devices display **Name - Device type name**, for example `Q1 - MCB C16 A`. Rename edits only the modular device name. See [explorer labels and editing](doc/model-explorer.md).
 
 Creation menus respect the remaining rail capacity, including compact custom catalog types. See [creation choices and rail capacity](doc/model-explorer.md#creation-choices-and-rail-capacity).

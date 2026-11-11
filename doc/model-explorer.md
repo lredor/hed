@@ -71,6 +71,14 @@ Model Explorer accepts one or several selected modular types. It validates the e
 
 Only modular types from the same dwelling are accepted. Terminal equipment, energy meters and service circuit-breakers cannot be mounted by this tool. A full rail, a foreign type, a board or the diagram background is rejected with a translated message. Configure circuit and upstream protection assignments afterward in Properties. Reopening retains modular device identities, their catalog references and rail order.
 
+## Create terminal equipment from the catalog
+
+Drag a type from **Device catalog → Terminal equipment** onto a **Room** in Model Explorer. Each accepted type creates a new outlet, control device or electrical load assigned to that room. The device belongs to the dwelling and references the selected catalog type; the type stays in its catalog. Initial names and technical values come from the type's current stored data, and control channels are initialized in the application language. Repeated drops create distinct devices that can be renamed independently in Properties.
+
+Model Explorer validates the complete selection before creating anything. Only terminal types from the same dwelling are accepted. A modular type, energy meter, service circuit-breaker, non-catalog object, unresolved source or foreign type causes the entire selection to be rejected. Drop directly onto the room: storeys, navigation groups and gaps between rows cannot receive this creation operation.
+
+Created devices are immediately available under the room and can then be dragged onto a Floor Plan of that storey. The plan's own drop operation places an existing device; direct catalog drops onto a floor plan remain rejected. Reopening retains device identities, their room assignments and their type references.
+
 ## Modular device labels
 
 A modular device mounted on a DIN rail is displayed as **Name - Device type name**, for example `Q1 - MCB C16 A`. Its name is the model's single local identifier. If the name is empty or contains only whitespace, the explorer displays the catalog type name alone. Without a catalog type, the usual object label is retained.
@@ -97,4 +105,4 @@ See [reordering rails and modular devices](explorer-reordering.md) for the conte
 
 Integration tests also cover composite/fallback labels, retained names in other contexts, raw edit values and delegation. The bilingual `explorer-labels.spec.ts` browser scenario checks renaming a modular device, propagation of a catalog type rename, persistence after reopening and editing an unnamed modular device.
 
-`CatalogDropService` in `hed.starter.representations` shares creation and validation between the two views. `CatalogTreeDropHandler` is restricted to the domain explorer through the native [tree drop API](https://github.com/eclipse-sirius/sirius-web/blob/v2026.9.0/packages/trees/backend/sirius-components-collaborative-trees/src/main/java/org/eclipse/sirius/components/collaborative/trees/api/IDropTreeItemHandler.java). The bilingual `catalog-drop.spec.ts` checks both routes, invalid targets/types, full-rail rejection, catalog-owned ratings and persistence.
+`CatalogDropService` in `hed.starter.representations` shares catalog-based creation and validation for DIN rails and rooms. Diagram catalog drops continue to use the rail route. `CatalogTreeDropHandler` is restricted to the domain explorer through the native [tree drop API](https://github.com/eclipse-sirius/sirius-web/blob/v2026.9.0/packages/trees/backend/sirius-components-collaborative-trees/src/main/java/org/eclipse/sirius/components/collaborative/trees/api/IDropTreeItemHandler.java). The bilingual `catalog-drop.spec.ts` checks both routes, invalid targets/types, full-rail rejection, catalog-owned ratings and persistence. `CatalogDropTest` also checks every terminal category, whole-selection room rejection and localized control-channel names. The bilingual `terminal-catalog-drop.spec.ts` verifies room creation, repeated drops, names and properties, invalid targets/types, placement on a storey floor plan and persistence.

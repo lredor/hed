@@ -25,9 +25,11 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import hed.domain.Messages;
+import hed.homeelectrical.DINRail;
+import hed.homeelectrical.Room;
 import hed.starter.representations.CatalogDropService;
 
-/** Create modular devices from catalog types dropped onto rails in the domain explorer. */
+/** Creates modular or terminal devices from catalog types dropped onto rails or rooms in the domain explorer. */
 @Service
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CatalogTreeDropHandler implements IDropTreeItemHandler {
@@ -42,7 +44,7 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
     /**
      * Creates the drop handler restricted to the HED explorer projection.
      *
-     * @param search resolves the selected catalog types and destination rail
+     * @param search resolves the selected catalog types and destination rail or room
      * @param descriptions identifies the domain explorer description
      * @param drops validates and creates the complete selection
      * @param locale selects explorer and rejection messages
@@ -63,13 +65,19 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
     @Override
     public IStatus handle(IEditingContext context, Tree tree, DropTreeItemInput input) {
         try {
-            // An indexed drop targets a gap between rows; creation requires dropping onto the rail itself.
+            // An indexed drop targets a gap between rows; creation requires a rail or room as the target.
             if (input.index() >= 0) {
-                throw new IllegalArgumentException("drop.catalogRail");
+                throw new IllegalArgumentException("drop.catalogTarget");
             }
             var target = search.getObject(context, input.targetElementId()).orElse(null);
             var sources = input.droppedElementIds().stream().map(id -> search.getObject(context, id).orElse(null)).toList();
-            drops.create(target, sources);
+            if (target instanceof Room room) {
+                drops.createInRoom(room, sources);
+            } else if (target instanceof DINRail) {
+                drops.create(target, sources);
+            } else {
+                throw new IllegalArgumentException("drop.catalogTarget");
+            }
             return new Success(ChangeKind.SEMANTIC_CHANGE, Map.of());
         } catch (IllegalArgumentException ex) {
             return new Failure(Messages.text(locale, ex.getMessage()));

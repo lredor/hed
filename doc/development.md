@@ -138,12 +138,14 @@ Browser checks cover project creation, catalog editing, native object creation, 
 ```powershell
 $env:HED_BASE_URL = 'http://localhost:8081'
 $env:HED_TEST_LOCALE = 'fr_FR'
-npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts rail-capacity.spec.ts circuit-phase.spec.ts floor-plan.spec.ts floor-plan-images.spec.ts panel.spec.ts
+npm --prefix frontend test -- bootstrap.spec.ts tables.spec.ts explorer-representations.spec.ts upstream-protection.spec.ts explorer-reordering.spec.ts explorer-labels.spec.ts explorer-hierarchy.spec.ts catalog-drop.spec.ts terminal-catalog-drop.spec.ts rail-capacity.spec.ts circuit-phase.spec.ts floor-plan.spec.ts floor-plan-images.spec.ts panel.spec.ts
 ```
 
 The protection workflow checks service-breaker inverse links, the read-only RCCB downstream list and persistence after reopening.
 
 `CircuitPhaseVisibilityTest` checks both circuit kinds and the always-visible supply selector. The bilingual `circuit-phase.spec.ts` workflow checks missing/unknown/single/three-phase supplies, live table-column updates and retention of hidden L2/L3 assignments across reopening.
+
+The bilingual `terminal-catalog-drop.spec.ts` workflow creates outlets, controls and loads by dropping their catalog types onto a room, checks localized names and control channels, rejects invalid drops and places the resulting device on a storey Floor Plan. `CatalogDropTest` checks whole-selection validation before any room equipment is created.
 
 The bilingual `rail-capacity.spec.ts` workflow verifies that the native New Object dialog remains available for a compact catalog variant when generic types no longer fit, then hides creation once the rail is full. It also checks drop rejection and persisted fractional module widths. `RailCapacityTest` covers menu/dialog consistency, stale choices and missing or incompatible catalog types.
 

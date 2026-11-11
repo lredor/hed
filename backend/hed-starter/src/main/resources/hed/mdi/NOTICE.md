@@ -1,12 +1,14 @@
 # Material Design Icons
 
-These unmodified SVG files are a subset of `@mdi/svg` version **7.4.47**, published by Pictogrammers.
+These SVG files are a subset of `@mdi/svg` version **7.4.47**, published by Pictogrammers.
 
 - Source: https://github.com/Templarian/MaterialDesign-SVG
 - Package: https://www.npmjs.com/package/@mdi/svg/v/7.4.47
 - License: Apache License 2.0 (see `LICENSE-APACHE-2.0.txt` and the upstream `LICENSE`).
 - Icon names and author credits below are taken from the upstream package metadata.
 - No brand/logo icons are included.
+
+The `home-lightning-bolt-outline` icon was adapted for HED by separating its original paths to color the lightning bolt. All other SVG files are unmodified.
 
 | Icon | Author |
 | --- | --- |

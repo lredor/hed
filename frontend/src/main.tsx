@@ -48,12 +48,13 @@ function Brand() {
         style={{
           display: 'inline-flex',
           alignItems: 'center',
-          fontSize: 20,
           padding: '4px 12px',
           color: 'inherit',
           textDecoration: 'none',
         }}>
-        <span aria-hidden="true">⚡</span>
+        <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24">
+          <use href="/api/images/hed/mdi/home-lightning-bolt-outline.svg?v=2#mdi-home-lightning-bolt-outline" />
+        </svg>
       </Link>
     </Tooltip>
   );

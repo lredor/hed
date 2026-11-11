@@ -55,6 +55,14 @@ Use **New object** on a room or rail to choose a compatible catalog type, or a c
 
 Distribution board catalog types include modular apparatus, energy meters and service circuit-breakers. All other types appear under Terminal equipment. Creating a type from the distribution board category initializes it as MCB; creating one from the terminal category initializes it as Outlet. Editing its **Category** immediately moves the same type to the corresponding navigation group, retaining its name, identity and semantic catalog ownership.
 
+## Creation choices and rail capacity
+
+On a DIN rail, **New object** stays available while at least one compatible catalog type fits in the remaining space. The dialog lists each fitting variant using its own module width. Contextual **Create** actions still use the default type for that category, so a generic action can disappear while a smaller custom variant remains available through **New object**.
+
+For example, a one-module rail with a half-module device can accept another half-module catalog variant, even though a default one-module device cannot fit. When no compatible type fits, **New object** is hidden. Creation requests and catalog drops are checked again on the server, including choices made before the available capacity changed.
+
+Properties only offers valid destination rails. Devices already on a full rail can still be reordered because their total occupied width does not change.
+
 ## Create modular devices from the catalog
 
 Drag a modular **Device type** from the catalog onto a **DIN rail** in Model Explorer, or onto a rail in the **Distribution Board Layout**. In the diagram, dropping onto an existing modular device uses its rail. Each accepted type creates a new modular device at the end of the rail, preserving the modular devices already mounted there. Its initial name is the type's current stored name. The type remains in the catalog; repeated drops create distinct modular devices sharing that type's specifications.

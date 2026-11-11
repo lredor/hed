@@ -59,6 +59,8 @@ Drag a modular device type from the catalog onto a DIN rail in Model Explorer or
 
 Rail-mounted modular devices display **Name - Device type name**, for example `Q1 - MCB C16 A`. Rename edits only the modular device name. See [explorer labels and editing](doc/model-explorer.md).
 
+Creation menus respect the remaining rail capacity, including compact custom catalog types. See [creation choices and rail capacity](doc/model-explorer.md#creation-choices-and-rail-capacity).
+
 See [reordering rails and mounted devices](doc/explorer-reordering.md) for Model Explorer movement commands.
 
 ### Model pictograms

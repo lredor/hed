@@ -250,7 +250,18 @@ public class HedJavaServices {
                         && !(self instanceof DeviceType t && inUse(t)) && !(self instanceof ControlChannel c && ((ControlDevice) c.eContainer()).getChannels().size() == 1);
     }
 
+    /**
+     * Determines whether the native New Object dialog has at least one compatible creation choice.
+     * For a rail, every catalog type is considered: a compact variant may fit when its kind's default type does not.
+     *
+     * @param self the prospective semantic owner or explorer navigation object
+     * @return whether the dialog can offer a compatible type or class for this owner
+     */
     public boolean canAddHedObject(Object self) {
+        if (self instanceof DINRail rail) {
+            var home = dwelling(rail);
+            return home != null && home.getCatalog() != null && home.getCatalog().getDeviceTypes().stream().anyMatch(type -> canAddToRail(rail, type));
+        }
         if (!(self instanceof EObject)) {
             return false;
         }

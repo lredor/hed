@@ -10,6 +10,8 @@ SPDX-License-Identifier: EPL-2.0
 
 # Docker launch
 
+For a first installation without development experience, use the illustrated user guide's [English installation walkthrough](user/en/index.adoc#installation) or [procédure en français](user/fr/index.adoc#installation). It explains Docker Desktop, ZIP extraction, credentials, settings, startup and data preservation. The commands below are the shorter developer workflow.
+
 Docker must be running with Linux containers. Set GH_PACKAGES_TOKEN as described in [GitHub Packages access](github-packages.md).
 
 Optionally copy .env.example to .env and adjust the database password or locale. Default configuration is for local development.

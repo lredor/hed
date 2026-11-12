@@ -21,11 +21,171 @@ Home Electrical Designer helps you describe a dwelling's electrical installation
 The same model is shared by the explorer, Properties, tables and diagrams.
 The application documents a design; it does not certify electrical compliance.
 
+[[installation]]
+== Install the application on your computer
+
+If someone has already installed HED for you, open the address they supplied and continue with <<_start_with_a_project>>.
+For a personal installation, this walkthrough uses *Docker Desktop*, which builds and runs HED together with its database.
+The database stores your projects; your browser lets you view and edit them.
+You do not need to install Java, Maven, Node.js or Git separately.
+The first build and updates require Internet access and a GitHub account with access to the dependencies.
+
+=== 1. Install Docker Desktop
+
+. Download Docker Desktop from the https://docs.docker.com/desktop/setup/install/windows-install/[official Windows installation page] and follow the instructions for your computer.
+. On Windows, use the *WSL 2* backend and *Linux containers*. Complete any requested WSL setup and Windows restart before continuing.
+. Start Docker Desktop from the Start menu and wait until its engine is running.
+
+WSL 2 is the Windows component that lets Docker run these Linux programs.
+You do not need to open a Linux console to use HED.
+The official installation page lists the current Windows and hardware requirements.
+
+=== 2. Download HED
+
+. Open the https://github.com/lredor/hed[HED repository on GitHub].
+. On the *master* branch, choose *Code → Download ZIP*.
+. Right-click the downloaded ZIP in Windows File Explorer and choose *Extract All*.
+. Keep the extracted folder somewhere permanent, for example under *Documents → HED*.
+
+Use the folder directly containing `compose.yaml`, `Dockerfile` and `.env.example`, usually `hed-master`.
+Do not run the application from inside the ZIP.
+
+=== 3. Allow dependency downloads
+
+The build retrieves Sirius Web components from *GitHub Packages*.
+GitHub requires a personal access token for this, even when the source ZIP can be downloaded without one.
+See https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages[GitHub's package permissions documentation].
+
+. Sign in to GitHub and open https://github.com/settings/tokens/new[the classic personal access token creation page], under *Developer settings → Personal access tokens → Tokens (classic)*.
+. Give the token a name such as `HED local`, choose an expiration date, select *read:packages* and generate it. Copy its value; GitHub will not show it again.
+. In the Windows Start menu, search for *Edit environment variables for your account* and open that setting.
+. Under *User variables*, choose *New*. Set the name to `GH_PACKAGES_TOKEN`, paste the token as its value and confirm the dialogs.
+
+Do not put the token in project files or share it.
+If it expires or is revoked, replace this same variable's value and open a new PowerShell window before rebuilding.
+Your GitHub account must also have access to the relevant packages; a token alone does not grant access to private packages.
+
+=== 4. Set the language and open PowerShell
+
+. In File Explorer, open the folder containing `compose.yaml`.
+. Click its address bar, type `powershell` and press Enter. The command window opens in that folder.
+. Copy these commands one line at a time, pressing Enter after each:
+
+[source,powershell]
+----
+docker compose version
+Copy-Item .env.example .env
+notepad .env
+----
+
+The first command should print a Docker Compose version.
+The second creates your local settings file; do not repeat it if you already have a `.env` file to keep.
+In Notepad, replace the `GITHUB_ACTOR` value with your GitHub username.
+Keep `HED_LOCALE=en_GB` for English, or use `HED_LOCALE=fr_FR` for French.
+Keep the initial `DATABASE_PASSWORD=hed-local` setting for this first local startup.
+Save and close Notepad. The filename must be exactly `.env`, without a `.txt` extension.
+The token stays in the Windows environment variable, not this file.
+
+=== 5. Build and start
+
+In the same PowerShell window:
+
+[source,powershell]
+----
+docker compose -p hed up --build -d
+docker compose -p hed ps
+----
+
+The first command downloads components, builds HED and starts `postgres` for the data and `application` for HED.
+The initial build may take several minutes. Wait for the command prompt to return; later starts reuse the build.
+The second command lists their status. Wait until both show `healthy`, repeating that second command if necessary.
+You can also find the *hed* group in Docker Desktop's *Containers* section.
+
+Open http://localhost:8080[http://localhost:8080] in your browser.
+`localhost` means your own computer; this installation is local.
+You should see *Empty dwelling* and *Sample dwelling* on the home page.
+Create a sample project and check that you can open it and edit an object.
+
+Every command in this guide uses the installation name `hed`, through `-p hed`.
+If you already have an installation under another name, retain that name instead of creating a second installation.
+
+=== 6. Stop, reopen and back up projects
+
+To stop HED cleanly from the same folder:
+
+[source,powershell]
+----
+docker compose -p hed stop
+----
+
+On another day, start Docker Desktop, open PowerShell in that folder and run:
+
+[source,powershell]
+----
+docker compose -p hed start
+docker compose -p hed ps
+----
+
+Reopen http://localhost:8080 and your project.
+Closing the browser tab does not stop the services.
+Your projects live in Docker's data storage named `hed_hed-postgres-data`, called a *volume*, rather than the source folder or application image.
+Stopping the services retains that volume. Do not delete it in Docker Desktop or use `docker compose down --volumes` for a normal stop: that would erase the data.
+
+Also download your projects regularly from their menu on the home page and keep those archives in a separate location, such as your usual backup.
+Use the home page's project upload action to restore an archive.
+Keeping the volume supports normal restarts; archives let you recover projects if Docker's data is lost.
+
+=== 7. Update the application
+
+. Back up your projects using those archives.
+. Download and extract the new ZIP into a new folder.
+. Copy `.env` from the old folder to the new one to retain your language, GitHub username and database password. Keep the Windows `GH_PACKAGES_TOKEN` variable and renew the token if it has expired.
+. Open PowerShell in the new folder containing `compose.yaml`, run `docker compose -p hed up --build -d` and wait for `healthy` status.
+. Refresh the browser with Ctrl+F5.
+
+Keeping the installation name `hed` reuses the same data volume even when the source folder changes.
+Do not simply change `DATABASE_PASSWORD` for an existing database: this does not change the password already stored in PostgreSQL.
+
+=== If startup fails
+
+[cols="2,3",options="header"]
+|===
+|Message or symptom |What to do
+|`docker` not found |Finish installing Docker Desktop and open a new PowerShell window.
+|Cannot connect to Docker |Start Docker Desktop, wait for its engine and check that Linux containers are selected.
+|`no configuration file provided` |Open PowerShell in the folder containing `compose.yaml`.
+|Missing token, `Permission denied`, `401` or `403` during the build |Check the user variable `GH_PACKAGES_TOKEN`, expiration, `read:packages` permission and `GITHUB_ACTOR` username. Open a new PowerShell window after changing environment variables.
+|Port `8080` or `5437` is already in use |Another application or installation is using it. First check Docker Desktop for an existing HED installation; retain that installation if it contains your projects.
+|The page will not open |Check both services with `docker compose -p hed ps`. Read recent messages with `docker compose -p hed logs --tail 100 application postgres`.
+|The application remains in the wrong language |Check `HED_LOCALE` in `.env`, then run `docker compose -p hed up -d`. Existing object names are not translated again.
+|===
+
+=== On macOS or Linux
+
+Install https://docs.docker.com/desktop/setup/install/mac-install/[Docker Desktop for macOS], or https://docs.docker.com/engine/install/[Docker Engine for your Linux distribution] with the https://docs.docker.com/compose/install/[Docker Compose plugin].
+Download and extract the same ZIP, then open a terminal in the folder containing `compose.yaml`.
+After creating the same classic token, first run this command alone in Bash or Zsh:
+
+[source,bash]
+----
+read -r -s GH_PACKAGES_TOKEN
+----
+
+Then paste the token and press Enter; its characters are not displayed. Continue with:
+
+[source,bash]
+----
+export GH_PACKAGES_TOKEN
+cp .env.example .env
+----
+Open `.env` in your text editor, enter your `GITHUB_ACTOR` username and desired language, then use the same `docker compose -p hed` commands as on Windows.
+This token is available only in that terminal; enter it again in a new terminal before building or updating.
+
 == Start with a project
 
 . On the home page, choose *Empty dwelling* to start your installation, or *Sample dwelling* to explore a completed example.
 . Enter a project name and create the project.
-. Open *Electrical installation* in Model Explorer if another explorer is selected.
+. The electrical-installation explorer opens automatically in the *Explorer* panel on the left.
 . Expand the project and select an object to show its *Properties*.
 
 The sample's rooms, equipment, circuits and catalog use the application's language at creation.
@@ -65,6 +225,10 @@ Its optional *Label text* is the wording to print on the board label.
 . Select an equipment instance to edit its name, room and connections in Properties.
 
 A catalog drop creates an installed instance; the type stays in the catalog.
+Start by preparing the device types you need, reusing the supplied types and adding missing variants.
+These types will define the terminal equipment in your dwelling and the modular devices in your distribution board.
+For example, create two breaker types for different current ratings; several installed devices can share one type.
+You can extend the catalog at any time, so you do not need to anticipate the entire installation before starting.
 New equipment takes the catalog type's current name.
 To move an existing device, drag it directly onto another room in Model Explorer.
 This keeps its name, identity, catalog type and circuit/control connections.
@@ -163,12 +327,19 @@ The image keeps its proportions; very flat or very tall images can be rejected.
 Replacing or clearing a background preserves equipment placement.
 The background image is shared by that storey's floor plans, while each representation saves its own equipment positions.
 
-Select the *Storey* in Model Explorer to adjust *Plan width* in *Details*.
+=== Adjust the plan size
+
+. Expand *Dwelling* in Model Explorer and select the relevant *Storey*, such as *First floor* or *Ground floor*, rather than the *Floor Plan* representation.
+. In that storey's *Details* panel, edit *Plan width* (`planWidth` in the metamodel).
+. Enter, for example, `2400`, then leave the field with Tab to confirm. Adjust the diagram zoom afterward if necessary.
+
 The width defaults to 1200 diagram units and accepts a positive whole number.
 *Plan height* is read-only: it is recalculated to preserve the image proportions.
 Importing or replacing an image keeps the chosen width.
 All plans of this storey share the background dimensions, while each retains its own equipment placement.
 When the width changes, equipment centers keep their relative position on the image, including in saved plans that are reopened later.
+
+=== Equipment size and labels
 
 Pictograms and their frameless nodes are both *24 × 24 diagram units*.
 At 100% zoom this corresponds to 24 × 24 CSS pixels; these are diagram units, not metres.

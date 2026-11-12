@@ -25,7 +25,7 @@ test('open the bundled localized user guide from native Help and switch language
       french ? 'Home Electrical Designer : guide utilisateur' : 'Home Electrical Designer: User Guide'
     );
     await expect(guide.locator('#toc')).toBeVisible();
-    await expect(guide.locator('table.tableblock')).toHaveCount(4);
+    await expect(guide.locator('table.tableblock')).toHaveCount(5);
     await expect(guide.locator('.admonitionblock.warning')).toContainText(french ? 'expérimental' : 'experimental');
     await expect(guide.locator('img')).toHaveCount(7);
     await expect

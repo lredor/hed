@@ -10,7 +10,7 @@ SPDX-License-Identifier: EPL-2.0
 
 # Model Explorer
 
-Select **Electrical installation** in the explorer selector to use the domain tree. Model Explorer provides contextual creation, rename and delete actions, and lists saved representations beneath their model element.
+The electrical-installation explorer opens automatically. The application removes the generic Sirius Web explorer when the domain tree is available, so a normal HED project needs no explorer selection. Model Explorer provides contextual creation, rename and delete actions, and lists saved representations beneath their model element.
 
 ## Hierarchy and creation contexts
 

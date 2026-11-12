@@ -9,19 +9,30 @@
  *******************************************************************************/
 import { defineConfig } from '@playwright/test';
 
+const testLocale = process.env.HED_TEST_LOCALE || 'en_GB';
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,
+  forbidOnly: Boolean(process.env.CI),
+  globalTimeout: process.env.CI ? 20 * 60 * 1000 : undefined,
   workers: 1,
   timeout: 60000,
   expect: { timeout: 10000 },
-  outputDir: '../test-results/bootstrap',
+  outputDir: `../test-results/${testLocale}/artifacts`,
+  reporter: process.env.CI
+    ? [
+        ['line'],
+        ['html', { outputFolder: `../playwright-report/${testLocale}`, open: 'never' }],
+        ['junit', { outputFile: `../test-results/${testLocale}/results.xml` }],
+      ]
+    : 'list',
   use: {
     baseURL: process.env.HED_BASE_URL || 'http://localhost:8080',
     channel: 'chrome',
     headless: true,
     viewport: { width: 1500, height: 1050 },
-    locale: process.env.HED_TEST_LOCALE?.startsWith('fr') ? 'fr-FR' : 'en-GB',
+    locale: testLocale.startsWith('fr') ? 'fr-FR' : 'en-GB',
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },

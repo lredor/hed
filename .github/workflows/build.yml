@@ -73,7 +73,7 @@ jobs:
           github.event_name == 'pull_request' &&
           (github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]')
         run: |
-          echo 'The full application build is skipped for fork and Dependabot pull requests because it may require package credentials.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'The full application build and browser verification are skipped for fork and Dependabot pull requests because they may require package credentials.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Before merging, validate the reviewed contribution on a trusted branch as described in doc/continuous-integration.md.' >> "$GITHUB_STEP_SUMMARY"
       - name: Upload domain test reports
         if: ${{ always() && !cancelled() }}
@@ -172,4 +172,140 @@ jobs:
           path: backend/hed-application/target/hed-application-*.jar
           if-no-files-found: error
           compression-level: 0
+          retention-days: 7
+
+  playwright:
+    name: Playwright (${{ matrix.language }})
+    needs: application
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - locale: en_GB
+            language: English
+          - locale: fr_FR
+            language: French
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: hed_e2e
+          POSTGRES_USER: hed
+          POSTGRES_PASSWORD: hed-ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hed -d hed_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      CI: 'true'
+      DATABASE_URL: jdbc:postgresql://127.0.0.1:5432/hed_e2e
+      DATABASE_USER: hed
+      DATABASE_PASSWORD: hed-ci
+      HED_BASE_URL: http://127.0.0.1:8080
+      HED_LOCALE: ${{ matrix.locale }}
+      HED_TEST_LOCALE: ${{ matrix.locale }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          overwrite-settings: false
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: '22.16.0'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Download the application built in this workflow
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: hed-application-${{ github.sha }}
+          path: ${{ runner.temp }}/hed-application
+      - name: Install locked test dependencies
+        working-directory: frontend
+        env:
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
+        run: npm ci
+      - name: Install Google Chrome and browser dependencies
+        working-directory: frontend
+        run: npx --no-install playwright install --with-deps chrome
+      - name: Start the application and wait for readiness
+        timeout-minutes: 5
+        run: |
+          application_jars=("$RUNNER_TEMP"/hed-application/hed-application-*.jar)
+          nohup java -Xmx1g -jar "${application_jars[0]}" > "$RUNNER_TEMP/hed-application.log" 2>&1 &
+          application_pid=$!
+          echo "$application_pid" > "$RUNNER_TEMP/hed-application.pid"
+          for (( attempt=0; attempt<90; attempt++ )); do
+            if ! kill -0 "$application_pid" 2>/dev/null; then
+              cat "$RUNNER_TEMP/hed-application.log"
+              exit 1
+            fi
+            if curl --fail --silent --max-time 2 --output /dev/null "$HED_BASE_URL/actuator/health/readiness"; then
+              exit 0
+            fi
+            sleep 2
+          done
+          tail -n 100 "$RUNNER_TEMP/hed-application.log"
+          echo 'Application readiness timed out.' >&2
+          exit 1
+      - name: Run all browser workflows in ${{ matrix.language }}
+        id: playwright_tests
+        working-directory: frontend
+        run: npm test
+      - name: Show Playwright test results
+        if: ${{ always() && !cancelled() }}
+        uses: mikepenz/action-junit-report@a16be3a69023e9bd7e748ede768b3282ea7b30ce # v6.7.1
+        with:
+          report_paths: test-results/${{ matrix.locale }}/results.xml
+          check_name: Playwright (${{ matrix.language }})
+          job_summary_text: |
+            ## Playwright (${{ matrix.language }})
+
+            ${{ steps.playwright_tests.outcome == 'success' && 'All browser workflows completed.' || 'Browser verification did not complete successfully. Only available results are shown; consult the setup and application logs if no tests could run.' }}
+          detailed_summary: true
+          job_summary: true
+          include_passed: true
+          include_skipped: true
+          include_time_in_summary: true
+          group_suite: true
+          failed_summary_logs: true
+          truncate_stack_traces: false
+          skip_annotations: true
+          comment: false
+          require_tests: ${{ steps.playwright_tests.outcome == 'success' }}
+          fail_on_failure: true
+          fail_on_parse_error: true
+      - name: Stop the test application and collect its logs
+        if: ${{ always() }}
+        run: |
+          if [ -f "$RUNNER_TEMP/hed-application.pid" ]; then
+            read -r application_pid < "$RUNNER_TEMP/hed-application.pid"
+            if kill -0 "$application_pid" 2>/dev/null; then
+              kill "$application_pid" 2>/dev/null || true
+            fi
+          fi
+          mkdir -p "test-results/$HED_TEST_LOCALE"
+          if [ -f "$RUNNER_TEMP/hed-application.log" ]; then
+            cp "$RUNNER_TEMP/hed-application.log" "test-results/$HED_TEST_LOCALE/application.log"
+          fi
+      - name: Upload browser reports, traces and application logs
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: playwright-${{ matrix.locale }}
+          path: |
+            playwright-report/${{ matrix.locale }}/
+            test-results/${{ matrix.locale }}/
+          if-no-files-found: warn
           retention-days: 7

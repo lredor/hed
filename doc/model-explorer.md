@@ -109,7 +109,23 @@ The red highlight propagates to each affected **Room**, **Storey** and **Dwellin
 
 Disabling the filter restores all normal labels immediately. The preference belongs to the current explorer, so another tab can leave it disabled independently. It does not change the model, plan layout or the diagram's separate **Show equipment labels** option.
 
+The two explorer highlights are mutually exclusive: enabling placement switches off circuit completeness, and conversely.
+
 `FloorPlanPlacementFilterProvider` contributes the default-off checkbox through Sirius Web 2026.9.0's [native tree-filter API](https://github.com/eclipse-sirius/sirius-web/blob/v2026.9.0/packages/trees/backend/sirius-components-collaborative-trees/src/main/java/org/eclipse/sirius/components/collaborative/trees/api/ITreeFilterProvider.java). The View DSL has no filter declaration in this version; the platform passes active filter identifiers to the tree renderer. `ExplorerPlanPlacement` uses them to prepare an immutable snapshot for that render only when requested, with live diagrams taking precedence over saved versions. It reuses the explorer's metadata snapshot when available. Parent labels inspect semantic room assignments against that same snapshot, independently of the expanded tree items. The disabled filter performs no placement-specific diagram reads and preserves the original label fragments. No placement flag is stored in the semantic model.
+
+## Optional circuit completeness highlight
+
+Enable **Highlight incomplete circuit elements** in the same **Filters** menu. The French checkbox is **Surligner les éléments incomplets des circuits**. It starts unchecked and enabling it unchecks the placement highlight. The labels turn red for:
+
+- Final or distribution circuits without a protective device.
+- Terminal equipment without a circuit, including equipment without a room.
+- Modular devices in distribution boards that are unused by every circuit.
+
+Usage includes upstream RCCBs of circuit protection devices and actuators of functional controls with a circuit-connected target or source control device. This avoids marking a used upstream RCCB or impulse relay as spare. Energy meters, service circuit-breakers and catalog types are outside this check.
+
+Red propagates through room, storey and dwelling for unconnected terminal equipment, and through rails, boards, the Circuits group and GTL for their incomplete descendants. Collapsing these parents retains the indication. This is an editing aid, not an electrical compliance check; it neither changes associations nor prevents saving. Each explorer keeps its own selection, and reopening starts with both highlights off.
+
+`CircuitCompletenessFilterProvider` contributes the checkbox and `ExplorerCircuitCompleteness` computes an immutable semantic snapshot only when it is enabled. Sirius Web 2026.9.0 has no exclusive filter-group API: `hed-explorer-filters-plugin.ts` routes the application's public tree-component imports through `ExclusiveTreeToolBar`, which forwards the native toolbar and submits one normalized selection per click. The native menu and per-explorer state remain in use. Production builds fail if that public import boundary changes during a Sirius Web upgrade, so the adapter must then be reviewed. The server also gives circuit completeness priority if a client submits both filter identifiers.
 
 ## Modular device labels
 

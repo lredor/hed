@@ -184,6 +184,18 @@ Equipment missing from every floor plan of its storey appears in red, as do its 
 The parent labels remain red when collapsed.
 Disabling the filter restores normal labels and never hides equipment.
 
+=== Find incomplete circuit associations
+
+Enable *Highlight incomplete circuit elements* in the same *Filters* menu.
+This default-off filter marks circuits without protection, dwelling equipment without a circuit and board modules unused by circuits in red.
+Upstream RCCBs and functional-control actuators connected to a circuit count as used.
+The highlight propagates to the relevant parents even when collapsed: room, storey, dwelling, rail, board, Circuits group and electrical service area.
+This helps complete the model; it is not an electrical compliance check.
+
+The two highlights are exclusive: enabling either one switches off the other.
+They do not change associations and each Model Explorer has its own selection.
+Reopening the page switches both off.
+
 == Create and use tables
 
 Use *New representation* on the owner listed below.

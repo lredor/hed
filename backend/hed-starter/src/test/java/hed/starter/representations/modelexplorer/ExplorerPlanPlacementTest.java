@@ -51,7 +51,7 @@ import hed.starter.representations.diagrams.floorplan.FloorPlanNodeStyleProvider
 
 /** Verifies opt-in filter defaults, isolated render snapshots and placement accounting for live and closed floor plans. */
 class ExplorerPlanPlacementTest {
-    private static TreeDescription tree(String label) {
+    static TreeDescription tree(String label) {
         return TreeDescription.newTreeDescription("hed-test-tree").label(label).idProvider(vm -> "explorer://test").treeItemIdProvider(vm -> "item").kindProvider(vm -> "equipment")
                 .labelProvider(vm -> new StyledString(List.of())).targetObjectIdProvider(vm -> "root").parentObjectProvider(vm -> null).treeItemIconURLsProvider(vm -> List.of())
                 .editableProvider(vm -> false).deletableProvider(vm -> false).selectableProvider(vm -> true).elementsProvider(vm -> List.of()).childrenProvider(vm -> List.of())
@@ -81,6 +81,9 @@ class ExplorerPlanPlacementTest {
         assertTrue(fixture.placements(absent).isEmpty());
         var unrelatedFilters = fixture.service.customize(tree(Messages.text(Locale.ENGLISH, "explorer.title")), fixture.variables(List.of("another-filter")));
         assertFalse(fixture.missing(equipment, unrelatedFilters));
+        var exclusive = fixture.service.customize(tree(Messages.text(Locale.ENGLISH, "explorer.title")),
+                fixture.variables(List.of(FloorPlanPlacementFilterProvider.FILTER_ID, CircuitCompletenessFilterProvider.FILTER_ID)));
+        assertFalse(fixture.missing(equipment, exclusive));
         var unrelatedTree = fixture.variables(List.of(FloorPlanPlacementFilterProvider.FILTER_ID));
         assertSame(unrelatedTree, fixture.service.customize(tree("Another tree"), unrelatedTree));
         assertEquals(0, fixture.metadataReads);

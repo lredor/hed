@@ -83,7 +83,8 @@ public class ExplorerPlanPlacement implements IRepresentationRenderVariableCusto
         if (!(description instanceof TreeDescription tree) || !Messages.text(this.locale, "explorer.title").equals(tree.getLabel())) {
             return variables;
         }
-        boolean enabled = variables.get(TreeRenderer.ACTIVE_FILTER_IDS, List.class).map(filters -> filters.contains(FloorPlanPlacementFilterProvider.FILTER_ID)).orElse(false);
+        boolean enabled = variables.get(TreeRenderer.ACTIVE_FILTER_IDS, List.class)
+                .map(filters -> filters.contains(FloorPlanPlacementFilterProvider.FILTER_ID) && !filters.contains(CircuitCompletenessFilterProvider.FILTER_ID)).orElse(false);
         var child = variables.createChild();
         child.put(ENABLED_VARIABLE, enabled);
         // Disabled explorers retain their original labels and perform no placement-related representation reads.

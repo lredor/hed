@@ -186,6 +186,18 @@ Les équipements absents de tous les plans de leur niveau apparaissent en rouge,
 Les parents restent rouges quand l’arbre est replié.
 Désactiver le filtre rétablit les libellés normaux sans masquer les équipements.
 
+=== Repérer les associations de circuits incomplètes
+
+Activez *Surligner les éléments incomplets des circuits* dans le même menu *Filtres*.
+Ce filtre, désactivé par défaut, colore en rouge les circuits sans protection, les équipements du logement sans circuit et les appareils du tableau inutilisés par les circuits.
+Les protections différentielles amont et les actionneurs de commandes fonctionnelles reliées à un circuit sont considérés comme utilisés.
+Le rouge remonte aux parents concernés, même repliés : pièce, niveau, logement, rail, tableau, groupe Circuits et gaine technique logement.
+Ce repérage aide à compléter le modèle ; il ne constitue pas une vérification de conformité électrique.
+
+Les deux surlignages sont exclusifs : activer l’un désactive l’autre.
+Ils ne changent aucune association et restent propres à chaque vue Model Explorer.
+Rouvrir la page les désactive tous les deux.
+
 == Créer et utiliser les tableaux
 
 Utilisez *Nouvelle représentation* sur l’élément indiqué ci-dessous.

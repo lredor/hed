@@ -17,6 +17,7 @@ canva
 .env
 *.log
 test-results
+coverage
 playwright-report
 .project
 .settings

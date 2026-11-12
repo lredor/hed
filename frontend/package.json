@@ -11,8 +11,11 @@
     "build": "npm run format-lint && tsc --noEmit && vite build && npm run build-docs",
     "build-docs": "node scripts/build-user-guide.mjs",
     "test": "playwright test",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"scripts/**/*.mjs\" \"*.ts\" \"index.html\"",
-    "format-lint": "prettier --check \"src/**/*.{ts,tsx,css}\" \"e2e/**/*.ts\" \"scripts/**/*.mjs\" \"*.ts\" \"index.html\""
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"tests/**/*.{ts,tsx}\" \"e2e/**/*.ts\" \"scripts/**/*.mjs\" \"*.ts\" \"index.html\"",
+    "format-lint": "prettier --check \"src/**/*.{ts,tsx,css}\" \"tests/**/*.{ts,tsx}\" \"e2e/**/*.ts\" \"scripts/**/*.mjs\" \"*.ts\" \"index.html\""
   },
   "dependencies": {
     "@apollo/client": "3.10.4",
@@ -83,13 +86,20 @@
   "devDependencies": {
     "@asciidoctor/core": "3.0.4",
     "@playwright/test": "1.56.1",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.10",
     "@types/node": "22.16.0",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "6.0.2",
+    "@vitest/coverage-v8": "5.1.0",
+    "jsdom": "27.4.0",
     "prettier": "2.7.1",
     "typescript": "5.4.5",
-    "vite": "8.1.5"
+    "vite": "8.1.5",
+    "vitest": "5.1.0"
   },
   "license": "EPL-2.0"
 }

@@ -16,9 +16,9 @@ GitHub Actions checks pushes to `master` and pull requests targeting `master`. B
 
 | Workflow / job | What it verifies |
 | --- | --- |
-| **CheckFormatting / Source formatting** | The Sirius Java formatter and Prettier checks for TypeScript, TSX, CSS, frontend build scripts and HTML. This job does not need GitHub Packages credentials. |
-| **Build / Domain verification** | `mvn -B -ntp verify`: Checkstyle, model/edit compilation and domain tests, using public dependencies. Also tests the coverage summary reporter with Python's standard library. This job runs for every contribution. |
-| **Build / Full application build** | Locked frontend dependency installation, Prettier, TypeScript checking, Vite assets, both user guides, and `mvn -B -ntp -s .github/maven-settings.xml -Papplication,coverage clean verify`. The application profile includes the starter tests and packages the executable Spring Boot JAR. JaCoCo aggregates Java-test coverage across modules. A final check verifies that the JAR contains the frontend and both guides. |
+| **CheckFormatting / Source formatting** | The Sirius Java formatter and Prettier checks for TypeScript, TSX, CSS, frontend unit/browser tests, build scripts and HTML. This job does not need GitHub Packages credentials. |
+| **Build / Domain verification** | `mvn -B -ntp verify`: Checkstyle, model/edit compilation and domain tests, using public dependencies. Also tests both coverage summary reporters with Python's standard library. This job runs for every contribution. |
+| **Build / Full application build** | Locked frontend dependency installation, Prettier, TypeScript checking including unit tests, Vite assets, both user guides, `npm run test:coverage`, and `mvn -B -ntp -s .github/maven-settings.xml -Papplication,coverage clean verify`. Vitest reports targeted frontend coverage; JaCoCo aggregates Java-test coverage across modules. The application profile includes starter tests and packages the executable JAR. A final check verifies that it contains the frontend and both guides. |
 | **Build / Playwright (English)** | All browser workflows against the packaged application started with `HED_LOCALE=en_GB`, a fresh PostgreSQL 17 service and an English Chrome locale. |
 | **Build / Playwright (French)** | The same browser workflows with `HED_LOCALE=fr_FR`, a separate fresh database and a French Chrome locale. |
 
@@ -94,6 +94,32 @@ python tools/ci/jacoco_summary.py backend/hed-coverage/target/site/jacoco-aggreg
 
 Use both profiles in the same reactor. `clean` removes old execution data and classes so the report describes the current test run. The HTML entry point is `backend/hed-coverage/target/site/jacoco-aggregate/index.html`. Without `coverage`, the regular domain and `application` builds retain their existing behavior and do not attach the agent or build the reporting module. To run the reporter tests locally, use `python -m unittest discover -s tools/ci -p 'test_*.py'`.
 
+## Frontend tests and coverage
+
+The full application job runs `npm run test:coverage` after building the frontend and guides, before Java verification. Vitest 5.1.0 and its matching V8 coverage provider are pinned alongside React Testing Library, user-event and jest-dom. jsdom 27.4.0 provides the DOM environment and was selected for compatibility with the workflow's Node 22.16.0. Unit tests are separate from Playwright: `npm test` still runs the existing browser workflows, while `npm run test:unit` performs a single local unit-test run and `npm run test:unit:watch` watches for edits.
+
+The tests exercise HED's existing public representation contributions: GraphQL subscription transforms, semantic-to-graphical conversion, constrained rail layouts, fixed 24-pixel pictograms, relative positions after plan resizing, same-rail drop handling, persisted label preferences, image import errors and the view-only deletion prompt in English and French. They use the real HED translations. Sirius contexts/renderers, React Flow accessors, uploads and mutation calls are controlled test doubles; React, GraphQL parsing, Apollo document transforms, translation handling and HED's own code run normally. No application or database is started for these tests. The bilingual Playwright jobs remain the check of actual workbench/server integration.
+
+Coverage includes **every TypeScript/TSX file under `frontend/src/representations/`**, including files not imported by the tests. It excludes `main.tsx` startup wiring, CSS, tests and dependencies such as Sirius Web. This is a targeted baseline, not a measurement of the entire web application. The HTML report shows uncovered source lines; totals include lines, branches, functions and statements. No minimum coverage threshold is enforced yet.
+
+Open **Actions → Build → a workflow run → Summary** for **Frontend coverage** followed by **Frontend unit tests**, within the Full application build summary. The coverage section is written before the detailed test list so it is easier to find. The existing Java and bilingual Playwright sections remain separate. The summary reporter computes percentages from counts and rejects missing, malformed, unexercised or out-of-scope results. Its tests run in Domain verification without package credentials.
+
+Reports are generated in `test-results/frontend-unit/results.xml` and `coverage/frontend/`, separate from Java and locale-specific browser reports. Available test and HTML coverage reports are retained even when Vitest fails. A setup/build failure may produce no reports; a successful test run must produce JUnit results and a valid coverage summary. Unit failures or invalid coverage reports fail the full build and prevent its dependent Playwright jobs from starting. As before, the full job is skipped on fork and Dependabot pull requests that cannot receive package credentials.
+
+For a local run after `npm ci`, execute from `frontend`:
+
+```sh
+npm run test:coverage
+```
+
+Open `coverage/frontend/index.html` from the repository root, or summarize the same report without GitHub:
+
+```sh
+python tools/ci/frontend_coverage_summary.py coverage/frontend/coverage-summary.json
+```
+
+Vitest's configuration restricts test discovery to `frontend/tests/**/*.test.{ts,tsx}` and uses isolated jsdom environments with at most two workers. Playwright continues discovering only `frontend/e2e`. The frontend TypeScript and Prettier checks include unit tests; reports and dependency directories are ignored by Git and excluded from the Docker context. Test dependencies and fixtures are not imported by the application bundle.
+
 ## Reports and application artifact
 
 Read test results directly in **Actions → Build → a workflow run → Summary**. The **Domain tests** and **Application tests** sections show totals, passed/failed/skipped counts, execution times, and individual tests grouped by suite. Failed tests include expandable error messages and stack traces. No download is needed to read the results.
@@ -109,6 +135,8 @@ Raw reports remain available as artifacts for detailed troubleshooting. Open the
 - **domain-test-reports** contains the model's Surefire XML and text reports.
 - **application-test-reports** contains all available Java test reports, including starter tests. Reports are uploaded even when verification fails; an earlier compilation or dependency failure may produce no reports.
 - **java-coverage** contains aggregate JaCoCo HTML and XML after successful Java verification. Line and branch coverage can also be read directly on the native Summary page.
+- **frontend-coverage** contains V8 HTML coverage (`index.html`), LCOV (`lcov.info`) and `coverage-summary.json` for HED representation code. Available reports are retained even after a unit-test failure; the native summary is published after successful unit tests.
+- **frontend-test-reports** contains the Vitest JUnit report. Individual results and failure details also appear under **Frontend unit tests** on the native Summary page.
 - **hed-application-&lt;commit SHA&gt;** contains the executable `hed-application-0.1.0-SNAPSHOT.jar`. It is uploaded only after the full build succeeds and includes both generated user guides. This is a build artifact, not a GitHub release.
 - **playwright-en_GB** and **playwright-fr_FR** contain each language's HTML report, JUnit XML, available failure screenshots/traces and application log. The native Summary page provides the results without downloading these archives. To investigate a trace, extract the archive and run `npx playwright show-trace <path-to-trace.zip>` from `frontend`; use `npx playwright show-report <path-to-report-folder>` for the HTML report.
 

@@ -50,4 +50,5 @@ jobs:
           npm exec --yes --package=prettier@2.7.1 -- prettier --check
           --config frontend/.prettierrc
           "frontend/src/**/*.{ts,tsx,css}" "frontend/e2e/**/*.ts"
+          "frontend/tests/**/*.{ts,tsx}"
           "frontend/scripts/**/*.mjs" "frontend/*.ts" frontend/index.html

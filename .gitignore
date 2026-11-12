@@ -18,4 +18,5 @@
 tempImagesNotInConf/
 playwright-report/
 test-results/
+coverage/
 backend/hed-application/src/main/resources/static/

@@ -59,6 +59,8 @@ GitHub Actions checks formatting and tests the domain modules for pushes to `mas
 
 The full build also measures Java-test coverage with JaCoCo. Its Summary shows line and branch coverage per module, excluding EMF-generated code. The **java-coverage** artifact provides the HTML source report and aggregate XML. This first baseline has no minimum coverage gate; see [coverage scope and local commands](doc/continuous-integration.md#java-coverage).
 
+Vitest and React Testing Library check HED's custom frontend representations, with V8 coverage for conversion/layout, rail drops, floor-plan controls and view-removal confirmation. Results and coverage are shown in the same workflow Summary; HTML and LCOV are retained in **frontend-coverage**. See [frontend test scope and local commands](doc/continuous-integration.md#frontend-tests-and-coverage).
+
 ## Model Explorer
 
 Use Model Explorer to create, rename and delete model elements, inspect their properties and open saved representations.

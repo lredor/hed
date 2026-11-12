@@ -165,6 +165,22 @@ Use `HED_TEST_LOCALE=en_GB` for an English backend. Use a separate database when
 
 The project is distributed under EPL-2.0. Model, edit, starter and application artifacts include the project license and notice; the MDI assets retain their upstream notices. Vite also emits `assets/third-party-licenses.md` alongside the frontend to preserve the license texts of bundled dependencies, including the Roboto font.
 
+## Frontend unit tests
+
+The targeted frontend suite uses [Vitest with V8 coverage](https://vitest.dev/guide/coverage.html) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/). It tests HED's custom diagram behavior with controlled Sirius/React Flow/server boundaries; the separate bilingual Playwright suite verifies the running application.
+
+After installing the locked frontend dependencies, run from `frontend`:
+
+```sh
+npm run test:unit
+npm run test:coverage
+npm run test:unit:watch
+```
+
+Use the first two commands for single runs and the last for interactive development. `npm test` continues to mean Playwright. The test fixtures and cases live in `frontend/tests/`; test discovery excludes `e2e/`. Both TypeScript and Prettier check the unit tests during `npm run build`.
+
+The coverage report includes all source files in `src/representations/`, with unexecuted files counted as uncovered. Startup wiring in `main.tsx`, CSS, tests and external dependencies are outside the measured baseline. Open `coverage/frontend/index.html` at the repository root for the HTML report; JUnit results are under `test-results/frontend-unit/`. These reports are independent of Java and browser reports and do not require an application or database. See [CI reporting and scope](continuous-integration.md#frontend-tests-and-coverage).
+
 ## User documentation
 
 The illustrated guides live in `doc/user/en/index.adoc` and `doc/user/fr/index.adoc`, and can be read directly in the repository. This follows [Ontology's repository user guide](https://github.com/ObeoNetwork/ontology/blob/main/doc/user.adoc). [SysON's documentation](https://github.com/eclipse-syson/syson/tree/main/doc) also uses AsciiDoc, organized into Antora user, installation and developer modules; HED currently keeps one guide per language for its smaller scope.

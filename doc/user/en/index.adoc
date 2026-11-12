@@ -146,6 +146,8 @@ Hiding them preserves recorded values.
 
 A control device owns independent channels, for example the two commands of a double switch.
 Create a functional control below Dwelling and select its channels, controlled equipment and optional modular actuator in Properties.
+Channel choices display *Control device name - Channel name*, for example *Entrance - Channel 1*, to distinguish switches.
+The label follows device and channel renaming.
 Room location, supply-circuit assignment and functional control are independent relationships.
 
 == Place equipment on a floor plan

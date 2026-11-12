@@ -143,7 +143,7 @@ The initial edit-label provider handles modular devices and delegates all other 
 
 ## Ordering and pictograms
 
-See [reordering rails and modular devices](explorer-reordering.md) for the contextual movement commands and [model pictograms](icons.md) for the shared icon selection.
+See [reordering circuits, rails and modular devices](explorer-reordering.md) for contextual movement commands and circuit drag-and-drop, and [model pictograms](icons.md) for the shared icon selection.
 
 ## Implementation and verification
 

@@ -36,6 +36,7 @@ import hed.domain.Messages;
 import hed.domain.HedDomain;
 import hed.starter.representations.CatalogDropService;
 import hed.starter.representations.modelexplorer.CatalogTreeDropHandler;
+import hed.starter.representations.modelexplorer.HedJavaServices;
 import hed.homeelectrical.DeviceKind;
 import hed.homeelectrical.ControlDevice;
 import hed.homeelectrical.Outlet;
@@ -99,7 +100,8 @@ class CatalogDropTest {
                 return Optional.ofNullable(objects.get(id));
             }
         };
-        var handler = new CatalogTreeDropHandler(search, null, new CatalogDropService(search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH), Locale.ENGLISH);
+        var handler = new CatalogTreeDropHandler(search, null, new CatalogDropService(search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH),
+                new HedJavaServices(new BootstrapIntegrationTest.Identity(), search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH, dwelling -> dwelling.getName()), Locale.ENGLISH);
         var input = new DropTreeItemInput(UUID.randomUUID(), "context", "tree", List.of("type"), "rail", -1);
         assertInstanceOf(Success.class, handler.handle(null, null, input));
         assertEquals(count + 1, rail.getDevices().size());
@@ -215,7 +217,8 @@ class CatalogDropTest {
                 return Optional.ofNullable(objects.get(id));
             }
         };
-        var handler = new CatalogTreeDropHandler(search, null, new CatalogDropService(search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH), Locale.ENGLISH);
+        var handler = new CatalogTreeDropHandler(search, null, new CatalogDropService(search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH),
+                new HedJavaServices(new BootstrapIntegrationTest.Identity(), search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH, dwelling -> dwelling.getName()), Locale.ENGLISH);
         assertInstanceOf(Success.class, handler.handle(null, null, new DropTreeItemInput(UUID.randomUUID(), "context", "tree", List.of("type", "type"), "room", -1)));
         assertEquals(count + 2, home.getEquipment().size());
         assertSame(room, home.getEquipment().get(count).getRoom());

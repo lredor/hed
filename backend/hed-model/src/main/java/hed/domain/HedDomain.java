@@ -483,6 +483,11 @@ public final class HedDomain {
         return dwelling(rccb).getBoards().stream().flatMap(b -> b.getDevices().stream()).filter(d -> d.getUpstreamRccb() == rccb).toList();
     }
 
+    /**
+     * Returns the position in the object's ordered explorer siblings.
+     * @param object a circuit, DIN rail or mounted modular device
+     * @return its zero-based position, or -1 for an unsupported or detached object
+     */
     public static int orderIndex(EObject object) {
         if (object instanceof ModularDevice d && d.getRail() != null) {
             return d.getRail().getDevices().indexOf(d);
@@ -490,16 +495,31 @@ public final class HedDomain {
         if (object instanceof DINRail rail && rail.eContainer() instanceof DistributionBoard board) {
             return board.getRails().indexOf(rail);
         }
+        if (object instanceof Circuit circuit && circuit.eContainer() instanceof Dwelling home) {
+            return home.getCircuits().indexOf(circuit);
+        }
         return -1;
     }
 
+    /**
+     * Checks that a relative move remains within the object's sibling list.
+     * @param object the element to move
+     * @param delta the relative offset
+     * @return whether the destination is an existing sibling position
+     */
     public static boolean canReorder(EObject object, int delta) {
         int index = orderIndex(object);
         int size = object instanceof ModularDevice d && d.getRail() != null ? d.getRail().getDevices().size()
-                : object instanceof DINRail rail && rail.eContainer() instanceof DistributionBoard board ? board.getRails().size() : 0;
+                : object instanceof DINRail rail && rail.eContainer() instanceof DistributionBoard board ? board.getRails().size()
+                        : object instanceof Circuit circuit && circuit.eContainer() instanceof Dwelling home ? home.getCircuits().size() : 0;
         return index >= 0 && index + delta >= 0 && index + delta < size;
     }
 
+    /**
+     * Moves an element within its current ordered siblings, preserving all electrical references.
+     * @param object the element to move
+     * @param delta the relative offset; an unavailable move does nothing
+     */
     public static void reorder(EObject object, int delta) {
         if (!canReorder(object, delta)) {
             return;
@@ -509,8 +529,38 @@ public final class HedDomain {
             device.getRail().getDevices().move(index, device);
         } else if (object instanceof DINRail rail) {
             ((DistributionBoard) rail.eContainer()).getRails().move(index, rail);
+        } else if (object instanceof Circuit circuit) {
+            ((Dwelling) circuit.eContainer()).getCircuits().move(index, circuit);
+            return;
         }
         synchronizeDeviceOrder((DistributionBoard) object.eContainer());
+    }
+
+    /**
+     * Moves a selection before a peer circuit, or to the end of its dwelling's circuit list.
+     * The entire selection is validated before mutation and retains its original model order.
+     * @param home the owning dwelling
+     * @param selection existing circuits from this dwelling
+     * @param before the destination peer, or null to append
+     * @throws IllegalArgumentException if the selection is empty, stale, detached or belongs to another dwelling
+     */
+    public static void placeCircuits(Dwelling home, List<Circuit> selection, Circuit before) {
+        if (home == null || selection.isEmpty() || selection.stream().anyMatch(circuit -> circuit == null || circuit.eContainer() != home || !home.getCircuits().contains(circuit))
+                || before != null && !home.getCircuits().contains(before)) {
+            throw new IllegalArgumentException("drop.circuitOrder");
+        }
+        if (before != null && selection.contains(before)) {
+            return;
+        }
+        var ordered = new ArrayList<>(home.getCircuits());
+        var moving = ordered.stream().filter(selection::contains).toList();
+        ordered.removeAll(moving);
+        ordered.addAll(before == null ? ordered.size() : ordered.indexOf(before), moving);
+        for (int i = 0; i < ordered.size(); i++) {
+            if (home.getCircuits().get(i) != ordered.get(i)) {
+                home.getCircuits().move(i, ordered.get(i));
+            }
+        }
     }
 
     /** Drop onto a peer to take its current position, or onto a different rail to append. */

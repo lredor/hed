@@ -22,6 +22,7 @@ const platform = vi.hoisted(() => ({
   onDragOver: vi.fn(),
   getNodes: vi.fn<() => Node<NodeData>[]>(() => []),
   getNode: vi.fn<(id: string) => Node<NodeData> | undefined>(),
+  screenToFlowPosition: vi.fn((position: { x: number; y: number }) => position),
   renderDiagram: vi.fn(),
 }));
 export { platform };
@@ -32,12 +33,17 @@ vi.mock('@apollo/client', async (original) => ({
 }));
 
 vi.mock('@xyflow/react', () => ({
-  useReactFlow: () => ({ getNodes: platform.getNodes, getNode: platform.getNode }),
+  useReactFlow: () => ({
+    getNodes: platform.getNodes,
+    getNode: platform.getNode,
+    screenToFlowPosition: platform.screenToFlowPosition,
+  }),
 }));
 
 vi.mock('@eclipse-sirius/sirius-components-core', async () => {
   const { createContext } = await import('react');
   return {
+    DRAG_SOURCES_TYPE: 'sirius-component/drag/sources',
     ServerContext: createContext({ httpOrigin: 'http://localhost' }),
     ConfirmationDialogContext: createContext({ showConfirmation: vi.fn() }),
     representationFactoryExtensionPoint: { identifier: 'representationFactory' },

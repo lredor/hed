@@ -51,7 +51,13 @@ Workflows use `pull_request`, never `pull_request_target`, to build contribution
 
 ## Reports and application artifact
 
-Open a workflow run under **Actions** to inspect each step and download its artifacts:
+Read test results directly in **Actions → Build → a workflow run → Summary**. The **Domain tests** and **Application tests** sections show totals, passed/failed/skipped counts, execution times, and individual tests grouped by suite. Failed tests include expandable error messages and stack traces. No download is needed to read the results.
+
+The application results already include the domain tests: these two job summaries describe their respective executions and should not be added together to count unique tests. A failed or incomplete build explicitly warns that only available reports are shown; compilation and dependency failures can prevent tests from running.
+
+The summaries are generated even after test failures. The pinned [JUnit Report Action](https://github.com/mikepenz/action-junit-report/tree/v6.7.1) writes the native job summaries with annotations and pull-request comments disabled, so reporting needs no write permissions and also works on fork pull requests. Malformed reports and reported test failures fail the reporting step; a successful Maven run must produce test results.
+
+Raw reports remain available as artifacts for detailed troubleshooting. Open the same workflow run to download them or the application:
 
 - **domain-test-reports** contains the model's Surefire XML and text reports.
 - **application-test-reports** contains all available Java test reports, including starter tests. Reports are uploaded even when verification fails; an earlier compilation or dependency failure may produce no reports.

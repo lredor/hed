@@ -55,7 +55,7 @@ Docker builds the frontend and backend from source, runs the Maven tests, and st
 
 ## Continuous integration
 
-GitHub Actions checks formatting and tests the domain modules for pushes to `master` and pull requests targeting it. Repository branches also run the full application build, including TypeScript checks, frontend assets, both user guides and the Java application tests. Test reports and the executable JAR are available as workflow artifacts for 7 days. See [workflow setup, GitHub Packages credentials and external contribution checks](doc/continuous-integration.md).
+GitHub Actions checks formatting and tests the domain modules for pushes to `master` and pull requests targeting it. Repository branches also run the full application build, including TypeScript checks, frontend assets, both user guides and the Java application tests. Test counts, individual results and failure details can be read directly in each workflow run's **Summary**. Raw reports and the executable JAR are also available as workflow artifacts for 7 days. See [workflow setup, GitHub Packages credentials and external contribution checks](doc/continuous-integration.md).
 
 ## Model Explorer
 

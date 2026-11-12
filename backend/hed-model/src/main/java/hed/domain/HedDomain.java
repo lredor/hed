@@ -43,6 +43,7 @@ import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.NamedElement;
 import hed.homeelectrical.Outlet;
+import hed.homeelectrical.Room;
 import hed.homeelectrical.ServiceCircuitBreaker;
 import hed.homeelectrical.Storey;
 import hed.homeelectrical.SupplyPhase;
@@ -364,6 +365,33 @@ public final class HedDomain {
             circuits.forEach(FieldEquipment::setCircuit);
             branches.forEach(FieldEquipment::setBranch);
             members.forEach((branch, equipment) -> branch.eSet(HomeElectricalPackage.Literals.CIRCUIT_BRANCH__EQUIPMENT, equipment));
+        }
+    }
+
+    /**
+     * Changes the room of existing terminal devices without changing their semantic ownership or electrical links.
+     * All devices must belong directly to the target room's dwelling. The complete selection is checked before mutation.
+     *
+     * @param room the destination room, contained in a storey of a dwelling
+     * @param equipment a nonempty selection of existing terminal devices; devices already in the room are unchanged
+     * @throws IllegalArgumentException if the room is detached, the selection is empty or a device belongs to another dwelling
+     */
+    public static void moveToRoom(Room room, List<FieldEquipment> equipment) {
+        var home = dwelling(room);
+        if (room == null || !(room.eContainer() instanceof Storey) || home == null) {
+            throw new IllegalArgumentException("drop.catalogTarget");
+        }
+        if (equipment == null || equipment.isEmpty() || equipment.stream().anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("drop.roomEquipment");
+        }
+        if (equipment.stream().anyMatch(item -> item.eContainer() != home)) {
+            throw new IllegalArgumentException("foreignReference");
+        }
+        // Rooms are references: moving devices must not recreate them or replace their circuit/control connections.
+        for (var item : equipment) {
+            if (item.getRoom() != room) {
+                item.setRoom(room);
+            }
         }
     }
 

@@ -128,7 +128,7 @@ SPDX-License-Identifier: EPL-2.0
             <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
                 <details
                     key="documentation"
-                    value="Floor-plan canvas width in diagram units. Image import normalizes the width to 1200."/>
+                    value="User-adjustable floor-plan canvas width in diagram units, defaulting to 1200. Changing the width recalculates the height while preserving image proportions."/>
             </eAnnotations>
         </eStructuralFeatures>
         <eStructuralFeatures
@@ -139,7 +139,18 @@ SPDX-License-Identifier: EPL-2.0
             <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
                 <details
                     key="documentation"
-                    value="Image-area height in diagram units, excluding the toolbar. Import preserves the image aspect ratio."/>
+                    value="Calculated image-area height in diagram units, excluding the toolbar. Read-only in Details; width edits and image imports preserve image proportions."/>
+            </eAnnotations>
+        </eStructuralFeatures>
+        <eStructuralFeatures
+            defaultValueLiteral="0.0"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+            name="planAspectRatio"
+            xsi:type="ecore:EAttribute">
+            <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+                <details
+                    key="documentation"
+                    value="Reference image width divided by height, retained to avoid cumulative integer-rounding drift. Zero uses the current canvas dimensions until the next resize or image import. Managed internally and hidden from Details."/>
             </eAnnotations>
         </eStructuralFeatures>
     </eClassifiers>

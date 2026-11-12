@@ -152,7 +152,18 @@ Les proportions de l’image sont conservées ; les images très aplaties ou tr�
 Remplacer ou retirer le fond conserve les positions des équipements.
 L’image de fond est partagée par les plans du même niveau, mais chaque représentation conserve ses propres positions.
 
-Les pictogrammes sont des nœuds de 24 × 24 sans cadre.
+Sélectionnez le *Niveau* dans Model Explorer pour ajuster la *Largeur du plan* dans *Details*.
+La largeur vaut 1200 unités du diagramme par défaut et accepte un nombre entier positif.
+La *Hauteur du plan* est en lecture seule : elle est recalculée pour conserver les proportions de l’image.
+L’import ou le remplacement d’une image conserve la largeur choisie.
+Les plans de ce niveau partagent les dimensions du fond, tout en conservant leurs propres implantations.
+Quand la largeur change, le centre des équipements conserve sa position relative sur l’image, y compris dans les plans enregistrés qui seront rouverts plus tard.
+
+Les pictogrammes et leurs nœuds sans cadre mesurent tous deux *24 × 24 unités du diagramme*.
+À un zoom de 100 %, cela correspond à 24 × 24 pixels CSS ; il s’agit d’unités du diagramme, pas de mètres.
+À titre indicatif, une icône occupe 2 % de la largeur d’un plan de 1200 unités et 1 % de celle d’un plan de 2400 unités.
+Augmentez la largeur du plan pour disposer de plus de place, les pictogrammes gardant la même taille en unités du diagramme, puis ajustez le zoom ou cadrez la vue si nécessaire.
+L’en-tête ajoute 48 unités au-dessus de l’image et n’est pas compris dans la *Hauteur du plan*.
 Les noms sont masqués par défaut.
 Activez *Afficher les libellés* dans l’en-tête du plan pour les afficher en bordure des icônes, sans agrandir les nœuds.
 Cette préférence est locale à ce diagramme dans votre navigateur.

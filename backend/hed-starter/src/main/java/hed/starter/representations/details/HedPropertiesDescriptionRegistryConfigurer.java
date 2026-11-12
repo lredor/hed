@@ -61,6 +61,7 @@ import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.ServiceCircuitBreaker;
+import hed.homeelectrical.Storey;
 import hed.starter.HedDomainIcons;
 import hed.starter.representations.CircuitEquipment;
 
@@ -88,8 +89,8 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
             if (classifier instanceof EClass type && !type.isAbstract()) {
                 var groups = new LinkedHashMap<String, List<AbstractControlDescription>>();
                 for (var feature : type.getEAllStructuralFeatures()) {
-                    // Background metadata is updated atomically by the plan's image import tool.
-                    if (type == HomeElectricalPackage.Literals.STOREY && List.of("planImageId", "planWidth", "planHeight").contains(feature.getName())) {
+                    // Image identity and reference proportions belong to the image-import tool.
+                    if (type == HomeElectricalPackage.Literals.STOREY && List.of("planImageId", "planAspectRatio").contains(feature.getName())) {
                         continue;
                     }
                     if (type == HomeElectricalPackage.Literals.MODULAR_DEVICE && feature.getName().equals("description")) {
@@ -270,8 +271,8 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                     .messageProvider(message).build();
         }
         return TextfieldDescription.newTextfieldDescription(widgetId).idProvider(vm -> widgetId).targetObjectIdProvider(target).labelProvider(title)
-                .valueProvider(vm -> Objects.toString(self(vm).eGet(feature), "")).newValueHandler((vm, value) -> update(() -> HedDomain.setText(self(vm), name, value)))
-                .diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
+                .isReadOnlyProvider(vm -> self(vm) instanceof Storey && name.equals("planHeight")).valueProvider(vm -> Objects.toString(self(vm).eGet(feature), ""))
+                .newValueHandler((vm, value) -> update(() -> HedDomain.setText(self(vm), name, value))).diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
     }
 
     /** Shows editable direct assignments until branches make the equipment list derived. */

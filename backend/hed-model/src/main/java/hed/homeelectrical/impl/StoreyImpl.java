@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getPlanImageId <em>Plan Image Id</em>}</li>
  *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getPlanWidth <em>Plan Width</em>}</li>
  *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getPlanHeight <em>Plan Height</em>}</li>
+ *   <li>{@link hed.homeelectrical.impl.StoreyImpl#getPlanAspectRatio <em>Plan Aspect Ratio</em>}</li>
  * </ul>
  *
  * @generated
@@ -135,6 +136,26 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
      * @ordered
      */
     protected int planHeight = PLAN_HEIGHT_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getPlanAspectRatio() <em>Plan Aspect Ratio</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPlanAspectRatio()
+     * @generated
+     * @ordered
+     */
+    protected static final double PLAN_ASPECT_RATIO_EDEFAULT = 0.0;
+
+    /**
+     * The cached value of the '{@link #getPlanAspectRatio() <em>Plan Aspect Ratio</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getPlanAspectRatio()
+     * @generated
+     * @ordered
+     */
+    protected double planAspectRatio = PLAN_ASPECT_RATIO_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -270,6 +291,30 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
      * @generated
      */
     @Override
+    public double getPlanAspectRatio() {
+        return planAspectRatio;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void setPlanAspectRatio(double newPlanAspectRatio) {
+        double oldPlanAspectRatio = planAspectRatio;
+        planAspectRatio = newPlanAspectRatio;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.STOREY__PLAN_ASPECT_RATIO, oldPlanAspectRatio, planAspectRatio));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
             case HomeElectricalPackage.STOREY__ROOMS:
@@ -296,6 +341,8 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
                 return getPlanWidth();
             case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
                 return getPlanHeight();
+            case HomeElectricalPackage.STOREY__PLAN_ASPECT_RATIO:
+                return getPlanAspectRatio();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -325,6 +372,9 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
             case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
                 setPlanHeight((Integer) newValue);
                 return;
+            case HomeElectricalPackage.STOREY__PLAN_ASPECT_RATIO:
+                setPlanAspectRatio((Double) newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -352,6 +402,9 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
             case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
                 setPlanHeight(PLAN_HEIGHT_EDEFAULT);
                 return;
+            case HomeElectricalPackage.STOREY__PLAN_ASPECT_RATIO:
+                setPlanAspectRatio(PLAN_ASPECT_RATIO_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -374,6 +427,8 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
                 return planWidth != PLAN_WIDTH_EDEFAULT;
             case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
                 return planHeight != PLAN_HEIGHT_EDEFAULT;
+            case HomeElectricalPackage.STOREY__PLAN_ASPECT_RATIO:
+                return planAspectRatio != PLAN_ASPECT_RATIO_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -398,6 +453,8 @@ public class StoreyImpl extends NamedElementImpl implements Storey {
         result.append(planWidth);
         result.append(", planHeight: ");
         result.append(planHeight);
+        result.append(", planAspectRatio: ");
+        result.append(planAspectRatio);
         result.append(')');
         return result.toString();
     }

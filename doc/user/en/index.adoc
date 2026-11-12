@@ -150,7 +150,18 @@ The image keeps its proportions; very flat or very tall images can be rejected.
 Replacing or clearing a background preserves equipment placement.
 The background image is shared by that storey's floor plans, while each representation saves its own equipment positions.
 
-Pictograms are frameless 24 × 24 nodes.
+Select the *Storey* in Model Explorer to adjust *Plan width* in *Details*.
+The width defaults to 1200 diagram units and accepts a positive whole number.
+*Plan height* is read-only: it is recalculated to preserve the image proportions.
+Importing or replacing an image keeps the chosen width.
+All plans of this storey share the background dimensions, while each retains its own equipment placement.
+When the width changes, equipment centers keep their relative position on the image, including in saved plans that are reopened later.
+
+Pictograms and their frameless nodes are both *24 × 24 diagram units*.
+At 100% zoom this corresponds to 24 × 24 CSS pixels; these are diagram units, not metres.
+For reference, an icon occupies 2% of a 1200-unit plan's width and 1% of a 2400-unit plan's width.
+Increase the plan width to provide more room for equipment while keeping the pictograms at the same size in diagram units, then adjust the zoom or fit the view as needed.
+The plan header adds 48 units above the image and is excluded from *Plan height*.
 Names are hidden by default.
 Enable *Show equipment labels* in the plan header to show them outside the icons; this does not resize the nodes.
 The preference is local to that diagram in your browser.

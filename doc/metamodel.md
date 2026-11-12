@@ -193,8 +193,9 @@ These representation-specific Storey attributes are introduced with Floor Plan. 
 | Property | English name | Nom français | English definition | Définition française |
 | --- | --- | --- | --- | --- |
 | `Storey.planImageId` | Floor-plan image | Image du plan | Optional UUID of the native project image used as the background, shared by this storey's plans. | UUID facultatif de l’image du projet utilisée comme fond, partagée par les plans de ce niveau. |
-| `Storey.planWidth` | Plan width | Largeur du plan | Canvas width in diagram units, defaulting to 1200 and normalized to 1200 on image import. | Largeur en unités du diagramme, égale à 1200 par défaut et lors de l’import d’une image. |
-| `Storey.planHeight` | Plan height | Hauteur du plan | Image-area height excluding the toolbar, defaulting to 800; import preserves the image aspect ratio. | Hauteur de la zone d’image hors barre d’outils, égale à 800 par défaut ; l’import conserve les proportions de l’image. |
+| `Storey.planWidth` | Plan width | Largeur du plan | Editable canvas width in diagram units, defaulting to 1200. Resizing preserves image proportions and relative equipment positions. Import keeps the chosen width. | Largeur modifiable en unités du diagramme, égale à 1200 par défaut. Le redimensionnement conserve les proportions de l’image et les positions relatives des équipements. L’import conserve la largeur choisie. |
+| `Storey.planHeight` | Plan height | Hauteur du plan | Calculated image-area height excluding the toolbar, defaulting to 800. Read-only in Details and updated when the width or image changes. | Hauteur calculée de la zone d’image hors barre d’outils, égale à 800 par défaut. En lecture seule dans Details, recalculée lors d’un changement de largeur ou d’image. |
+| `Storey.planAspectRatio` | Image aspect ratio | Rapport largeur/hauteur de l’image | Internal reference width/height ratio retained to avoid cumulative rounding drift. Zero means that the current canvas dimensions provide the initial reference. Hidden from Details. | Rapport largeur/hauteur de référence interne évitant l’accumulation d’arrondis. Une valeur nulle utilise les dimensions actuelles du plan comme référence initiale. Masqué dans Details. |
 
 ### References / Relations
 

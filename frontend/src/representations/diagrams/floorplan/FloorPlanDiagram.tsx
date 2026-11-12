@@ -41,6 +41,29 @@ interface PlanData extends NodeData {
   planDiagramId: string;
 }
 const equipmentSize = 24;
+const headerHeight = 48;
+
+/** Keeps each pictogram's center at the same image-relative location while its size stays fixed. */
+const scalePlanPosition = (
+  position: { x: number; y: number },
+  before: { width: number; height: number },
+  after: { width: number; height: number }
+) => {
+  if (
+    before.width <= 0 ||
+    before.height <= headerHeight ||
+    (before.width === after.width && before.height === after.height)
+  )
+    return position;
+  const half = equipmentSize / 2;
+  return {
+    x: ((position.x + half) * after.width) / before.width - half,
+    y:
+      headerHeight +
+      ((position.y + half - headerHeight) * (after.height - headerHeight)) / (before.height - headerHeight) -
+      half,
+  };
+};
 const fragment = gql`
   fragment HedFloorPlanStyle on FloorPlanNodeStyle {
     backgroundNode
@@ -104,6 +127,18 @@ class PlanConverter implements INodeConverter {
     // Pictogram dimensions stay fixed when labels are toggled or saved layouts are reopened.
     const width = plan.backgroundNode ? node.defaultWidth ?? 1200 : equipmentSize,
       height = plan.backgroundNode ? node.defaultHeight ?? 848 : equipmentSize;
+    let position = saved?.position ?? { x: 0, y: 0 };
+    if (!plan.backgroundNode && saved && parent) {
+      const background = diagram.layoutData.nodeLayoutData.find((entry) => entry.id === parent.id);
+      if (background) {
+        // Closed plans retain their previous background size in native layout data.
+        const before = background.size.width > 0 ? background.size : background.minComputedSize;
+        position = scalePlanPosition(position, before, {
+          width: parent.defaultWidth ?? 1200,
+          height: parent.defaultHeight ?? 848,
+        });
+      }
+    }
     const data: PlanData = {
       plan,
       planDiagramId: diagram.id,
@@ -146,7 +181,7 @@ class PlanConverter implements INodeConverter {
       type: 'hedFloorPlanNode',
       data,
       parentId: parent?.id,
-      position: plan.backgroundNode ? { x: 0, y: 0 } : saved?.position ?? { x: 0, y: 0 },
+      position: plan.backgroundNode ? { x: 0, y: 0 } : position,
       width,
       height,
       measured: { width, height },
@@ -169,12 +204,22 @@ class PlanLayout implements INodeLayoutHandler<NodeData> {
   }
   handle: INodeLayoutHandler<NodeData>['handle'] = (engine, previous, node, visible, children, added) => {
     engine.layoutNodes(previous, visible, children, added);
-    // Native drop coordinates take precedence; image changes retain each existing view's position.
+    const oldBackground = previous?.nodes.find((candidate) => candidate.id === node.id);
+    // New drops already use the current image size; only existing placements need scaling.
     for (const child of children) {
       const created = added.find((candidate) => candidate.id === child.id),
         old = previous?.nodes.find((candidate) => candidate.id === child.id);
       if (created) child.position = created.position;
-      else if (!child.data.isNew && old) child.position = old.position;
+      else if (!child.data.isNew && old) {
+        child.position =
+          (node.data as PlanData).plan.backgroundNode && oldBackground
+            ? scalePlanPosition(
+                old.position,
+                { width: oldBackground.width ?? 1200, height: oldBackground.height ?? 848 },
+                { width: node.data.defaultWidth ?? 1200, height: node.data.defaultHeight ?? 848 }
+              )
+            : old.position;
+      }
     }
     node.width = node.data.defaultWidth ?? equipmentSize;
     node.height = node.data.defaultHeight ?? equipmentSize;
@@ -224,14 +269,14 @@ const PlanNode = memo(({ id, data: raw }: NodeProps) => {
     { getNode } = useReactFlow();
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
-  const setBackground = async (imageId: string, height: number) => {
+  const setBackground = async (imageId: string, aspectRatio = 1) => {
     const result = await client.mutate({
       mutation: backgroundMutation,
       variables: {
         input: {
           id: crypto.randomUUID(),
           editingContextId,
-          actionId: `hed-plan-background:${encodeURIComponent(data.targetObjectId)}:${imageId}:${height}`,
+          actionId: `hed-plan-background:${encodeURIComponent(data.targetObjectId)}:${imageId}:${aspectRatio}`,
         },
       },
     });
@@ -245,8 +290,8 @@ const PlanNode = memo(({ id, data: raw }: NodeProps) => {
       if (!['image/png', 'image/jpeg', 'image/svg+xml'].includes(file.type) || file.size > 10 * 1024 * 1024)
         throw new Error(t('plan.imageError'));
       const size = await imageSize(file);
-      const height = Math.round((1200 * size.height) / size.width);
-      if (!size.width || height < 120 || height > 6000) throw new Error(t('plan.imageError'));
+      const aspectRatio = size.width / size.height;
+      if (!Number.isFinite(aspectRatio) || aspectRatio < 0.2 || aspectRatio > 10) throw new Error(t('plan.imageError'));
       const projectId = window.location.pathname.match(/\/projects\/([^/]+)/)?.[1];
       if (!projectId) throw new Error(t('plan.uploadError'));
       const result = await sendFile(
@@ -257,7 +302,7 @@ const PlanNode = memo(({ id, data: raw }: NodeProps) => {
       );
       const payload = result.data?.uploadImage;
       if (payload?.__typename !== 'UploadImageSuccessPayload') throw new Error(t('plan.uploadError'));
-      await setBackground(payload.imageId, height);
+      await setBackground(payload.imageId, aspectRatio);
     } catch (error) {
       addErrorMessage(error instanceof Error && error.message !== 'image' ? error.message : t('plan.imageError'));
     } finally {
@@ -269,7 +314,7 @@ const PlanNode = memo(({ id, data: raw }: NodeProps) => {
     if (readOnly || busy) return;
     setBusy(true);
     try {
-      await setBackground('', (data.defaultHeight ?? 848) - 48);
+      await setBackground('');
     } catch {
       addErrorMessage(t('plan.uploadError'));
     } finally {

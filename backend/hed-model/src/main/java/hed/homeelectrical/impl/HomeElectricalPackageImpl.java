@@ -579,6 +579,16 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
      * @generated
      */
     @Override
+    public EAttribute getStorey_PlanAspectRatio() {
+        return (EAttribute) storeyEClass.getEStructuralFeatures().get(5);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public EClass getRoom() {
         return roomEClass;
     }
@@ -1272,6 +1282,7 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         createEAttribute(storeyEClass, STOREY__PLAN_IMAGE_ID);
         createEAttribute(storeyEClass, STOREY__PLAN_WIDTH);
         createEAttribute(storeyEClass, STOREY__PLAN_HEIGHT);
+        createEAttribute(storeyEClass, STOREY__PLAN_ASPECT_RATIO);
 
         roomEClass = createEClass(ROOM);
         createEAttribute(roomEClass, ROOM__USAGE);
@@ -1467,6 +1478,8 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
                 !IS_DERIVED, IS_ORDERED);
         initEAttribute(getStorey_PlanHeight(), ecorePackage.getEInt(), "planHeight", "800", 0, 1, Storey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
                 !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getStorey_PlanAspectRatio(), ecorePackage.getEDouble(), "planAspectRatio", "0.0", 0, 1, Storey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+                IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(roomEClass, Room.class, "Room", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getRoom_Usage(), ecorePackage.getEString(), "usage", null, 0, 1, Room.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,

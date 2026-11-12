@@ -25,6 +25,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link hed.homeelectrical.Storey#getPlanImageId <em>Plan Image Id</em>}</li>
  *   <li>{@link hed.homeelectrical.Storey#getPlanWidth <em>Plan Width</em>}</li>
  *   <li>{@link hed.homeelectrical.Storey#getPlanHeight <em>Plan Height</em>}</li>
+ *   <li>{@link hed.homeelectrical.Storey#getPlanAspectRatio <em>Plan Aspect Ratio</em>}</li>
  * </ul>
  *
  * @see hed.homeelectrical.HomeElectricalPackage#getStorey()
@@ -97,7 +98,7 @@ public interface Storey extends NamedElement {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
-     * Floor-plan canvas width in diagram units. Image import normalizes the width to 1200.
+     * User-adjustable floor-plan canvas width in diagram units, defaulting to 1200. Changing the width recalculates the height while preserving image proportions.
      * <!-- end-model-doc -->
      * @return the value of the '<em>Plan Width</em>' attribute.
      * @see #setPlanWidth(int)
@@ -123,7 +124,7 @@ public interface Storey extends NamedElement {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
-     * Image-area height in diagram units, excluding the toolbar. Import preserves the image aspect ratio.
+     * Calculated image-area height in diagram units, excluding the toolbar. Read-only in Details; width edits and image imports preserve image proportions.
      * <!-- end-model-doc -->
      * @return the value of the '<em>Plan Height</em>' attribute.
      * @see #setPlanHeight(int)
@@ -142,5 +143,31 @@ public interface Storey extends NamedElement {
      * @generated
      */
     void setPlanHeight(int value);
+
+    /**
+     * Returns the value of the '<em><b>Plan Aspect Ratio</b></em>' attribute.
+     * The default value is <code>"0.0"</code>.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Reference image width divided by height, retained to avoid cumulative integer-rounding drift. Zero uses the current canvas dimensions until the next resize or image import. Managed internally and hidden from Details.
+     * <!-- end-model-doc -->
+     * @return the value of the '<em>Plan Aspect Ratio</em>' attribute.
+     * @see #setPlanAspectRatio(double)
+     * @see hed.homeelectrical.HomeElectricalPackage#getStorey_PlanAspectRatio()
+     * @model default="0.0"
+     * @generated
+     */
+    double getPlanAspectRatio();
+
+    /**
+     * Sets the value of the '{@link hed.homeelectrical.Storey#getPlanAspectRatio <em>Plan Aspect Ratio</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Plan Aspect Ratio</em>' attribute.
+     * @see #getPlanAspectRatio()
+     * @generated
+     */
+    void setPlanAspectRatio(double value);
 
 } // Storey

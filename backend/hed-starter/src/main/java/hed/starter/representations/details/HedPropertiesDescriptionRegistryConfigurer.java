@@ -48,6 +48,7 @@ import hed.domain.HedDomain;
 import hed.domain.Messages;
 import hed.domain.HedValidation;
 import hed.homeelectrical.Circuit;
+import hed.homeelectrical.ControlChannel;
 import hed.homeelectrical.ControlDevice;
 import hed.homeelectrical.ControlFunction;
 import hed.homeelectrical.DINRail;
@@ -160,7 +161,11 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
         return value == null ? "" : value instanceof EObject o ? identity.getId(o) : value instanceof Enumerator e ? e.getLiteral() : value.toString();
     }
 
+    /** Qualifies channel reference choices with their control device while retaining the stored channel name. */
     private String label(Object value) {
+        if (value instanceof ControlChannel channel && channel.eContainer() instanceof ControlDevice device) {
+            return HedDomain.label(device, locale) + " - " + HedDomain.label(channel, locale);
+        }
         return value instanceof EObject o ? HedDomain.label(o, locale)
                 : value instanceof Enumerator e ? Messages.text(locale, "enum." + e.getClass().getSimpleName() + "." + e.getName()) : Messages.text(locale, "unassigned");
     }

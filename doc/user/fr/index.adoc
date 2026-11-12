@@ -148,6 +148,8 @@ Masquer ces champs conserve les valeurs déjà enregistrées.
 
 Un organe de commande possède des canaux indépendants, par exemple les deux commandes d’un double interrupteur.
 Créez une commande fonctionnelle sous Logement puis choisissez ses canaux, les équipements commandés et l’éventuel actionneur modulaire dans les propriétés.
+Dans la liste des canaux, chaque choix affiche *Nom de l’organe de commande - Nom du canal*, par exemple *Entrée - Canal 1*, pour distinguer les interrupteurs.
+Ce libellé suit les renommages de l’interrupteur et du canal.
 La pièce, le circuit d’alimentation et la commande fonctionnelle sont des relations indépendantes.
 
 == Placer les équipements sur un plan

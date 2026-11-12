@@ -26,6 +26,7 @@ import './style.css';
 import { panelDocumentTransform, panelNodeRegistry } from './representations/diagrams/panel/PanelDiagram';
 import { diagramRendererReactFlowPropsCustomizerExtensionPoint } from '@eclipse-sirius/sirius-components-diagrams';
 import { usePanelRailDropProps } from './representations/diagrams/panel/PanelRailDrop';
+import { ExplorerDragSourcesProvider } from './representations/modelexplorer/ExplorerDragSources';
 import {
   floorPlanDocumentTransform,
   floorPlanNodeRegistry,
@@ -91,20 +92,22 @@ registry.putData(representationFactoryExtensionPoint, {
   data: [floorPlanConfirmationFactory],
 });
 createRoot(document.getElementById('root')!).render(
-  <SiriusWebApplication
-    httpOrigin={httpOrigin}
-    wsOrigin={wsOrigin}
-    extensionRegistry={registry}
-    extensionRegistryMergeStrategy={registryMergeStrategy}>
-    <DiagramRepresentationConfiguration
-      nodeTypeRegistry={{
-        nodeConverters: [...panelNodeRegistry.nodeConverters, ...floorPlanNodeRegistry.nodeConverters],
-        nodeLayoutHandlers: [...panelNodeRegistry.nodeLayoutHandlers, ...floorPlanNodeRegistry.nodeLayoutHandlers],
-        nodeTypeContributions: [
-          ...panelNodeRegistry.nodeTypeContributions,
-          ...floorPlanNodeRegistry.nodeTypeContributions,
-        ],
-      }}
-    />
-  </SiriusWebApplication>
+  <ExplorerDragSourcesProvider>
+    <SiriusWebApplication
+      httpOrigin={httpOrigin}
+      wsOrigin={wsOrigin}
+      extensionRegistry={registry}
+      extensionRegistryMergeStrategy={registryMergeStrategy}>
+      <DiagramRepresentationConfiguration
+        nodeTypeRegistry={{
+          nodeConverters: [...panelNodeRegistry.nodeConverters, ...floorPlanNodeRegistry.nodeConverters],
+          nodeLayoutHandlers: [...panelNodeRegistry.nodeLayoutHandlers, ...floorPlanNodeRegistry.nodeLayoutHandlers],
+          nodeTypeContributions: [
+            ...panelNodeRegistry.nodeTypeContributions,
+            ...floorPlanNodeRegistry.nodeTypeContributions,
+          ],
+        }}
+      />
+    </SiriusWebApplication>
+  </ExplorerDragSourcesProvider>
 );

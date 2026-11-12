@@ -22,13 +22,13 @@ import {
   NodeData,
   NodeTypeContribution,
   convertOutsideLabels,
-  useDrop,
 } from '@eclipse-sirius/sirius-components-diagrams';
 import { Node, NodeProps, useReactFlow } from '@xyflow/react';
 import { useTranslation } from 'react-i18next';
 import './floor-plan.css';
 import { usePlanLabels } from './PlanLabelFilter';
 import { FloorPlanRemovalContext } from './FloorPlanRemovalConfirmation';
+import { useFloorPlanDrop } from './FloorPlanDrop';
 
 interface PlanStyle extends GQLNodeStyle {
   backgroundNode: boolean;
@@ -265,7 +265,7 @@ const PlanNode = memo(({ id, data: raw }: NodeProps) => {
   const [showLabels, setShowLabels] = usePlanLabels(data.planDiagramId);
   const registerFloorPlan = useContext(FloorPlanRemovalContext);
   useEffect(() => (plan.backgroundNode ? registerFloorPlan() : undefined), [plan.backgroundNode, registerFloorPlan]);
-  const { onDrop, onDragOver } = useDrop(),
+  const { onDrop, onDragOver } = useFloorPlanDrop(),
     { getNode } = useReactFlow();
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);

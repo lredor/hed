@@ -58,7 +58,8 @@ class RoomEquipmentDropTest {
         var before = List.copyOf(home.getEquipment());
         var search = search(Map.of("room", targetRoom, "device", device, "type", HedDomain.type(home, DeviceKind.OUTLET)));
         var feedback = new BootstrapIntegrationTest.Feedback();
-        var handler = new CatalogTreeDropHandler(search, null, new CatalogDropService(search, feedback, Locale.ENGLISH), Locale.ENGLISH);
+        var handler = new CatalogTreeDropHandler(search, null, new CatalogDropService(search, feedback, Locale.ENGLISH),
+                new HedJavaServices(new BootstrapIntegrationTest.Identity(), search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH, dwelling -> dwelling.getName()), Locale.ENGLISH);
         var explorer = new HedJavaServices(new BootstrapIntegrationTest.Identity(), search, feedback, Locale.ENGLISH, dwelling -> dwelling.getName());
         var identity = explorer.getHedId(device);
         assertInstanceOf(Success.class, handler.handle(null, null, input(List.of("device"), "room", -1)));
@@ -80,7 +81,8 @@ class RoomEquipmentDropTest {
         var upper = home.getStoreys().get(1);
         var device = home.getEquipment().getFirst();
         var search = search(Map.of("room", upper.getRooms().getFirst(), "device", device));
-        var handler = new CatalogTreeDropHandler(search, null, null, Locale.ENGLISH);
+        var handler = new CatalogTreeDropHandler(search, null, null,
+                new HedJavaServices(new BootstrapIntegrationTest.Identity(), search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH, dwelling -> dwelling.getName()), Locale.ENGLISH);
         assertTrue(FloorPlanServices.belongsTo(device, ground));
         assertFalse(FloorPlanServices.belongsTo(device, upper));
         assertInstanceOf(Success.class, handler.handle(null, null, input(List.of("device"), "room", -1)));
@@ -97,7 +99,8 @@ class RoomEquipmentDropTest {
             var target = home.getStoreys().getFirst().getRooms().get(1);
             var search = search(Map.of("room", target, "device", device, "other", HedSamples.example().getEquipment().getFirst(), "type", HedDomain.type(home, DeviceKind.OUTLET)));
             var feedback = new BootstrapIntegrationTest.Feedback();
-            var handler = new CatalogTreeDropHandler(search, null, new CatalogDropService(search, feedback, locale), locale);
+            var handler = new CatalogTreeDropHandler(search, null, new CatalogDropService(search, feedback, locale),
+                    new HedJavaServices(new BootstrapIntegrationTest.Identity(), search, new BootstrapIntegrationTest.Feedback(), locale, dwelling -> dwelling.getName()), locale);
             assertEquals(Messages.text(locale, "drop.roomEquipment"),
                     assertInstanceOf(Failure.class, handler.handle(null, null, input(List.of("device", "type"), "room", -1))).getMessages().getFirst().body());
             assertEquals(Messages.text(locale, "foreignReference"),

@@ -133,7 +133,8 @@ class BranchIntegrationTest {
                 return Optional.ofNullable(objects.get(id));
             }
         };
-        var handler = new CatalogTreeDropHandler(search, null, null, Locale.ENGLISH);
+        var handler = new CatalogTreeDropHandler(search, null, null,
+                new HedJavaServices(new BootstrapIntegrationTest.Identity(), search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH, dwelling -> dwelling.getName()), Locale.ENGLISH);
         assertInstanceOf(Failure.class, handler.handle(null, null, new DropTreeItemInput(UUID.randomUUID(), "context", "tree", List.of("equipment", "type"), "branch", -1)));
         assertNull(equipment.getBranch());
         assertSame(previousCircuit, equipment.getCircuit());

@@ -113,6 +113,13 @@ La touche *Suppr* sur un appareil de ce diagramme supprime l’appareil du modè
 
 == Associer les circuits et les équipements
 
+Dans Model Explorer, utilisez *Déplacer vers le haut / Déplacer vers le bas* sur un circuit pour modifier l’ordre de lecture de la liste *Circuits*.
+Vous pouvez aussi glisser un circuit sur un autre, ou dans l’espace juste au-dessus, pour le placer avant lui.
+Déposez-le sur le groupe *Circuits* pour le placer en fin de liste.
+Une sélection de plusieurs circuits conserve son ordre relatif.
+Ces déplacements sont limités au même logement et conservent les protections, branches et équipements associés.
+L’ordre est enregistré ; la disposition des nœuds du schéma des circuits reste indépendante.
+
 . Créez un circuit terminal sous *Circuits* dans la GTL, ou depuis un tableau de répartition.
 . Renseignez son tableau source, sa protection, son usage et sa section de conducteurs dans les propriétés.
 . Sans branche, modifiez sa liste *Équipements associés*, ou choisissez ce circuit dans le champ *Circuit d’alimentation* d’un équipement.

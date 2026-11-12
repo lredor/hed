@@ -27,12 +27,14 @@ import org.springframework.stereotype.Service;
 import hed.domain.Messages;
 import hed.domain.HedDomain;
 import hed.homeelectrical.CircuitBranch;
+import hed.homeelectrical.Circuit;
+import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.FieldEquipment;
 import hed.homeelectrical.DINRail;
 import hed.homeelectrical.Room;
 import hed.starter.representations.CatalogDropService;
 
-/** Creates devices from catalog types, moves terminal devices between rooms and associates them with circuit branches. */
+/** Creates catalog devices, moves terminal devices between rooms, assigns branches and reorders existing circuits. */
 @Service
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CatalogTreeDropHandler implements IDropTreeItemHandler {
@@ -42,6 +44,8 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
 
     private final CatalogDropService drops;
 
+    private final HedJavaServices explorer;
+
     private final Locale locale;
 
     /**
@@ -50,12 +54,14 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
      * @param search resolves catalog types or existing devices and the destination rail, room or branch
      * @param descriptions identifies the domain explorer description
      * @param drops validates and creates the complete selection
+     * @param explorer resolves semantic destinations and virtual explorer groups
      * @param locale selects explorer and rejection messages
      */
-    public CatalogTreeDropHandler(IObjectSearchService search, IViewRepresentationDescriptionSearchService descriptions, CatalogDropService drops, Locale locale) {
+    public CatalogTreeDropHandler(IObjectSearchService search, IViewRepresentationDescriptionSearchService descriptions, CatalogDropService drops, HedJavaServices explorer, Locale locale) {
         this.search = search;
         this.descriptions = descriptions;
         this.drops = drops;
+        this.explorer = explorer;
         this.locale = locale;
     }
 
@@ -68,13 +74,20 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
     @Override
     public IStatus handle(IEditingContext context, Tree tree, DropTreeItemInput input) {
         try {
-            // Indexed drops target gaps; creation, room moves and branch assignment require a semantic destination.
-            if (input.index() >= 0) {
-                throw new IllegalArgumentException("drop.catalogTarget");
-            }
-            var target = search.getObject(context, input.targetElementId()).orElse(null);
+            var target = explorer.getHedObject(input.targetElementId(), context);
             var sources = input.droppedElementIds().stream().map(id -> search.getObject(context, id).orElse(null)).toList();
-            if (target instanceof CircuitBranch branch) {
+            if (sources.stream().anyMatch(Circuit.class::isInstance)) {
+                var home = target instanceof Circuit circuit ? HedDomain.dwelling(circuit)
+                        : target instanceof HedJavaServices.Group group && group.feature().equals("circuits") && group.owner() instanceof Dwelling dwelling ? dwelling : null;
+                if (home == null || sources.stream().anyMatch(source -> !(source instanceof Circuit)) || input.index() >= 0 && !(target instanceof Circuit)) {
+                    throw new IllegalArgumentException("drop.circuitOrder");
+                }
+                // Native gap drops identify the following peer. Its stable ID avoids offsets from expanded children.
+                HedDomain.placeCircuits(home, sources.stream().map(Circuit.class::cast).toList(), target instanceof Circuit circuit ? circuit : null);
+            } else if (input.index() >= 0) {
+                // Creation, room moves and branch assignment still require a semantic destination, not a gap.
+                throw new IllegalArgumentException("drop.catalogTarget");
+            } else if (target instanceof CircuitBranch branch) {
                 if (sources.isEmpty() || sources.stream().anyMatch(source -> !(source instanceof FieldEquipment))) {
                     throw new IllegalArgumentException("drop.branchEquipment");
                 }

@@ -111,6 +111,13 @@ An RCCB displays its residual-current value and differential type, such as *Type
 
 == Associate circuits and equipment
 
+In Model Explorer, use *Move up / Move down* on a circuit to change the reading order of the *Circuits* list.
+You can also drag a circuit onto another circuit, or into the gap just above it, to insert it before that peer.
+Drop it onto the *Circuits* group to append it at the end.
+Multiple selected circuits retain their relative order.
+Moves stay within the same dwelling and retain protection, branches and associated equipment.
+The order is saved; Circuit Diagram node positions remain independent.
+
 . Create a final circuit below the GTL's *Circuits* section or from a distribution board.
 . Select its source board, protective device, usage and conductor section in Properties.
 . Without branches, edit the circuit's *Associated equipment* list, or select the circuit from an equipment's *Supply circuit* field.

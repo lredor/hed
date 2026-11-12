@@ -518,8 +518,14 @@ public class HedJavaServices {
         return self;
     }
 
+    /**
+     * Labels vertical circuit/rail moves and horizontal modular-device moves in the application language.
+     * @param self the element being reordered
+     * @param delta negative for backward movement, positive for forward movement
+     * @return the localized context-menu label
+     */
     public String getHedReorderLabel(Object self, int delta) {
-        return Messages.text(locale, self instanceof DINRail ? delta < 0 ? "action.moveUp" : "action.moveDown" : delta < 0 ? "action.moveLeft" : "action.moveRight");
+        return Messages.text(locale, self instanceof DINRail || self instanceof Circuit ? delta < 0 ? "action.moveUp" : "action.moveDown" : delta < 0 ? "action.moveLeft" : "action.moveRight");
     }
 
     public String getHedCell(EObject self, String feature) {

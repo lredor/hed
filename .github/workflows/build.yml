@@ -1,0 +1,126 @@
+# Copyright (c) 2026 Laurent Redor.
+# This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v2.0
+# which accompanies this distribution, and is available at
+# https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+
+name: Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  domain:
+    name: Domain verification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-java-maven
+        with:
+          cache-dependency-path: |
+            pom.xml
+            backend/hed-model/pom.xml
+            backend/hed-model-edit/pom.xml
+      - name: Build and test the model and edit modules
+        run: mvn -B -ntp verify
+      - name: Explain restricted contribution checks
+        if: >-
+          github.event_name == 'pull_request' &&
+          (github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]')
+        run: |
+          echo 'The full application build is skipped for fork and Dependabot pull requests because it may require package credentials.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Before merging, validate the reviewed contribution on a trusted branch as described in doc/continuous-integration.md.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload domain test reports
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: domain-test-reports
+          path: backend/hed-model*/target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 7
+
+  application:
+    name: Full application build
+    # Only repository-controlled code can use the optional package-read secret.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-java-maven
+        with:
+          cache-dependency-path: |
+            pom.xml
+            backend/**/pom.xml
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: '22.16.0'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install locked frontend dependencies
+        working-directory: frontend
+        env:
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
+        run: npm ci
+      - name: Check and build the frontend and both user guides
+        working-directory: frontend
+        run: npm run build
+      - name: Build and test all application modules
+        env:
+          GH_PACKAGES_USERNAME: ${{ vars.GH_PACKAGES_USERNAME || github.repository_owner }}
+          GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
+        run: mvn -B -ntp -s .github/maven-settings.xml -Papplication verify
+      - name: Check packaged frontend and user guides
+        run: |
+          application_jars=(backend/hed-application/target/hed-application-*.jar)
+          jar --list --file "${application_jars[0]}" > "$RUNNER_TEMP/application-contents.txt"
+          for entry in \
+            BOOT-INF/classes/static/index.html \
+            BOOT-INF/classes/static/help/en/index.html \
+            BOOT-INF/classes/static/help/fr/index.html
+          do
+            grep --fixed-strings --line-regexp "$entry" "$RUNNER_TEMP/application-contents.txt"
+          done
+      - name: Upload Java test reports
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: application-test-reports
+          path: backend/**/target/surefire-reports/
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload the executable application
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: hed-application-${{ github.sha }}
+          path: backend/hed-application/target/hed-application-*.jar
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7

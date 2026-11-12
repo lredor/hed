@@ -58,14 +58,6 @@ SPDX-License-Identifier: EPL-2.0
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
-        <repository>
-            <id>github-sirius-web</id>
-            <url>https://maven.pkg.github.com/eclipse-sirius/sirius-web</url>
-        </repository>
-        <repository>
-            <id>github-sirius-emfjson</id>
-            <url>https://maven.pkg.github.com/eclipse-sirius/sirius-emf-json</url>
-        </repository>
     </repositories>
     <profiles>
         <profile>
@@ -74,6 +66,16 @@ SPDX-License-Identifier: EPL-2.0
                 <module>backend/hed-starter</module>
                 <module>backend/hed-application</module>
             </modules>
+            <repositories>
+                <repository>
+                    <id>github-sirius-web</id>
+                    <url>https://maven.pkg.github.com/eclipse-sirius/sirius-web</url>
+                </repository>
+                <repository>
+                    <id>github-sirius-emfjson</id>
+                    <url>https://maven.pkg.github.com/eclipse-sirius/sirius-emf-json</url>
+                </repository>
+            </repositories>
         </profile>
     </profiles>
     <build>
@@ -106,6 +108,8 @@ SPDX-License-Identifier: EPL-2.0
                 <configuration>
                     <configLocation>${hed.root.directory}/tools/style/CheckstyleConfiguration.xml</configLocation>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <includeResources>false</includeResources>
+                    <includeTestResources>false</includeTestResources>
                     <failsOnError>true</failsOnError>
                     <consoleOutput>true</consoleOutput>
                 </configuration>

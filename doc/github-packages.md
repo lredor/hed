@@ -44,4 +44,6 @@ docker compose up --build -d
 
 A 401 or 403 response means the credentials, token scope, expiration, or package access need checking.
 
+For GitHub Actions, configure the repository secret and optional username variable described in [continuous integration](continuous-integration.md#github-packages-configuration). The workflow can also use its automatic token when upstream package access permits it.
+
 [Official npm registry authentication documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)

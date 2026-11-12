@@ -77,6 +77,35 @@ SPDX-License-Identifier: EPL-2.0
                 </repository>
             </repositories>
         </profile>
+        <profile>
+            <id>coverage</id>
+            <!-- Combine with application so all tested modules are in the reactor. -->
+            <modules>
+                <module>backend/hed-coverage</module>
+            </modules>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.16</version>
+                        <executions>
+                            <execution>
+                                <id>java-test-coverage</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>hed.*</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
     <build>
         <pluginManagement>

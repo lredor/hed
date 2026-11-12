@@ -22,6 +22,8 @@ Read the [English user guide](doc/user/en/index.adoc) or the [guide utilisateur 
 
 New sample projects use that same creation language for their names. Existing and user-edited names remain unchanged.
 
+For a first installation, follow the step-by-step [Windows/Docker installation guide in English](doc/user/en/index.adoc#installation) or [l’installation pas à pas en français](doc/user/fr/index.adoc#installation). They cover downloading the source ZIP, GitHub Packages access, startup, backups and updates, with a macOS/Linux alternative.
+
 ## Domain build
 
 Requirements: JDK 21 or later and Maven 3.9.9 or later.
@@ -65,7 +67,7 @@ Vitest and React Testing Library check HED's custom frontend representations, wi
 
 Use Model Explorer to create, rename and delete model elements, inspect their properties and open saved representations.
 
-If another explorer is active, choose **Electrical installation** in the explorer selector to use the domain projection. Its root is the native project name, with **Dwelling**, **Electrical service area (GTL)** and **Device catalog** beneath it. Storeys, rooms and functional controls are under Dwelling; the service connection, distribution boards and circuits are under the GTL. The catalog separates **Distribution board devices** from **Terminal equipment**.
+The electrical-installation explorer opens automatically; the generic explorer is removed when this domain explorer is available. Its root is the native project name, with **Dwelling**, **Electrical service area (GTL)** and **Device catalog** beneath it. Storeys, rooms and functional controls are under Dwelling; the service connection, distribution boards and circuits are under the GTL. The catalog separates **Distribution board devices** from **Terminal equipment**.
 
 Create a distribution board from the GTL, then rails on the board and modular devices directly on a rail. See [the hierarchy and contextual creation menus](doc/model-explorer.md).
 

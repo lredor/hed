@@ -16,7 +16,7 @@ import org.eclipse.sirius.components.view.diagram.DiagramDescription;
 import org.eclipse.sirius.components.view.diagram.DiagramLayoutOption;
 import org.eclipse.sirius.components.view.diagram.UserResizableDirection;
 import hed.domain.Messages;
-import hed.starter.HedDomainIcons;
+import hed.starter.representations.HedRepresentationIcons;
 
 /** A physical panel: graphical nesting follows board, DIN rails and ordered devices. */
 public final class PanelDiagram {
@@ -55,7 +55,7 @@ public final class PanelDiagram {
                 .defaultWidthExpression("aql:self.getHedPanelWidth()").defaultHeightExpression("aql:self.getHedPanelHeight()").userResizable(UserResizableDirection.NONE)
                 .style(b.newImageNodeStyleDescription().shape("hed-panel:board").build()).childrenDescriptions(rail).build();
         return b.newDiagramDescription().name(Messages.text(locale, "diagram.panel")).domainType("homeelectrical::DistributionBoard").preconditionExpression("aql:true")
-                .titleExpression(Messages.text(locale, "diagram.panel")).iconExpression(HedDomainIcons.path("view-dashboard-outline"))
+                .titleExpression(Messages.text(locale, "diagram.panel")).iconExpression(HedRepresentationIcons.PANEL)
                 .style(b.newDiagramStyleDescription().background(operations.newFixedColor().name("hed-panel-background").value("#ffffff").build()).build()).layoutOption(DiagramLayoutOption.NONE)
                 .nodeDescriptions(board).minimapVisible(false).palette(b.newDiagramPalette().dropTool(b.newDropTool().name("hed-panel-create-from-catalog")
                         .body(operations.newChangeContext().expression("aql:self.dropHedCatalogType(selectedNode, editingContext)").build()).build()).build())

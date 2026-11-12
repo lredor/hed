@@ -186,6 +186,7 @@ Désactiver le filtre rétablit les libellés normaux sans masquer les équipeme
 
 Utilisez *Nouvelle représentation* sur l’élément indiqué ci-dessous.
 Les tableaux et diagrammes enregistrés apparaissent sous cet élément dans Model Explorer ; vous pouvez les ouvrir, renommer ou supprimer depuis l’arbre.
+Leurs icônes en forme de document les distinguent des éléments sémantiques, comme les pièces et les tableaux électriques, y compris pour les représentations déjà créées.
 Supprimer une représentation conserve son élément sémantique et les équipements.
 
 [cols="2,1,3",options="header"]

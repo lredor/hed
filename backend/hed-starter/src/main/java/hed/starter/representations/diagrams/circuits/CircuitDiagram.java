@@ -29,6 +29,7 @@ import org.eclipse.sirius.components.view.diagram.SynchronizationPolicy;
 import org.eclipse.sirius.components.view.diagram.UserResizableDirection;
 import hed.domain.Messages;
 import hed.starter.HedDomainIcons;
+import hed.starter.representations.HedRepresentationIcons;
 
 /** A native, freely arranged logical view of the dwelling's circuits and controls. */
 public final class CircuitDiagram {
@@ -92,7 +93,7 @@ public final class CircuitDiagram {
         edges.add(edge("circuit-branch", "CircuitBranch", "aql:self.circuits->filter(homeelectrical::FinalCircuit).branches", "aql:self.circuit", "aql:self", circuits, branches, false, ""));
         edges.add(edge("branch-equipment", "FieldEquipment", "aql:self.equipment->select(e | e.branch <> null)", "aql:self.branch", "aql:self", branches, terminals, false, ""));
         return b.newDiagramDescription().name(Messages.text(locale, "diagram.circuits")).domainType("homeelectrical::Dwelling").preconditionExpression("aql:true")
-                .titleExpression(Messages.text(locale, "diagram.circuits")).iconExpression(HedDomainIcons.concept("Circuit")).description(Messages.text(locale, "diagram.circuits.description"))
+                .titleExpression(Messages.text(locale, "diagram.circuits")).iconExpression(HedRepresentationIcons.CIRCUITS).description(Messages.text(locale, "diagram.circuits.description"))
                 .endUserDocumentation(Messages.text(locale, "diagram.circuits.description")).style(b.newDiagramStyleDescription().background(color("#ffffff")).build())
                 .layoutOption(DiagramLayoutOption.AUTO_UNTIL_MANUAL).arrangeLayoutDirection(ArrangeLayoutDirection.RIGHT)
                 .nodeDescriptions(storey, board, supply, unlocated, unattached, unattachedBranch).edgeDescriptions(edges.toArray(EdgeDescription[]::new)).build();

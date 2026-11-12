@@ -33,6 +33,7 @@ import org.eclipse.sirius.web.domain.boundedcontexts.representationdata.Represen
 import hed.domain.Messages;
 import hed.domain.HedDomain;
 import hed.domain.HedValidation;
+import hed.starter.representations.HedRepresentationIcons;
 import hed.homeelectrical.Catalog;
 import hed.homeelectrical.Circuit;
 import hed.homeelectrical.CircuitBranch;
@@ -247,9 +248,14 @@ public class HedJavaServices {
                 : self instanceof ProjectRoot ? "hed-project" : self instanceof Group ? "hed-group" : identity.getKind(BranchEquipmentLinks.semantic(self));
     }
 
+    /**
+     * Distinguishes saved representations using document icons while retaining domain pictograms for semantic objects.
+     *
+     * @param self a semantic element, virtual explorer node or saved representation
+     * @return its image URL
+     */
     public String getHedIcon(Object self) {
-        return self instanceof RepresentationMetadata representation ? representation.getIconURLs().stream().map(icon -> icon.url()).findFirst().orElse(HedDomainIcons.path("table-large"))
-                : HedDomainIcons.of(self);
+        return self instanceof RepresentationMetadata representation ? HedRepresentationIcons.of(representation) : HedDomainIcons.of(self);
     }
 
     /**

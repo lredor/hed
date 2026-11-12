@@ -19,6 +19,9 @@ The `home-lightning-bolt-outline` icon was adapted for HED by separating its ori
 | electric-switch | Louistwee |
 | electric-switch-closed | Michael Irigoyen |
 | fan | Austin Andrews |
+| file-cad | GreenTurtwig |
+| file-image-outline | Terren |
+| file-table-outline | Michael Richins |
 | file-tree-outline | Michael Irigoyen |
 | flash-outline | Michael Irigoyen |
 | floor-plan | james-fry |
@@ -29,6 +32,7 @@ The `home-lightning-bolt-outline` icon was adapted for HED by separating its ori
 | home-lightning-bolt-outline | Michael Irigoyen |
 | home-outline | Google |
 | layers-outline | Google |
+| light-switch | Matthias de Baat |
 | lightbulb-outline | Austin Andrews |
 | lightning-bolt-outline | Brooke Clifton |
 | map-marker-question-outline | Google |

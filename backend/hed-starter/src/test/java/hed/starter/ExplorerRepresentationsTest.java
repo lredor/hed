@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.eclipse.sirius.components.core.api.IEditingContext;
@@ -26,8 +27,10 @@ import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.junit.jupiter.api.Test;
 import hed.domain.HedSamples;
 import hed.homeelectrical.HomeElectricalFactory;
+import hed.starter.representations.HedRepresentationIcons;
 import hed.starter.representations.modelexplorer.HedJavaServices;
 
+/** Verifies saved representation discovery and presentation independently of semantic objects. */
 class ExplorerRepresentationsTest {
     private final BootstrapIntegrationTest.Identity identity = new BootstrapIntegrationTest.Identity();
 
@@ -36,9 +39,12 @@ class ExplorerRepresentationsTest {
     private final IEditingContext context = () -> contextId.toString();
 
     private RepresentationMetadata representation(Object target, String label) {
+        return representation(target, label, Table.KIND, List.of(new RepresentationIconURL(HedDomainIcons.path("table-large"))));
+    }
+
+    private RepresentationMetadata representation(Object target, String label, String kind, List<RepresentationIconURL> icons) {
         return RepresentationMetadata.newRepresentationMetadata(UUID.randomUUID().toString()).representationMetadataId(UUID.randomUUID()).semanticData(AggregateReference.to(contextId))
-                .targetObjectId(identity.getId(target)).descriptionId("description").label(label).kind(Table.KIND).iconURLs(List.of(new RepresentationIconURL(HedDomainIcons.path("table-large"))))
-                .documentation("").build(UUID::randomUUID);
+                .targetObjectId(identity.getId(target)).descriptionId("description").label(label).kind(kind).iconURLs(icons).documentation("").build(UUID::randomUUID);
     }
 
     @Test
@@ -60,10 +66,31 @@ class ExplorerRepresentationsTest {
         assertEquals(circuits.getRepresentationMetadataId().toString(), service.getHedId(circuits));
         assertEquals(Table.KIND, service.getHedKind(circuits));
         assertEquals("Circuit Table", service.getHedLabel(circuits));
-        assertEquals(HedDomainIcons.path("table-large"), service.getHedIcon(circuits));
+        assertEquals(HedRepresentationIcons.TABLE, service.getHedIcon(circuits));
         assertTrue(service.isHedSelectable(circuits));
         assertTrue(service.isHedDeletable(circuits));
         assertFalse(service.hasHedChildren(circuits, all));
+    }
+
+    @Test
+    void existingDiagramsReceiveDistinctDocumentIconsWithoutChangingTheirMetadata() {
+        var home = HedSamples.example();
+        var service = new HedJavaServices(identity, new IObjectSearchService.NoOp(), new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH, dwelling -> dwelling.getName());
+        var expected = Map.of("floor-plan", HedRepresentationIcons.FLOOR_PLAN, "view-dashboard-outline", HedRepresentationIcons.PANEL, "vector-polyline", HedRepresentationIcons.CIRCUITS);
+        for (var entry : expected.entrySet()) {
+            for (var prefix : List.of("/hed/mdi/", "/api/images/hed/mdi/")) {
+                var oldIcons = List.of(new RepresentationIconURL(prefix + entry.getKey() + ".svg"));
+                var diagram = representation(home, "My diagram", "siriusComponents://representation?type=Diagram", oldIcons);
+                var id = diagram.getRepresentationMetadataId().toString();
+                assertEquals(entry.getValue(), service.getHedIcon(diagram));
+                assertEquals(id, service.getHedId(diagram));
+                assertEquals("My diagram", service.getHedLabel(diagram));
+                assertEquals(oldIcons, diagram.getIconURLs());
+            }
+        }
+        var custom = representation(home, "Custom", "diagram", List.of(new RepresentationIconURL("/custom.svg")));
+        assertEquals("/custom.svg", service.getHedIcon(custom));
+        assertEquals(HedRepresentationIcons.FLOOR_PLAN, service.getHedIcon(representation(home, "No icon", "diagram", List.of())));
     }
 
     @Test

@@ -184,6 +184,7 @@ Disabling the filter restores normal labels and never hides equipment.
 
 Use *New representation* on the owner listed below.
 Saved tables and diagrams appear beneath their owner in Model Explorer; open, rename or delete them from there.
+Their document-shaped icons distinguish them from semantic elements such as rooms and distribution boards, including representations created before this icon change.
 Deleting a representation retains its semantic owner and equipment.
 
 [cols="2,1,3",options="header"]

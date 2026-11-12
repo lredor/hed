@@ -12,9 +12,11 @@ SPDX-License-Identifier: EPL-2.0
 
 The explorer, creation menus, native new-object dialog and semantic reference selectors share the icon selection in `HedDomainIcons`. Catalog types and equipment instances use their category icon. Virtual explorer groups use distinct pictograms; the explorer tab has a tree icon.
 
-The 43 bundled SVGs are an unmodified subset of **Material Design Icons 7.4.47** (`@mdi/svg`), by [Pictogrammers](https://pictogrammers.com/library/mdi/). They are stored in the starter module at `backend/hed-starter/src/main/resources/hed/mdi/`. Their [Apache 2.0 license, upstream license notice and individual author credits](../backend/hed-starter/src/main/resources/hed/mdi/NOTICE.md) ship alongside the files. They retain their upstream licensing; the project's EPL-2.0 does not replace it.
+The 47 bundled SVGs come from **Material Design Icons 7.4.47** (`@mdi/svg`), by [Pictogrammers](https://pictogrammers.com/library/mdi/). The application logo has a colored lightning bolt; the other icons are unmodified. They are stored in the starter module at `backend/hed-starter/src/main/resources/hed/mdi/`. Their [Apache 2.0 license, upstream license notice and individual author credits](../backend/hed-starter/src/main/resources/hed/mdi/NOTICE.md) ship alongside the files. They retain their upstream licensing; the project's EPL-2.0 does not replace it.
 
-The mapping gives a catalog type and every equipment instance using it the same category icon. Virtual explorer branches have distinct pictograms. Circuit branches are included because they are already part of the consolidated domain model. The application serves the bundled icons locally through Sirius at `/api/images/hed/mdi/`, without an external icon service. Project-root, GTL and representation-specific entries are reserved for the corresponding later UI increments.
+The mapping gives a catalog type and every equipment instance using it the same category icon. Switches use a vertical wall-switch pictogram. Virtual explorer branches have distinct pictograms. The application serves the bundled icons locally through Sirius at `/api/images/hed/mdi/`, without an external icon service.
+
+Saved representations use document-shaped pictograms selected by `HedRepresentationIcons`, so they can be distinguished from rooms, boards and other semantic elements. Model Explorer also applies these pictograms to existing representations whose metadata still contains the previous icons, without changing their identifiers, labels or layouts. Custom diagram icons are retained.
 
 These are interface pictograms, not a claim of IEC 60617 conformity. Physical cabinet and appliance illustrations belong to the separate panel diagram increment.
 
@@ -40,7 +42,7 @@ These are interface pictograms, not a claim of IEC 60617 conformity. Physical ca
 | Energy meter | `meter-electric-outline` | ![meter-electric-outline](../backend/hed-starter/src/main/resources/hed/mdi/meter-electric-outline.svg) |
 | Service circuit-breaker | `shield-home-outline` | ![shield-home-outline](../backend/hed-starter/src/main/resources/hed/mdi/shield-home-outline.svg) |
 | Outlet | `power-socket-fr` | ![power-socket-fr](../backend/hed-starter/src/main/resources/hed/mdi/power-socket-fr.svg) |
-| Switch | `toggle-switch-outline` | ![toggle-switch-outline](../backend/hed-starter/src/main/resources/hed/mdi/toggle-switch-outline.svg) |
+| Switch | `light-switch` | ![light-switch](../backend/hed-starter/src/main/resources/hed/mdi/light-switch.svg) |
 | Push-button | `gesture-tap-button` | ![gesture-tap-button](../backend/hed-starter/src/main/resources/hed/mdi/gesture-tap-button.svg) |
 | Dimmer | `brightness-6` | ![brightness-6](../backend/hed-starter/src/main/resources/hed/mdi/brightness-6.svg) |
 | Shutter control | `window-shutter-settings` | ![window-shutter-settings](../backend/hed-starter/src/main/resources/hed/mdi/window-shutter-settings.svg) |
@@ -59,7 +61,11 @@ These are interface pictograms, not a claim of IEC 60617 conformity. Physical ca
 | Impulse relay | `toggle-switch-variant` | ![toggle-switch-variant](../backend/hed-starter/src/main/resources/hed/mdi/toggle-switch-variant.svg) |
 | Electrical load without a type | `flash-outline` | ![flash-outline](../backend/hed-starter/src/main/resources/hed/mdi/flash-outline.svg) |
 | Unclassified element | `shape-outline` | ![shape-outline](../backend/hed-starter/src/main/resources/hed/mdi/shape-outline.svg) |
-| Explorer / schedule | `file-tree-outline` / `table-large` | ![file-tree-outline](../backend/hed-starter/src/main/resources/hed/mdi/file-tree-outline.svg) ![table-large](../backend/hed-starter/src/main/resources/hed/mdi/table-large.svg) |
+| Explorer tab | `file-tree-outline` | ![file-tree-outline](../backend/hed-starter/src/main/resources/hed/mdi/file-tree-outline.svg) |
+| Table representation | `file-table-outline` | ![file-table-outline](../backend/hed-starter/src/main/resources/hed/mdi/file-table-outline.svg) |
+| Floor-plan representation | `file-image-outline` | ![file-image-outline](../backend/hed-starter/src/main/resources/hed/mdi/file-image-outline.svg) |
+| Panel representation | `file-cad` | ![file-cad](../backend/hed-starter/src/main/resources/hed/mdi/file-cad.svg) |
+| Circuit representation | `file-tree-outline` | ![file-tree-outline](../backend/hed-starter/src/main/resources/hed/mdi/file-tree-outline.svg) |
 | Move left / move right | `arrow-left` / `arrow-right` | ![arrow-left](../backend/hed-starter/src/main/resources/hed/mdi/arrow-left.svg) ![arrow-right](../backend/hed-starter/src/main/resources/hed/mdi/arrow-right.svg) |
 
 To update the subset, select non-brand icons from a pinned `@mdi/svg` release, copy their SVGs without modification, and refresh the upstream license and author credits from the package's `meta.json`. Update this mapping and validate the SVG files and their credits. Also check the explorer, creation menus and reference selectors in the browser.

@@ -18,7 +18,7 @@ import org.eclipse.sirius.components.view.diagram.NodeContainmentKind;
 import org.eclipse.sirius.components.view.diagram.SynchronizationPolicy;
 import org.eclipse.sirius.components.view.diagram.UserResizableDirection;
 import hed.domain.Messages;
-import hed.starter.HedDomainIcons;
+import hed.starter.representations.HedRepresentationIcons;
 
 /** An imported floor plan and explicitly placed views of existing equipment. */
 public final class FloorPlanDiagram {
@@ -53,7 +53,7 @@ public final class FloorPlanDiagram {
         var drop = b.newDropTool().name("hed-floor-plan-place").body(ops.newIf().conditionExpression("aql:self.canPlaceHedEquipmentInPlan(diagramContext, editingContext)").children(create).build())
                 .build();
         return b.newDiagramDescription().name(Messages.text(locale, "diagram.floorPlan")).domainType("homeelectrical::Storey").preconditionExpression("aql:true")
-                .titleExpression(Messages.text(locale, "diagram.floorPlan")).iconExpression(HedDomainIcons.concept("Room"))
+                .titleExpression(Messages.text(locale, "diagram.floorPlan")).iconExpression(HedRepresentationIcons.FLOOR_PLAN)
                 .style(b.newDiagramStyleDescription().background(ops.newFixedColor().name("hed-plan-background").value("#f1f5f9").build()).build()).layoutOption(DiagramLayoutOption.NONE)
                 .minimapVisible(false).nodeDescriptions(background).palette(b.newDiagramPalette().dropTool(drop).build()).build();
     }

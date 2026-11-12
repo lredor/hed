@@ -23,7 +23,7 @@ import org.eclipse.sirius.components.view.builder.generated.table.TableBuilders;
 import org.eclipse.sirius.components.view.builder.generated.view.ViewBuilders;
 import org.springframework.stereotype.Service;
 import hed.domain.Messages;
-import hed.starter.HedDomainIcons;
+import hed.starter.representations.HedRepresentationIcons;
 
 /** Editable tables sharing domain services with the explorer and properties. */
 @Service
@@ -87,7 +87,7 @@ public class HedTableDescriptions {
                 .semanticCandidatesExpression("aql:self.getHedRows('" + table + "',globalFilterData,columnFilters,columnSort)->toPaginatedData(cursor,direction,size)")
                 .headerLabelExpression("aql:self.getHedLabel()").headerIconExpression("aql:self.getHedIcon()").initialHeightExpression("36").isResizableExpression("aql:true").build();
         return builders.newTableDescription().name(Messages.text(locale, "table." + table)).domainType("homeelectrical::" + rootType).preconditionExpression("aql:true")
-                .titleExpression(Messages.text(locale, "table." + table)).iconExpression(HedDomainIcons.path("table-large")).enableSubRows(false)
+                .titleExpression(Messages.text(locale, "table." + table)).iconExpression(HedRepresentationIcons.TABLE).enableSubRows(false)
                 .columnDescriptions(columns.toArray(ColumnDescription[]::new)).rowDescription(row).cellDescriptions(cells.toArray(CellDescription[]::new)).useStripedRowsExpression("aql:true")
                 .pageSizeOptionsExpression("aql:Sequence{10,25,50}").defaultPageSizeIndexExpression("0").build();
     }

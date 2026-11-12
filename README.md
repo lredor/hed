@@ -85,6 +85,8 @@ Branches are optional. A final circuit's **Associated equipment** list in Detail
 
 The explorer's native **Filters** menu includes **Highlight equipments not in floor plans**, disabled by default. Enable it to show room equipment missing from every floor plan of its storey in red, along with its room, storey and dwelling. The parent labels remain red when collapsed. See [the optional placement highlight](doc/model-explorer.md#optional-floor-plan-placement-highlight).
 
+**Highlight incomplete circuit elements** marks circuits without protection, terminal equipment without a circuit and unused board modules, together with their explorer parents. Both highlights start disabled; enabling either one switches the other off. See [the circuit completeness highlight](doc/model-explorer.md#optional-circuit-completeness-highlight).
+
 ### Model pictograms
 
 The explorer, creation menus and reference selectors share the local [Material Design Icons selection](doc/icons.md), with visual previews and author credits. The SVGs retain their upstream licenses.

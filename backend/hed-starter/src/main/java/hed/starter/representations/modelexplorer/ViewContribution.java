@@ -79,8 +79,8 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
 
     @Override
     public List<Class<?>> getServiceClasses(View view) {
-        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class, FloorPlanServices.class, ExplorerPlanPlacement.class,
-                CircuitServices.class);
+        return List.of(HedJavaServices.class, ExplorerRepresentations.class, PanelServices.class, CatalogDropService.class, FloorPlanServices.class, ExplorerPlanPlacement.class, CircuitServices.class,
+                ExplorerCircuitCompleteness.class);
     }
 
     @Override
@@ -125,10 +125,11 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
                 .hasChildrenExpression("aql:self.hasHedChildren(hedRepresentations)").treeItemIdExpression("aql:self.getHedId()").treeItemObjectExpression("aql:id.getHedObject(editingContext)")
                 .treeItemIconExpression("aql:self.getHedIcon()").kindExpression("aql:self.getHedKind()").parentExpression("aql:self.getHedParent(editingContext)")
                 .selectableExpression("aql:self.isHedSelectable()").editableExpression("aql:self.isHedEditable()").deletableExpression("aql:self.isHedDeletable()")
-                .treeItemLabelDescriptions(
-                        tb.newTreeItemLabelDescription().name("hed-label").preconditionExpression("aql:not self.isHedMissingFromFloorPlans(hedPlanPlacements, hedHighlightUnplaced)")
-                                .children(tb.newTreeItemLabelFragmentDescription().labelExpression("aql:self.getHedExplorerLabel()").build()).build(),
-                        tb.newTreeItemLabelDescription().name("hed-label-unplaced").preconditionExpression("aql:self.isHedMissingFromFloorPlans(hedPlanPlacements, hedHighlightUnplaced)")
+                .treeItemLabelDescriptions(tb.newTreeItemLabelDescription().name("hed-label").preconditionExpression(
+                        "aql:not (self.isHedMissingFromFloorPlans(hedPlanPlacements, hedHighlightUnplaced) or self.isHedCircuitIncomplete(hedIncompleteCircuitElements, hedHighlightIncompleteCircuits))")
+                        .children(tb.newTreeItemLabelFragmentDescription().labelExpression("aql:self.getHedExplorerLabel()").build()).build(),
+                        tb.newTreeItemLabelDescription().name("hed-label-unplaced").preconditionExpression(
+                                "aql:self.isHedMissingFromFloorPlans(hedPlanPlacements, hedHighlightUnplaced) or self.isHedCircuitIncomplete(hedIncompleteCircuitElements, hedHighlightIncompleteCircuits)")
                                 .children(tb.newTreeItemLabelFragmentDescription().labelExpression("aql:self.getHedExplorerLabel()")
                                         .style(vb.newTextStyleDescription().name("hed-plan-placement").foregroundColorExpression(ExplorerPlanPlacement.UNPLACED_COLOR).build()).build())
                                 .build())

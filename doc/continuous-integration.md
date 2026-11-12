@@ -17,14 +17,14 @@ GitHub Actions checks pushes to `master` and pull requests targeting `master`. B
 | Workflow / job | What it verifies |
 | --- | --- |
 | **CheckFormatting / Source formatting** | The Sirius Java formatter and Prettier checks for TypeScript, TSX, CSS, frontend build scripts and HTML. This job does not need GitHub Packages credentials. |
-| **Build / Domain verification** | `mvn -B -ntp verify`: Checkstyle, model/edit compilation and domain tests, using public dependencies. This job runs for every contribution. |
-| **Build / Full application build** | Locked frontend dependency installation, Prettier, TypeScript checking, Vite assets, both user guides, and `mvn -B -ntp -s .github/maven-settings.xml -Papplication verify`. The application profile includes the starter tests and packages the executable Spring Boot JAR. A final check verifies that it contains the frontend and both guides. |
+| **Build / Domain verification** | `mvn -B -ntp verify`: Checkstyle, model/edit compilation and domain tests, using public dependencies. Also tests the coverage summary reporter with Python's standard library. This job runs for every contribution. |
+| **Build / Full application build** | Locked frontend dependency installation, Prettier, TypeScript checking, Vite assets, both user guides, and `mvn -B -ntp -s .github/maven-settings.xml -Papplication,coverage clean verify`. The application profile includes the starter tests and packages the executable Spring Boot JAR. JaCoCo aggregates Java-test coverage across modules. A final check verifies that the JAR contains the frontend and both guides. |
 | **Build / Playwright (English)** | All browser workflows against the packaged application started with `HED_LOCALE=en_GB`, a fresh PostgreSQL 17 service and an English Chrome locale. |
 | **Build / Playwright (French)** | The same browser workflows with `HED_LOCALE=fr_FR`, a separate fresh database and a French Chrome locale. |
 
 Jobs run on Ubuntu 24.04 with Temurin Java 21 and Maven 3.9.9. The frontend uses Node 22.16.0. The shared Java/Maven action downloads Maven from Apache and checks a pinned SHA-512 checksum. External actions are pinned to commit hashes, with version comments for maintenance. Maven and npm dependency caches speed up subsequent runs; model, formatter and full-application Maven caches use separate dependency fingerprints.
 
-Java verification runs without starting the application or a database. Browser verification starts its own application and PostgreSQL service per language. Code coverage, container publication and deployment are separate steps in the CI rollout.
+Java verification and coverage run without starting the application or a database. Browser verification starts its own application and PostgreSQL service per language. Container publication and deployment are separate steps in the CI rollout.
 
 Only the `application` profile declares GitHub Packages repositories. Model/edit builds resolve public dependencies from Maven Central. Checkstyle examines Java production and test sources only: it skips resource directories, including the repository root used to package license files. Its Java-only rules therefore do not traverse npm dependencies or local caches.
 
@@ -73,6 +73,27 @@ npx playwright show-report ../playwright-report/fr_FR
 
 The example expects the backend to be started in French. Use `en_GB` and the URL of an English test instance for the English run. Clear `CI` afterward to return to the regular local console reporter.
 
+## Java coverage
+
+The full application build runs [JaCoCo 0.8.16](https://github.com/jacoco/jacoco/releases/tag/v0.8.16) through the optional `coverage` Maven profile, together with `application`. The model, starter and application entry point are measured. Generated EMF classes and edit item providers under `hed/homeelectrical/**` are excluded from the report, while their tests continue to run. The edit module has no handwritten production Java after this exclusion. Tests, dependencies and the separate model generator/formatter are outside the measured production sources.
+
+The `hed-coverage` reporting module depends on all application modules and runs last. Its [aggregate report](https://www.jacoco.org/jacoco/trunk/doc/report-aggregate-mojo.html) combines execution data from the entire reactor: a starter test that exercises a domain service contributes to that service's coverage. Measuring each module using only its own tests would miss these calls. The application entry point remains visible even if the Java tests do not exercise it.
+
+Open **Actions → Build → a workflow run → Summary → Java coverage** to read overall and per-module percentages and covered/total counts. **Lines** measure source lines executed by Java tests. **Branches** measure outcomes of Java decisions such as `if` and `switch`; they do not refer to Git branches. A dash means there are no branches to measure. Percentages use combined counts, rather than averaging module percentages.
+
+The **java-coverage** artifact contains the navigable HTML report and aggregate `jacoco.xml`. Extract it and open `index.html` to inspect packages, classes and highlighted source lines. Coverage is published after successful Java verification; a failed or incomplete Maven build may not reach the reporting module. A missing, malformed, incomplete or entirely unexercised report fails summary generation instead of publishing a misleading result. Coverage-summary regression checks run in Domain verification, including on fork pull requests.
+
+Coverage currently establishes a baseline without a minimum coverage threshold or pull-request comments. Coverage indicates which code was executed, not whether all behavior was correctly asserted. The later Playwright jobs start the packaged JAR without a coverage agent and do not contribute to this Java-test report. The agent is attached only to the Java test process; it does not alter the packaged application.
+
+For the same report locally, first build the frontend and guides as described in [development](development.md), configure the package credentials, then run from the repository root:
+
+```sh
+mvn -B -ntp -s .github/maven-settings.xml -Papplication,coverage clean verify
+python tools/ci/jacoco_summary.py backend/hed-coverage/target/site/jacoco-aggregate/jacoco.xml
+```
+
+Use both profiles in the same reactor. `clean` removes old execution data and classes so the report describes the current test run. The HTML entry point is `backend/hed-coverage/target/site/jacoco-aggregate/index.html`. Without `coverage`, the regular domain and `application` builds retain their existing behavior and do not attach the agent or build the reporting module. To run the reporter tests locally, use `python -m unittest discover -s tools/ci -p 'test_*.py'`.
+
 ## Reports and application artifact
 
 Read test results directly in **Actions → Build → a workflow run → Summary**. The **Domain tests** and **Application tests** sections show totals, passed/failed/skipped counts, execution times, and individual tests grouped by suite. Failed tests include expandable error messages and stack traces. No download is needed to read the results.
@@ -87,6 +108,7 @@ Raw reports remain available as artifacts for detailed troubleshooting. Open the
 
 - **domain-test-reports** contains the model's Surefire XML and text reports.
 - **application-test-reports** contains all available Java test reports, including starter tests. Reports are uploaded even when verification fails; an earlier compilation or dependency failure may produce no reports.
+- **java-coverage** contains aggregate JaCoCo HTML and XML after successful Java verification. Line and branch coverage can also be read directly on the native Summary page.
 - **hed-application-&lt;commit SHA&gt;** contains the executable `hed-application-0.1.0-SNAPSHOT.jar`. It is uploaded only after the full build succeeds and includes both generated user guides. This is a build artifact, not a GitHub release.
 - **playwright-en_GB** and **playwright-fr_FR** contain each language's HTML report, JUnit XML, available failure screenshots/traces and application log. The native Summary page provides the results without downloading these archives. To investigate a trace, extract the archive and run `npx playwright show-trace <path-to-trace.zip>` from `frontend`; use `npx playwright show-report <path-to-report-folder>` for the HTML report.
 

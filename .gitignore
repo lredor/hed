@@ -9,6 +9,7 @@
 **/target/
 **/node_modules/
 **/dist/
+**/__pycache__/
 .cache/
 .reference/
 .env

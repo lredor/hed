@@ -57,6 +57,8 @@ Docker builds the frontend and backend from source, runs the Maven tests, and st
 
 GitHub Actions checks formatting and tests the domain modules for pushes to `master` and pull requests targeting it. Repository branches also run the full application build, including TypeScript checks, frontend assets, both user guides and the Java application tests. Two parallel Playwright jobs reuse its JAR to run the browser workflows in English and French, each with a fresh PostgreSQL database. Test counts, individual results and failure details can be read directly in each workflow run's **Summary**. Raw reports, browser traces and the executable JAR are also available as workflow artifacts for 7 days. See [workflow setup, GitHub Packages credentials and external contribution checks](doc/continuous-integration.md).
 
+The full build also measures Java-test coverage with JaCoCo. Its Summary shows line and branch coverage per module, excluding EMF-generated code. The **java-coverage** artifact provides the HTML source report and aggregate XML. This first baseline has no minimum coverage gate; see [coverage scope and local commands](doc/continuous-integration.md#java-coverage).
+
 ## Model Explorer
 
 Use Model Explorer to create, rename and delete model elements, inspect their properties and open saved representations.

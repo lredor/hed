@@ -44,6 +44,8 @@ jobs:
       - name: Build and test the model and edit modules
         id: domain_tests
         run: mvn -B -ntp verify
+      - name: Test the coverage summary reporter
+        run: python3 -m unittest discover -s tools/ci -p 'test_*.py'
       - name: Show domain test results
         if: ${{ always() && !cancelled() }}
         uses: mikepenz/action-junit-report@a16be3a69023e9bd7e748ede768b3282ea7b30ce # v6.7.1
@@ -122,7 +124,7 @@ jobs:
         env:
           GH_PACKAGES_USERNAME: ${{ vars.GH_PACKAGES_USERNAME || github.repository_owner }}
           GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
-        run: mvn -B -ntp -s .github/maven-settings.xml -Papplication verify
+        run: mvn -B -ntp -s .github/maven-settings.xml -Papplication,coverage clean verify
       - name: Show application test results
         if: ${{ always() && !cancelled() }}
         uses: mikepenz/action-junit-report@a16be3a69023e9bd7e748ede768b3282ea7b30ce # v6.7.1
@@ -157,6 +159,19 @@ jobs:
           do
             grep --fixed-strings --line-regexp "$entry" "$RUNNER_TEMP/application-contents.txt"
           done
+      - name: Show Java coverage
+        run: >-
+          python3 tools/ci/jacoco_summary.py
+          backend/hed-coverage/target/site/jacoco-aggregate/jacoco.xml
+          >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload Java coverage details
+        if: ${{ always() && !cancelled() && steps.application_tests.outcome == 'success' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: java-coverage
+          path: backend/hed-coverage/target/site/jacoco-aggregate/
+          if-no-files-found: error
+          retention-days: 7
       - name: Upload Java test reports
         if: ${{ always() && !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6

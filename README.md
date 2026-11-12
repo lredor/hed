@@ -53,6 +53,10 @@ Build the frontend before packaging the application, then run it against Postgre
 
 Docker builds the frontend and backend from source, runs the Maven tests, and starts the application with PostgreSQL. See [the Docker launch and persistence workflow](doc/docker.md) and [GitHub Packages access](doc/github-packages.md).
 
+## Continuous integration
+
+GitHub Actions checks formatting and tests the domain modules for pushes to `master` and pull requests targeting it. Repository branches also run the full application build, including TypeScript checks, frontend assets, both user guides and the Java application tests. Test reports and the executable JAR are available as workflow artifacts for 7 days. See [workflow setup, GitHub Packages credentials and external contribution checks](doc/continuous-integration.md).
+
 ## Model Explorer
 
 Use Model Explorer to create, rename and delete model elements, inspect their properties and open saved representations.

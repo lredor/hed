@@ -1,0 +1,41 @@
+# Copyright (c) 2026 Laurent Redor.
+# This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v2.0
+# which accompanies this distribution, and is available at
+# https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+
+name: Set up Java and Maven
+description: Install Temurin 21 and Maven 3.9.9 with a cache for the selected POMs.
+
+inputs:
+  cache-dependency-path:
+    description: POM paths used to identify the Maven dependency cache.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+      with:
+        distribution: temurin
+        java-version: '21'
+        cache: maven
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
+        overwrite-settings: false
+    - name: Install Maven 3.9.9
+      shell: bash
+      run: |
+        archive="$RUNNER_TEMP/apache-maven-3.9.9-bin.tar.gz"
+        curl --fail --silent --show-error --location --retry 3 \
+          https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz \
+          --output "$archive"
+        printf '%s  %s\n' \
+          a555254d6b53d267965a3404ecb14e53c3827c09c3b94b5678835887ab404556bfaf78dcfe03ba76fa2508649dca8531c74bca4d5846513522404d48e8c4ac8b \
+          "$archive" | sha512sum --check -
+        tar --extract --gzip --file "$archive" --directory "$RUNNER_TEMP"
+        echo "$RUNNER_TEMP/apache-maven-3.9.9/bin" >> "$GITHUB_PATH"
+    - name: Show Java and Maven versions
+      shell: bash
+      run: mvn --version

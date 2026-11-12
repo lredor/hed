@@ -72,7 +72,7 @@ class FloorPlanTest {
 
     @Test
     void storeyIdentifiersRemainOpaque() {
-        assertEquals("external:storey", FloorPlanBackgroundAction.parse(FloorPlanBackgroundAction.PREFIX + "external%3Astorey::800").storeyId());
+        assertEquals("external:storey", FloorPlanBackgroundAction.parse(FloorPlanBackgroundAction.PREFIX + "external%3Astorey::1.5").storeyId());
     }
 
     @Test
@@ -81,12 +81,12 @@ class FloorPlanTest {
         var storey = home.getStoreys().get(0);
         int count = home.getEquipment().size();
         var fixture = new ActionFixture(storey, "project-a", "project-a");
-        assertInstanceOf(Success.class, fixture.action.handle(fixture.context, fixture.command(fixture.image.getId().toString(), 900)));
+        assertInstanceOf(Success.class, fixture.action.handle(fixture.context, fixture.command(fixture.image.getId().toString(), 4.0 / 3.0)));
         assertEquals(fixture.image.getId().toString(), storey.getPlanImageId());
         assertEquals(900, storey.getPlanHeight());
         assertEquals(1200, storey.getPlanWidth());
         assertEquals(count, home.getEquipment().size());
-        assertInstanceOf(Success.class, fixture.action.handle(fixture.context, fixture.command("", 900)));
+        assertInstanceOf(Success.class, fixture.action.handle(fixture.context, fixture.command("", 1)));
         assertNull(storey.getPlanImageId());
         assertEquals(900, storey.getPlanHeight());
         assertEquals(count, home.getEquipment().size());
@@ -99,11 +99,28 @@ class FloorPlanTest {
         storey.setPlanImageId(old);
         storey.setPlanHeight(720);
         var fixture = new ActionFixture(storey, "project-a", "project-b");
-        for (var command : List.of(fixture.command(fixture.image.getId().toString(), 900), fixture.command("broken", 900), fixture.command("", 0), fixture.command("", 6001))) {
+        for (var command : List.of(fixture.command(fixture.image.getId().toString(), 4.0 / 3.0), fixture.command("broken", 1.5), fixture.command("", 0), fixture.command("", 10.1),
+                fixture.command("", Double.NaN), fixture.command("", Double.POSITIVE_INFINITY))) {
             assertInstanceOf(Failure.class, fixture.action.handle(fixture.context, command));
             assertEquals(old, storey.getPlanImageId());
             assertEquals(720, storey.getPlanHeight());
         }
+    }
+
+    @Test
+    void imageImportRetainsTheChosenWidthAndClearingRetainsTheDimensions() {
+        var storey = HedSamples.example().getStoreys().getFirst();
+        storey.setPlanWidth(2400);
+        var fixture = new ActionFixture(storey, "project-a", "project-a");
+        assertInstanceOf(Success.class, fixture.action.handle(fixture.context, fixture.command(fixture.image.getId().toString(), 1.5)));
+        assertEquals(2400, storey.getPlanWidth());
+        assertEquals(1600, storey.getPlanHeight());
+        assertEquals(1.5, storey.getPlanAspectRatio());
+        assertInstanceOf(Success.class, fixture.action.handle(fixture.context, fixture.command("", 1)));
+        assertNull(storey.getPlanImageId());
+        assertEquals(2400, storey.getPlanWidth());
+        assertEquals(1600, storey.getPlanHeight());
+        assertEquals(1.5, storey.getPlanAspectRatio());
     }
 
     @SuppressWarnings("unchecked")
@@ -137,8 +154,8 @@ class FloorPlanTest {
                     stub(IProjectSemanticDataSearchService.class, name -> Optional.of(link)), Locale.ENGLISH);
         }
 
-        String command(String imageId, int height) {
-            return FloorPlanBackgroundAction.PREFIX + storeyId + ":" + imageId + ":" + height;
+        String command(String imageId, double aspectRatio) {
+            return FloorPlanBackgroundAction.PREFIX + storeyId + ":" + imageId + ":" + aspectRatio;
         }
     }
 }

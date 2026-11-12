@@ -27,6 +27,7 @@ import org.eclipse.sirius.web.domain.boundedcontexts.projectsemanticdata.service
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.stereotype.Service;
 import hed.domain.Messages;
+import hed.domain.HedFloorPlans;
 import hed.homeelectrical.Storey;
 
 /** Runs in the native editing-context event queue, so image changes persist and refresh every view. */
@@ -74,9 +75,11 @@ public class FloorPlanBackgroundAction implements IEditingContextActionHandler {
                 }
             }
             // All validation precedes mutation, so rejected imports retain the previous background.
-            storey.setPlanImageId(command.imageId().isEmpty() ? null : command.imageId());
-            storey.setPlanWidth(1200);
-            storey.setPlanHeight(command.height());
+            if (command.imageId().isEmpty()) {
+                storey.setPlanImageId(null);
+            } else {
+                HedFloorPlans.assignImage(storey, command.imageId(), command.aspectRatio());
+            }
             return new Success(ChangeKind.SEMANTIC_CHANGE, Map.of());
         } catch (IllegalArgumentException ex) {
             return new Failure(Messages.text(locale, "plan.invalidBackground"));
@@ -84,19 +87,19 @@ public class FloorPlanBackgroundAction implements IEditingContextActionHandler {
     }
 
     /**
-     * A validated background assignment. Width is normalized to 1200 diagram units.
+     * A validated background assignment carrying image proportions independently of the user's canvas width.
      * @param storeyId the opaque semantic identifier of the target storey
      * @param imageId the uploaded project image UUID, or an empty string to clear the background
-     * @param height the image area's height, from 120 through 6000 diagram units
+     * @param aspectRatio the intrinsic image width divided by height, from 0.2 through 10
      */
-    public record BackgroundCommand(String storeyId, String imageId, int height) {
+    public record BackgroundCommand(String storeyId, String imageId, double aspectRatio) {
     }
 
     /**
      * Parses and validates the action payload before any semantic mutation.
-     * @param actionId the action prefix, encoded storey identifier, image identifier and height
+     * @param actionId the action prefix, encoded storey identifier, image identifier and aspect ratio
      * @return the validated command
-     * @throws IllegalArgumentException for an unknown prefix, invalid identifier or out-of-range height
+     * @throws IllegalArgumentException for an unknown prefix, invalid identifier or out-of-range aspect ratio
      */
     public static BackgroundCommand parse(String actionId) {
         if (!actionId.startsWith(PREFIX)) {
@@ -113,10 +116,10 @@ public class FloorPlanBackgroundAction implements IEditingContextActionHandler {
         if (!parts[1].isEmpty()) {
             UUID.fromString(parts[1]);
         }
-        int height = Integer.parseInt(parts[2]);
-        if (height < 120 || height > 6000) {
+        double ratio = Double.parseDouble(parts[2]);
+        if (!Double.isFinite(ratio) || ratio < 0.2 || ratio > 10) {
             throw new IllegalArgumentException();
         }
-        return new BackgroundCommand(storeyId, parts[1], height);
+        return new BackgroundCommand(storeyId, parts[1], ratio);
     }
 }

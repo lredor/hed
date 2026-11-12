@@ -14,9 +14,17 @@ Create **Floor Plan** on a **Storey** using its Model Explorer menu, **New Repre
 
 ## Import a background
 
-Use **Import floor plan** to upload a PNG, JPEG or SVG image from your computer. Images must be at most 10 MB and have a width/height ratio between 1:5 and 10:1. The native Sirius Web project-image service stores the image. Its UUID, normalized canvas width (1200 units) and proportional height are recorded on the Storey; these fields are managed by the import tool and hidden from Properties.
+Use **Import floor plan** to upload a PNG, JPEG or SVG image from your computer. Images must be at most 10 MB and have a width/height ratio between 1:5 and 10:1. The native Sirius Web project-image service stores the image. Import retains the Storey's chosen canvas width and calculates its height from the image proportions. Image identity and reference proportions are managed internally.
 
-Use **Replace floor plan** to choose another image or **Remove background** to return to an empty canvas. These actions retain equipment views and their positions. Different representations of the same storey share its background image; each has its own equipment views and layout. Images remain in the project's image library when the background is removed or replaced.
+Use **Replace floor plan** to choose another image or **Remove background** to return to an empty canvas. Equipment views remain in their representations. If image proportions change, their positions follow the resized image; removing the background retains the canvas dimensions and positions. Different representations of the same storey share its background image and dimensions; each has its own equipment views and layout. Images remain in the project's image library when the background is removed or replaced.
+
+## Adjust the canvas size
+
+Select the **Storey** in Model Explorer, then edit **Plan width** in **Details**. It accepts a positive whole number and defaults to **1200 diagram units**. **Plan height** is read-only and is recalculated to preserve the image proportions. Before the first import, the empty canvas defaults to 1200 × 800. Importing or replacing an image preserves the width you chose.
+
+Existing equipment keeps its position relative to the image: pictogram centers follow the resized background, while each pictogram stays **24 × 24 diagram units**. This also applies to saved plans that are closed when the width changes; each keeps its independent placement when reopened. Use the diagram's zoom or fit controls after changing the canvas size if necessary.
+
+These are diagram units, not metres. At 100% zoom a 24-unit icon occupies 24 CSS pixels; zoom changes its size on screen. As a guide, an icon occupies 2% of a 1200-unit plan's width and 1% of a 2400-unit plan's width. Increasing the plan width therefore gives more space for equipment without enlarging its icons. Labels remain outside the 24 × 24 nodes. The header is an additional 48 units high and is not included in **Plan height**.
 
 ## Place existing equipment
 
@@ -34,7 +42,7 @@ Model Explorer keeps its usual labels by default. Enable **Highlight equipments 
 
 ## Implementation and validation
 
-Backend contributions are in `hed.starter.representations.diagrams.floorplan`, and frontend rendering is in `frontend/src/representations/diagrams/floorplan`. The native View DSL uses an unsynchronized equipment node and Create View / Delete View operations. A custom style and React Flow converter draw the image and the compact pictograms, retaining native selection, drops and persisted positions. The canvas is fixed and nonselectable.
+Backend contributions are in `hed.starter.representations.diagrams.floorplan`, and frontend rendering is in `frontend/src/representations/diagrams/floorplan`. The native View DSL uses an unsynchronized equipment node and Create View / Delete View operations. A custom style and React Flow converter draw the image and the compact pictograms, retaining native selection, drops and persisted positions. The canvas is nonselectable and is resized through the Storey's Details rather than node resize handles.
 
 Background assignments run in the editing-context event queue. The handler checks the uploaded image's project and supported media type before changing the Storey. Invalid commands leave the previous background untouched; read-only diagrams disable import and removal controls.
 

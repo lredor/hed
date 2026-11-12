@@ -58,6 +58,7 @@ public class StoreyItemProvider extends NamedElementItemProvider {
             addPlanImageIdPropertyDescriptor(object);
             addPlanWidthPropertyDescriptor(object);
             addPlanHeightPropertyDescriptor(object);
+            addPlanAspectRatioPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -108,6 +109,18 @@ public class StoreyItemProvider extends NamedElementItemProvider {
         itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(), getString("_UI_Storey_planHeight_feature"),
                 getString("_UI_PropertyDescriptor_description", "_UI_Storey_planHeight_feature", "_UI_Storey_type"), HomeElectricalPackage.Literals.STOREY__PLAN_HEIGHT, true, false, false,
                 ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Plan Aspect Ratio feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addPlanAspectRatioPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+                getString("_UI_Storey_planAspectRatio_feature"), getString("_UI_PropertyDescriptor_description", "_UI_Storey_planAspectRatio_feature", "_UI_Storey_type"),
+                HomeElectricalPackage.Literals.STOREY__PLAN_ASPECT_RATIO, true, false, false, ItemPropertyDescriptor.REAL_VALUE_IMAGE, null, null));
     }
 
     /**
@@ -179,6 +192,7 @@ public class StoreyItemProvider extends NamedElementItemProvider {
             case HomeElectricalPackage.STOREY__PLAN_IMAGE_ID:
             case HomeElectricalPackage.STOREY__PLAN_WIDTH:
             case HomeElectricalPackage.STOREY__PLAN_HEIGHT:
+            case HomeElectricalPackage.STOREY__PLAN_ASPECT_RATIO:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
             case HomeElectricalPackage.STOREY__ROOMS:

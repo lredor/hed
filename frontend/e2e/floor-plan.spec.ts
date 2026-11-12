@@ -99,8 +99,8 @@ test('import a storey plan, place existing equipment, move it and reopen the sav
     const labels = background.getByRole('checkbox', { name: /^(Show equipment labels|Afficher les libellés)$/ });
     await expect(labels).not.toBeChecked();
     await expect(device(sampleName('sofaOutlet')).locator('.hed-floor-equipment-label')).toBeHidden();
-    const dimensions = () =>
-      device(sampleName('sofaOutlet')).evaluate((element) => {
+    const dimensions = (label = sampleName('sofaOutlet')) =>
+      device(label).evaluate((element) => {
         const box = element.closest('.react-flow__node') as HTMLElement;
         return { width: box.style.width, height: box.style.height };
       });
@@ -219,10 +219,63 @@ test('import a storey plan, place existing equipment, move it and reopen the sav
     await expect(equipment).toHaveCount(0);
     await expect(background.locator('.hed-floor-plan-image')).toHaveAttribute('src', sharedImage!);
     await expect(labels).not.toBeChecked();
+    await labels.check();
+    await expand();
+    await drop(item(sampleName('doubleSwitch')), 0.42, 0.54);
+    await expect(equipment).toHaveCount(1);
+    const secondPlanURL = page.url(),
+      secondPlaced = await position(sampleName('doubleSwitch'));
     await page.goto(firstPlanURL);
     await expect(equipment).toHaveCount(1);
     await expect(device(sampleName('doubleSwitch'))).toBeVisible();
     await expect(labels).toBeChecked();
+    const firstPlaced = await position(sampleName('doubleSwitch'));
+    await expand();
+    await item(sampleName('groundFloor')).click();
+    const planWidth = page.getByRole('textbox', { name: /^(Plan width|Largeur du plan)$/, exact: true }),
+      planHeight = page.getByRole('textbox', { name: /^(Plan height|Hauteur du plan)$/, exact: true });
+    await expect(planWidth).toHaveValue('1200');
+    await expect(planHeight).toHaveValue('700');
+    await expect(planHeight).not.toBeEditable();
+    await planWidth.fill('2400');
+    await planWidth.press('Tab');
+    await expect(planHeight).toHaveValue('1400');
+    const doubled = (point: { x: number; y: number }) => ({
+      x: 2 * (point.x + 12) - 12,
+      y: 48 + 2 * (point.y + 12 - 48) - 12,
+    });
+    const expectDoubled = async (point: { x: number; y: number }) => {
+      const expected = doubled(point);
+      await expect
+        .poll(async () => {
+          const actual = await position(sampleName('doubleSwitch'));
+          return Math.abs(actual.x - expected.x) + Math.abs(actual.y - expected.y);
+        })
+        .toBeLessThan(0.1);
+    };
+    await expectDoubled(firstPlaced);
+    await expect.poll(() => dimensions(sampleName('doubleSwitch'))).toEqual({ width: '24px', height: '24px' });
+    await page.reload();
+    await expectDoubled(firstPlaced);
+    await page.goto(secondPlanURL);
+    await expectDoubled(secondPlaced);
+    await page.reload();
+    await expectDoubled(secondPlaced);
+    await upload('wide-plan.svg', '#e0f2fe');
+    await expand();
+    await item(sampleName('groundFloor')).click();
+    await expect(planWidth).toHaveValue('2400');
+    await expect(planHeight).toHaveValue('1400');
+    await planWidth.fill('0');
+    await planWidth.press('Tab');
+    await expect(
+      page.getByText(/^(Choose a positive whole width|Choisissez une largeur entière positive)/).first()
+    ).toBeVisible();
+    await page.reload();
+    await expand();
+    await item(sampleName('groundFloor')).click();
+    await expect(planWidth).toHaveValue('2400');
+    await expect(planHeight).toHaveValue('1400');
     expect(errors).toEqual([]);
   } finally {
     if (projectId) {

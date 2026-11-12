@@ -44,6 +44,7 @@ import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.NamedElement;
 import hed.homeelectrical.Outlet;
 import hed.homeelectrical.ServiceCircuitBreaker;
+import hed.homeelectrical.Storey;
 import hed.homeelectrical.SupplyPhase;
 
 /** HedDomain operations shared by explorer, forms and tables. Generated code stays untouched. */
@@ -203,7 +204,28 @@ public final class HedDomain {
         return (Double) get(device, feature);
     }
 
+    /**
+     * Edits a structural feature while preserving domain constraints and inverse references.
+     * Floor-plan width edits also derive the height; direct height edits are rejected.
+     *
+     * @param object the semantic object to edit
+     * @param feature the name of an existing structural feature
+     * @param value the typed replacement value or collection
+     * @throws IllegalArgumentException if the edit violates a domain constraint or targets a calculated property
+     */
     public static void set(EObject object, String feature, Object value) {
+        if (object instanceof Storey storey) {
+            if (feature.equals("planHeight")) {
+                throw new IllegalArgumentException("plan.derivedHeight");
+            }
+            if (feature.equals("planWidth")) {
+                if (!(value instanceof Integer width)) {
+                    throw new IllegalArgumentException("plan.invalidDimensions");
+                }
+                HedFloorPlans.resize(storey, width);
+                return;
+            }
+        }
         if (object instanceof ModularDevice && TECHNICAL_FEATURES.contains(feature)) {
             throw new IllegalArgumentException("catalogSpecifications");
         }

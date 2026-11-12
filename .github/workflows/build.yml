@@ -42,7 +42,32 @@ jobs:
             backend/hed-model/pom.xml
             backend/hed-model-edit/pom.xml
       - name: Build and test the model and edit modules
+        id: domain_tests
         run: mvn -B -ntp verify
+      - name: Show domain test results
+        if: ${{ always() && !cancelled() }}
+        uses: mikepenz/action-junit-report@a16be3a69023e9bd7e748ede768b3282ea7b30ce # v6.7.1
+        with:
+          report_paths: backend/hed-model*/target/surefire-reports/TEST-*.xml
+          check_name: Domain tests
+          job_summary_text: |
+            ## Domain tests
+
+            ${{ steps.domain_tests.outcome == 'success' && 'All model and edit module tests completed.' || 'The build did not complete. Only available test reports are shown; consult the build log for tests that could not run.' }}
+          detailed_summary: true
+          job_summary: true
+          include_passed: true
+          include_skipped: true
+          include_time_in_summary: true
+          group_suite: true
+          failed_summary_logs: true
+          truncate_stack_traces: false
+          # Native summaries also work with the read-only token on fork PRs.
+          skip_annotations: true
+          comment: false
+          require_tests: ${{ steps.domain_tests.outcome == 'success' }}
+          fail_on_failure: true
+          fail_on_parse_error: true
       - name: Explain restricted contribution checks
         if: >-
           github.event_name == 'pull_request' &&
@@ -93,10 +118,34 @@ jobs:
         working-directory: frontend
         run: npm run build
       - name: Build and test all application modules
+        id: application_tests
         env:
           GH_PACKAGES_USERNAME: ${{ vars.GH_PACKAGES_USERNAME || github.repository_owner }}
           GH_PACKAGES_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
         run: mvn -B -ntp -s .github/maven-settings.xml -Papplication verify
+      - name: Show application test results
+        if: ${{ always() && !cancelled() }}
+        uses: mikepenz/action-junit-report@a16be3a69023e9bd7e748ede768b3282ea7b30ce # v6.7.1
+        with:
+          report_paths: backend/**/target/surefire-reports/TEST-*.xml
+          check_name: Application tests
+          job_summary_text: |
+            ## Application tests
+
+            ${{ steps.application_tests.outcome == 'success' && 'All application module tests completed.' || 'The build did not complete. Only available test reports are shown; consult the build log for tests that could not run.' }}
+          detailed_summary: true
+          job_summary: true
+          include_passed: true
+          include_skipped: true
+          include_time_in_summary: true
+          group_suite: true
+          failed_summary_logs: true
+          truncate_stack_traces: false
+          skip_annotations: true
+          comment: false
+          require_tests: ${{ steps.application_tests.outcome == 'success' }}
+          fail_on_failure: true
+          fail_on_parse_error: true
       - name: Check packaged frontend and user guides
         run: |
           application_jars=(backend/hed-application/target/hed-application-*.jar)

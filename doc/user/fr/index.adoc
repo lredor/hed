@@ -68,6 +68,10 @@ Le champ facultatif *Libellé d’étiquette* contient le texte destiné à l’
 
 Le dépôt d’un type crée un équipement installé ; le type reste dans le catalogue.
 Le nouvel équipement reçoit le nom actuellement enregistré sur son type.
+Pour déplacer un équipement existant, glissez-le directement sur une autre pièce dans Model Explorer.
+Il conserve son nom, son identité, son type et ses relations avec les circuits et les commandes.
+Vous pouvez déplacer plusieurs équipements ensemble, y compris vers un autre niveau du même logement ; ne mélangez pas équipements et types du catalogue dans un dépôt.
+Son placement est conservé pour un changement de pièce sur le même niveau. Après un changement de niveau, placez-le sur le plan du niveau de destination.
 Supprimer une pièce conserve ses équipements : retrouvez-les sous *Équipements sans pièce* puis affectez-leur une autre pièce.
 
 Pour les appareils modulaires, le courant assigné, les caractéristiques différentielles et l’encombrement appartiennent au type du catalogue.

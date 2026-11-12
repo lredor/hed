@@ -32,7 +32,7 @@ import hed.homeelectrical.DINRail;
 import hed.homeelectrical.Room;
 import hed.starter.representations.CatalogDropService;
 
-/** Creates devices from catalog drops onto rails/rooms and associates existing terminal devices with circuit branches. */
+/** Creates devices from catalog types, moves terminal devices between rooms and associates them with circuit branches. */
 @Service
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CatalogTreeDropHandler implements IDropTreeItemHandler {
@@ -68,7 +68,7 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
     @Override
     public IStatus handle(IEditingContext context, Tree tree, DropTreeItemInput input) {
         try {
-            // Indexed drops target gaps; creation or branch assignment requires a semantic destination.
+            // Indexed drops target gaps; creation, room moves and branch assignment require a semantic destination.
             if (input.index() >= 0) {
                 throw new IllegalArgumentException("drop.catalogTarget");
             }
@@ -80,7 +80,14 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
                 }
                 HedDomain.assignToBranch(branch, sources.stream().map(FieldEquipment.class::cast).toList());
             } else if (target instanceof Room room) {
-                drops.createInRoom(room, sources);
+                if (sources.stream().anyMatch(FieldEquipment.class::isInstance)) {
+                    if (sources.stream().anyMatch(source -> !(source instanceof FieldEquipment))) {
+                        throw new IllegalArgumentException("drop.roomEquipment");
+                    }
+                    HedDomain.moveToRoom(room, sources.stream().map(FieldEquipment.class::cast).toList());
+                } else {
+                    drops.createInRoom(room, sources);
+                }
             } else if (target instanceof DINRail) {
                 drops.create(target, sources);
             } else {

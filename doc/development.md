@@ -157,6 +157,8 @@ The bilingual `rail-capacity.spec.ts` workflow verifies that the native New Obje
 
 `CircuitEquipmentPropertiesTest` checks the final circuit's native multi-select: editable direct assignments without branches, a live read-only union with branches, rejection of stale or foreign selections, and return to direct editing after the last branch is removed. `BranchIntegrationTest` also verifies transfer of direct members into the first explorer-created branch. The bilingual `optional-circuit-branches.spec.ts` exercises both modes, first-branch transfer, redistribution between branches, deletion, reopening and independent room/supply relationships.
 
+`RoomEquipmentMoveTest` and `RoomEquipmentDropTest` check room reassignment without cloning, preserved ownership and circuit/branch/control links, multi-device validation before mutation, localized rejection and floor-plan storey eligibility. The bilingual `room-equipment-move.spec.ts` moves an outlet, a luminaire and a switch through the native explorer, checks stable identity and connections, retains same-storey placement and reopens the saved room assignments.
+
 The [panel diagram workflow](distribution-board-layout.md) checks SVG alignment, module widths, drag-and-drop transfers and reopening of the constrained layout.
 
 The [table workflow](tables.md) also checks all four representation contexts and persistence of table edits.

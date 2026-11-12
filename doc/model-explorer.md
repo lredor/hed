@@ -79,6 +79,14 @@ Model Explorer validates the complete selection before creating anything. Only t
 
 Created devices are immediately available under the room and can then be dragged onto a Floor Plan of that storey. The plan's own drop operation places an existing device; direct catalog drops onto a floor plan remain rejected. Reopening retains device identities, their room assignments and their type references.
 
+## Move existing equipment between rooms
+
+Drag an existing outlet, control device or load directly onto its destination **Room**. This changes its room reference and moves its explorer entry, preserving the same semantic device, name, catalog type, circuit, branch and functional-control connections. The destination can be on another storey of the same dwelling. Devices under **Unlocated equipment** can also be assigned this way; dropping a device onto its current room does not duplicate it.
+
+Several existing devices can be moved together. The entire selection is validated before changing any room. Mixing devices with catalog types, unresolved sources, devices from another dwelling, detached rooms and drops between tree rows are rejected. Catalog types retain their separate behavior: dropping them onto a room creates new devices.
+
+The room reference determines which storey's Floor Plans can represent the device. Moving between rooms on the same storey preserves its existing plan placement. After a move to another storey, place the device on that storey's plan; no placement is automatically created there.
+
 ## Circuit branches and associated devices
 
 Create a **Branch** below a **Final circuit** using its creation menu or **New Object**. Each branch groups devices supplied by that same circuit. Distribution circuits do not have branches.

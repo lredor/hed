@@ -66,6 +66,10 @@ Its optional *Label text* is the wording to print on the board label.
 
 A catalog drop creates an installed instance; the type stays in the catalog.
 New equipment takes the catalog type's current name.
+To move an existing device, drag it directly onto another room in Model Explorer.
+This keeps its name, identity, catalog type and circuit/control connections.
+You can move several existing devices together, including to another storey of the same dwelling; do not mix devices and catalog types in one drop.
+Its placement is retained for room changes on the same storey. After changing storey, place it on the destination storey's plan.
 Equipment remains in the model if its room is deleted; find it under *Unlocated equipment* and assign another room.
 
 For modular devices, ratings, residual-current characteristics and module width belong to the catalog type.

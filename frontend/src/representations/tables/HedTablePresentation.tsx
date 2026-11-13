@@ -26,27 +26,40 @@ const circuitFields = [
   'usage',
 ];
 const presentations = new WeakMap<GQLTable, GQLTable>();
+const equipmentFields = ['name', 'deviceType', 'circuit', 'room', 'controls', 'issues'];
 
-/** Identifies only HED's circuit summary, including when optional columns are not instantiated. */
-export function hasHedSummaryColumns(table: GQLTable): boolean {
+function summaryFields(table: GQLTable): string[] | undefined {
   const fields = new Set((table.columns as SemanticColumn[]).map((column) => column.targetObjectId));
-  return (
+  if (
     fields.has('description') &&
     fields.has('served') &&
     fields.has('upstreamRccb') &&
     [...fields].every((field) => field !== undefined && circuitFields.includes(field))
-  );
+  )
+    return circuitFields;
+  if (
+    fields.has('deviceType') &&
+    fields.has('controls') &&
+    fields.has('room') &&
+    [...fields].every((field) => field !== undefined && equipmentFields.includes(field))
+  )
+    return equipmentFields;
+  return undefined;
+}
+
+/** Identifies HED's circuit and equipment summaries without affecting board or catalog tables. */
+export function hasHedSummaryColumns(table: GQLTable): boolean {
+  return summaryFields(table) !== undefined;
 }
 
 /** Keeps the requested semantic order when native refreshes introduce columns with a zero default index. */
 export function presentHedTable(table: GQLTable): GQLTable {
-  if (!hasHedSummaryColumns(table)) return table;
+  const fields = summaryFields(table);
+  if (!fields) return table;
   const cached = presentations.get(table);
   if (cached) return cached;
   const columns = [...table.columns] as SemanticColumn[];
-  columns.sort(
-    (left, right) => circuitFields.indexOf(left.targetObjectId!) - circuitFields.indexOf(right.targetObjectId!)
-  );
+  columns.sort((left, right) => fields.indexOf(left.targetObjectId!) - fields.indexOf(right.targetObjectId!));
   const result = columns.every((column, index) => table.columns[index] === column) ? table : { ...table, columns };
   presentations.set(table, result);
   return result;

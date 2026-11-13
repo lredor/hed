@@ -48,6 +48,21 @@ const table = (fields: string[]): GQLTable => ({
 });
 
 describe('summary table presentation', () => {
+  it('orders equipment inventory columns and preserves hidden names and native cell identities', () => {
+    const input = table(['issues', 'controls', 'room', 'name', 'circuit', 'deviceType']);
+    const result = presentHedTable(input);
+    expect(result.columns.map((item) => (item as ReturnType<typeof column>).targetObjectId)).toEqual([
+      'name',
+      'deviceType',
+      'circuit',
+      'room',
+      'controls',
+      'issues',
+    ]);
+    expect(result.columns[0]).toBe(input.columns[3]);
+    expect(result.columns[0].hidden).toBe(true);
+    expect(hasHedSummaryColumns(result)).toBe(true);
+  });
   it('keeps conditional columns at their requested position without mutating server state or visibility', () => {
     const input = table([
       'sourceBoard',

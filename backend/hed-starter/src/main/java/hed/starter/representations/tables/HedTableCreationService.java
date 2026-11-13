@@ -43,7 +43,9 @@ public class HedTableCreationService extends TableCreationService {
     @Override
     public Table create(String id, Object target, TableDescription description, IEditingContext context) {
         var table = super.create(id, target, description, context);
-        return target instanceof Dwelling && Messages.text(locale, "table.circuits").equals(description.getLabel()) ? withHiddenName(table) : table;
+        boolean circuits = target instanceof Dwelling && Messages.text(locale, "table.circuits").equals(description.getLabel());
+        boolean equipment = HedEquipmentTableScope.supports(target) && Messages.text(locale, "table.equipment").equals(description.getLabel());
+        return circuits || equipment ? withHiddenName(table) : table;
     }
 
     /**
@@ -62,7 +64,7 @@ public class HedTableCreationService extends TableCreationService {
 
     private static Column hidden(Column column) {
         return Column.newColumn(column.getId()).descriptionId(column.getDescriptionId()).targetObjectId(column.getTargetObjectId()).targetObjectKind(column.getTargetObjectKind())
-                .headerLabel(column.getHeaderLabel()).headerIconURLs(column.getHeaderIconURLs()).headerIndexLabel(column.getHeaderIndexLabel()).width(column.getWidth())
-                .resizable(column.isResizable()).hidden(true).filterVariant(column.getFilterVariant()).sortable(column.isSortable()).index(column.getIndex()).build();
+                .headerLabel(column.getHeaderLabel()).headerIconURLs(column.getHeaderIconURLs()).headerIndexLabel(column.getHeaderIndexLabel()).width(column.getWidth()).resizable(column.isResizable())
+                .hidden(true).filterVariant(column.getFilterVariant()).sortable(column.isSortable()).index(column.getIndex()).build();
     }
 }

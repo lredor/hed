@@ -368,7 +368,7 @@ Supprimer une représentation conserve son élément sémantique et les équipem
 [cols="2,1,3",options="header"]
 |===
 |Tableau |Création sur |Contenu et édition
-|Inventaire des équipements |Logement |Pièces, types, circuits, branches et commandes. Noms et puissances modifiables.
+|Inventaire des équipements |Logement, étage ou pièce |Type, Circuit / Branche, Étage / Pièce, Fonctions de commande et Anomalies. Réaffichez Nom pour renommer les équipements.
 |Liste des circuits |Logement |Description, tableau d’origine s’il y en a plusieurs, interrupteur différentiel amont, protection, section, équipements, anomalies et usage en dernier. Descriptions, sections et noms lorsqu’ils sont affichés sont modifiables.
 |Composition du tableau |Tableau de répartition |Rails, ordre des appareils, protections et caractéristiques. Noms et libellés étiquette modifiables ; caractéristiques du catalogue en lecture seule.
 |Catalogue des équipements |Catalogue |Noms des types, valeurs assignées, encombrements et références produit. Données partagées par les appareils utilisant les types.
@@ -380,6 +380,11 @@ Les colonnes sont redimensionnables et les lignes sont paginées.
 Une édition refusée conserve la valeur précédente et affiche un message.
 
 image::equipment-table.png[Inventaire des équipements,width=1000]
+
+Créez l’inventaire sur le logement pour voir tous les équipements terminaux, y compris ceux sans pièce ; créez-le sur un étage ou une pièce pour limiter la liste à cet emplacement. Déplacer un équipement entre deux pièces actualise automatiquement les inventaires concernés.
+*Circuit / Branche* réunit les noms du circuit et de sa branche éventuelle avec ` / `. *Étage / Pièce* réunit les noms de l’étage et de la pièce avec ` - `. La recherche, les filtres et le tri utilisent ces valeurs combinées. À part les noms, les cellules sont en lecture seule ; modifiez les associations dans Details.
+La colonne *Nom*, déjà présente dans l’en-tête de ligne, est masquée initialement. Réaffichez-la avec *Afficher/Masquer les colonnes* pour renommer les équipements ou filtrer leurs noms ; ce choix est conservé. La recherche globale inclut les noms masqués. Les caractéristiques techniques restent accessibles dans l’onglet Avancé de Details.
+
 image::circuit-table.png[Liste des circuits,width=1000]
 
 La Liste des circuits masque initialement la colonne *Nom*, déjà présente dans l’en-tête de ligne. Réaffichez-la avec *Afficher/Masquer les colonnes* pour éditer les noms ou les filtrer ; ce choix est conservé. La recherche globale retrouve les noms même si la colonne est masquée. *Phase / alimentation* apparaît après Protection uniquement en triphasé.
@@ -437,7 +442,7 @@ Ces opérations ne proposent pas de commande d’annulation.
 [cols="2,3",options="header"]
 |===
 |Symptôme |Vérification
-|Une représentation n’est pas proposée |Sélectionnez son propriétaire : Logement pour l’inventaire, les circuits et leur schéma ; Niveau pour le plan ; tableau de répartition pour ses vues ; catalogue pour son tableau.
+|Une représentation n’est pas proposée |Sélectionnez son propriétaire : logement, étage ou pièce pour l’inventaire ; logement pour la liste et le schéma des circuits ; étage pour le plan ; tableau de répartition pour ses vues ; catalogue pour son tableau.
 |Un outil de création sur rail est absent |Vérifiez la capacité disponible et l’encombrement du type. Nouvel objet propose les variantes compatibles qui tiennent sur le rail.
 |Un circuit manque dans les choix d’alimentation d’un équipement |S’il possède des branches, choisissez une Branche.
 |Le champ Phase d’un circuit est absent |Renseignez une alimentation générale Triphasé si elle correspond à votre installation.

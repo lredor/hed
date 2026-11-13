@@ -92,7 +92,7 @@ The root expands automatically when the project opens. Use **Navigate to device 
 
 See [reordering model elements](doc/explorer-reordering.md) for movement commands and drag-and-drop ordering of circuits, catalog types, storeys, rooms, room equipment and functional controls, alongside rail and modular-device ordering. Drop before a peer or onto the current parent to append to that group.
 
-Create branches below final circuits and associate existing devices by dragging them onto a branch or editing Properties. Devices retain their room and also appear under their branch. The Circuit Diagram shows their supply through that branch, and the Equipment Table includes a Branch column. See [circuit branches and associated devices](doc/model-explorer.md#circuit-branches-and-associated-devices).
+Create branches below final circuits and associate existing devices by dragging them onto a branch or editing Properties. Devices retain their room and also appear under their branch. The Circuit Diagram shows their supply through that branch, and the Equipment Table combines circuit and branch names. See [circuit branches and associated devices](doc/model-explorer.md#circuit-branches-and-associated-devices).
 
 Branches are optional. A final circuit's **Associated equipment** list in Details is editable without branches and becomes the read-only union of branch members when branches exist. The first branch receives the circuit's existing devices; removing the last branch restores direct editing. Circuits with branches require association through a branch. Removing equipment from a branch, or deleting its branch while others remain, clears its supply assignment and retains the device and its room.
 
@@ -112,7 +112,7 @@ See [table creation and editing](doc/tables.md) for the available columns and ed
 
 ### Equipment Table
 
-Create this table on a **Dwelling**. It lists terminal equipment, rooms, catalog types, circuits, functional controls and power ratings. Names and power ratings can be edited inline.
+Create this table on a **Dwelling**, **Storey** or **Room** to list terminal equipment in that scope. Columns show Type, Circuit / Branch, Storey / Room, Control functions and Issues. Circuit and optional branch names are joined with ` / `; storey and room names are joined with ` - `. Name is initially hidden because it is already the row heading; show it through the column-visibility menu to rename equipment inline. Assignments remain editable in Details.
 
 ![Equipment Table](doc/images/representations/equipment-table.png)
 

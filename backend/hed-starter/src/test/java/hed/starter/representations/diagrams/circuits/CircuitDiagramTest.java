@@ -273,13 +273,13 @@ class CircuitDiagramTest {
         assertTrue(projection.connects(home.getControlFunctions().get(1).getChannels().getFirst(), home.getEquipment().get(1)));
         var junction = projection.nodes.get(circuit);
         assertEquals("hed-circuits-junction", junction.getName());
-        assertEquals("3", junction.getDefaultWidthExpression());
-        assertEquals("3", junction.getDefaultHeightExpression());
+        assertEquals("24", junction.getDefaultWidthExpression());
+        assertEquals("24", junction.getDefaultHeightExpression());
         assertNull(junction.getInsideLabel());
         assertTrue(junction.getOutsideLabels().isEmpty());
-        var style = (RectangularNodeStyleDescription) junction.getStyle();
+        var style = (org.eclipse.sirius.components.view.diagram.ImageNodeStyleDescription) junction.getStyle();
         assertEquals(0, style.getBorderSize());
-        assertEquals("#000000", ((org.eclipse.sirius.components.view.FixedColor) style.getBackground()).getValue());
+        assertEquals("hed-circuits:junction", style.getShape());
         branch.getEquipment().move(0, equipment);
         var reordered = new Projection(home);
         assertTrue(reordered.connects(circuit, equipment));

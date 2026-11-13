@@ -425,7 +425,9 @@ Each rail initially reserves 260 units of height for routing. To add space, sele
 Circuits and branches are named edges rather than equipment nodes:
 
 * Without branches: protective device → first associated device → second → next, with the circuit name on the first segment.
-* With branches: protective device → black 3 × 3 junction (circuit name), then one chain per nonempty branch (branch name on the first segment).
+* With branches: protective device → black 8 × 8 junction (circuit name), then one chain per nonempty branch (branch name on the first segment).
+
+The junction’s 8 × 8 black square has a white halo and a transparent 24 × 24 manipulation area. Hover to see its frame and circuit name. Drag the square or its surrounding margin; the junction takes priority over the links at that spot, even if a link is selected. Links remain attached to the centre, and the saved position is restored on reopening. Pinned junctions and read-only diagrams cannot be dragged.
 
 Chains follow association order, not graphical positions or physical cable routing.
 Links between two devices assigned to the same room have no label. Names remain on circuit and branch starts, between different rooms and when either endpoint has no assigned room.

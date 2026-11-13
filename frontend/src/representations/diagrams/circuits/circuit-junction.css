@@ -1,0 +1,63 @@
+/*******************************************************************************
+ * Copyright (c) 2026 Laurent Redor.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+/* Keep the hit surface above even selected edges, independently of React Flow's computed edge elevation. */
+.react-flow__node-hedCircuitJunctionNode {
+  z-index: 10000 !important;
+}
+
+.hed-circuit-junction {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  pointer-events: auto;
+}
+.hed-circuit-junction:hover,
+.hed-circuit-junction-selected,
+.react-flow__node-hedCircuitJunctionNode:focus-visible .hed-circuit-junction {
+  outline-color: #1976d2;
+  background: rgb(25 118 210 / 8%);
+}
+.hed-circuit-junction:not(.nodrag):active {
+  cursor: grabbing !important;
+}
+.hed-circuit-junction-symbol {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  background: #000;
+  box-shadow: 0 0 0 2px #fff;
+  pointer-events: none;
+}
+/* Native handle containers must not push the actual endpoints back onto the outer hit-box border. */
+.hed-circuit-junction > div {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
+  pointer-events: none;
+}
+.hed-circuit-junction .react-flow__handle {
+  top: 12px !important;
+  left: 12px !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 0;
+  min-height: 0;
+  transform: translate(-50%, -50%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

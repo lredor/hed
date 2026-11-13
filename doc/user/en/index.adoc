@@ -144,7 +144,7 @@ Developers building from source can follow the https://github.com/lredor/hed/blo
 . On the home page, choose *Empty dwelling* to start your installation, or *Sample dwelling* to explore a completed example.
 . Enter a project name and create the project.
 . The electrical-installation explorer opens automatically in the *Explorer* panel on the left.
-. Expand the project and select an object to show its *Properties*.
+. Select an object to show its *Properties*. The project root expands automatically when opened to show *Dwelling*, *Electrical service area* and *Device catalog*. You can collapse it normally afterward.
 
 The sample's rooms, equipment, circuits and catalog use the application's language at creation.
 Afterward, names are editable project data: changing the application language does not rename your objects.

@@ -146,7 +146,7 @@ Les développeurs qui souhaitent compiler les sources peuvent suivre https://git
 . Depuis l’accueil, choisissez *Logement vide* pour commencer votre installation, ou *Logement d’exemple* pour découvrir un exemple déjà renseigné.
 . Saisissez le nom du projet et créez-le.
 . L’explorateur de l’installation électrique s’ouvre automatiquement dans le panneau *Explorer* à gauche.
-. Dépliez le projet et sélectionnez un objet pour afficher ses propriétés.
+. Sélectionnez un objet pour afficher ses propriétés. La racine du projet se déplie automatiquement à l’ouverture pour montrer *Logement*, *Gaine technique logement* et *Catalogue*. Vous pouvez ensuite la replier normalement.
 
 Les noms des pièces, équipements, circuits et types du catalogue de l’exemple sont créés dans la langue de l’application.
 Ils deviennent ensuite des données modifiables du projet : changer la langue de l’application ne les renomme pas.

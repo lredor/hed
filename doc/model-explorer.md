@@ -12,6 +12,8 @@ SPDX-License-Identifier: EPL-2.0
 
 The electrical-installation explorer opens automatically. The application removes the generic Sirius Web explorer when the domain tree is available, so a normal HED project needs no explorer selection. Model Explorer provides contextual creation, rename and delete actions, and lists saved representations beneath their model element.
 
+The project root expands once when the explorer opens, exposing Dwelling, GTL and Device catalog. Users can collapse it afterward; semantic refreshes do not force it open again.
+
 ## Navigate to a device type
 
 Use **Navigate to device type** in an installed device's context menu, or the small button beside its **Device type** selector in Details. Both update the workbench selection and reveal the type through the native explorer selection target, expanding the catalog category as needed. The tool also supports device occurrences below circuit branches and remains available in read-only views. Objects without a type have no explorer action; an empty Details selector disables the button.

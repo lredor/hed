@@ -198,8 +198,7 @@ class BootstrapIntegrationTest {
         var rccb = HedSamples.example().getBoards().get(0).getDevices().get(0);
         var vm = new VariableManager();
         vm.put(VariableManager.SELF, rccb);
-        var page = pages.stream().filter(p -> p.getCanCreatePredicate().test(vm)).findFirst().orElseThrow();
-        var widgets = page.getGroupDescriptions().stream().flatMap(g -> g.getControlDescriptions().stream())
+        var widgets = pages.stream().filter(p -> p.getCanCreatePredicate().test(vm)).flatMap(page -> page.getGroupDescriptions().stream()).flatMap(g -> g.getControlDescriptions().stream())
                 .flatMap(c -> c instanceof IfDescription condition ? condition.getControlDescriptions().stream() : java.util.stream.Stream.of(c)).toList();
         var current = widgets.stream().filter(TextfieldDescription.class::isInstance).map(TextfieldDescription.class::cast)
                 .filter(w -> w.getIdProvider().apply(vm).equals("hed.ModularDevice.ratedCurrentA")).findFirst().orElseThrow();

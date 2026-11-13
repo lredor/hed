@@ -184,6 +184,12 @@ Le champ facultatif *Libellé d’étiquette* contient le texte destiné à l’
 . Créez les équipements terminaux depuis le menu d’une pièce, ou glissez un type d’équipement terminal du catalogue sur cette pièce.
 . Sélectionnez un équipement pour modifier son nom, sa pièce et ses relations dans les propriétés.
 
+Pour les équipements terminaux, le compteur et les appareils de protection ou de commande du tableau, le panneau *Details* propose deux onglets :
+
+* *Général* : nom, description ou libellé d’étiquette selon l’appareil, type d’équipement, relations applicables et validation.
+  Les équipements terminaux présentent notamment leur pièce, leur circuit et leur branche ; les appareils du tableau présentent leurs relations amont et aval et leur rail DIN lorsqu’il est applicable.
+* *Avancé* : caractéristiques techniques, avec les mêmes règles de modification ou de lecture seule qu’auparavant.
+
 Le dépôt d’un type crée un équipement installé ; le type reste dans le catalogue.
 Commencez donc par préparer tous les types d’équipements dont vous aurez besoin, en réutilisant les types fournis et en créant les variantes manquantes.
 Ces types serviront ensuite à choisir les équipements terminaux de votre logement et les modules de votre tableau électrique.

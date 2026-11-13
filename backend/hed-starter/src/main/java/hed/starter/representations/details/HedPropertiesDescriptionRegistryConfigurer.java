@@ -11,6 +11,7 @@ package hed.starter.representations.details;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -89,7 +90,15 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
         for (var classifier : HomeElectricalPackage.eINSTANCE.getEClassifiers()) {
             if (classifier instanceof EClass type && !type.isAbstract()) {
                 var groups = new LinkedHashMap<String, List<AbstractControlDescription>>();
-                for (var feature : type.getEAllStructuralFeatures()) {
+                var features = new ArrayList<>(type.getEAllStructuralFeatures());
+                if (HomeElectricalPackage.Literals.EQUIPMENT.isSuperTypeOf(type)) {
+                    var generalOrder = List.of("name", "description", "labelText", "deviceType");
+                    features.sort(Comparator.comparingInt(feature -> {
+                        int index = generalOrder.indexOf(feature.getName());
+                        return index < 0 ? Integer.MAX_VALUE : index;
+                    }));
+                }
+                for (var feature : features) {
                     // Image identity and reference proportions belong to the image-import tool.
                     if (type == HomeElectricalPackage.Literals.STOREY && List.of("planImageId", "planAspectRatio").contains(feature.getName())) {
                         continue;
@@ -101,7 +110,7 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                         continue;
                     }
                     var widget = control(type, feature);
-                    groups.computeIfAbsent(group(feature), k -> new ArrayList<>()).add(IfDescription.newIfDescription("hed.visible." + type.getName() + "." + feature.getName())
+                    groups.computeIfAbsent(group(type, feature), k -> new ArrayList<>()).add(IfDescription.newIfDescription("hed.visible." + type.getName() + "." + feature.getName())
                             .targetObjectIdProvider(vm -> identity.getId(self(vm))).predicate(vm -> applicable(self(vm), feature)).controlDescriptions(List.of(widget)).build());
                 }
                 if (type == HomeElectricalPackage.Literals.MODULAR_DEVICE) {
@@ -118,13 +127,31 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                     groups.computeIfAbsent("connections", k -> new ArrayList<>()).add(circuitEquipment());
                 }
                 groups.computeIfAbsent("validation", k -> new ArrayList<>()).add(validation(type));
-                var groupDescriptions = new ArrayList<GroupDescription>();
-                groups.forEach((key, controls) -> groupDescriptions.add(GroupDescription.newGroupDescription("hed." + type.getName() + "." + key).idProvider(vm -> "hed." + type.getName() + "." + key)
-                        .labelProvider(vm -> Messages.text(locale, "group." + key)).semanticElementsProvider(vm -> List.of(self(vm))).controlDescriptions(controls).build()));
-                registry.add(PageDescription.newPageDescription("hed.properties." + type.getName()).idProvider(vm -> "hed.properties." + type.getName())
-                        .labelProvider(vm -> Messages.text(locale, "properties")).semanticElementsProvider(vm -> List.of(self(vm)))
-                        .canCreatePredicate(vm -> vm.get(VariableManager.SELF, EObject.class).map(o -> o.eClass() == type).orElse(false)).groupDescriptions(groupDescriptions).build());
+                if (HomeElectricalPackage.Literals.EQUIPMENT.isSuperTypeOf(type)) {
+                    addPage(registry, type, "", "properties.general", groups, List.of("general", "connections", "validation"));
+                    addPage(registry, type, ".advanced", "properties.advanced", groups, List.of("technical"));
+                } else {
+                    addPage(registry, type, "", "properties", groups, List.copyOf(groups.keySet()));
+                }
             }
+        }
+    }
+
+    /** Registers ordered groups on a page, retaining the existing main-page identifier for saved Details state. */
+    private void addPage(IPropertiesDescriptionRegistry registry, EClass type, String suffix, String labelKey, Map<String, List<AbstractControlDescription>> groups, List<String> order) {
+        var descriptions = new ArrayList<GroupDescription>();
+        for (var key : order) {
+            var controls = groups.get(key);
+            if (controls != null && !controls.isEmpty()) {
+                var groupId = "hed." + type.getName() + "." + key;
+                descriptions.add(GroupDescription.newGroupDescription(groupId).idProvider(vm -> groupId).labelProvider(vm -> Messages.text(locale, "group." + key))
+                        .semanticElementsProvider(vm -> List.of(self(vm))).controlDescriptions(controls).build());
+            }
+        }
+        if (!descriptions.isEmpty()) {
+            var pageId = "hed.properties." + type.getName() + suffix;
+            registry.add(PageDescription.newPageDescription(pageId).idProvider(vm -> pageId).labelProvider(vm -> Messages.text(locale, labelKey)).semanticElementsProvider(vm -> List.of(self(vm)))
+                    .canCreatePredicate(vm -> vm.get(VariableManager.SELF, EObject.class).map(o -> o.eClass() == type).orElse(false)).groupDescriptions(descriptions).build());
         }
     }
 
@@ -147,8 +174,9 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
         };
     }
 
-    private String group(EStructuralFeature f) {
-        if (List.of("name", "description", "labelText", "manufacturer", "productReference").contains(f.getName())) {
+    private String group(EClass type, EStructuralFeature f) {
+        if (List.of("name", "description", "labelText", "manufacturer", "productReference").contains(f.getName())
+                || f.getName().equals("deviceType") && HomeElectricalPackage.Literals.EQUIPMENT.isSuperTypeOf(type)) {
             return "general";
         }
         if (f instanceof EReference) {

@@ -119,6 +119,7 @@ test('create, edit and reopen a dwelling with catalog names, category icons and 
     await expect(item(roomName)).toHaveCount(0);
 
     await item('ID1').click();
+    await page.getByRole('tab', { name: messages['properties.advanced'], exact: true }).click();
     const current = page.getByRole('textbox', { name: messages['feature.ratedCurrentA'], exact: true });
     await expect(current).toBeDisabled();
     await expect(current).toHaveValue('63.0');

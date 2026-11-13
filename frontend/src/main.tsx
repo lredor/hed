@@ -41,6 +41,11 @@ import {
   DeviceTypePropertyNavigation,
 } from './representations/navigation/DeviceTypeNavigation';
 import {
+  SupplyCircuitExplorerNavigation,
+  SupplyCircuitPaletteNavigation,
+  SupplyCircuitPropertyNavigation,
+} from './representations/navigation/SupplyCircuitNavigation';
+import {
   floorPlanDocumentTransform,
   floorPlanNodeRegistry,
 } from './representations/diagrams/floorplan/FloorPlanDiagram';
@@ -91,6 +96,14 @@ registry.addComponent(treeItemContextMenuEntryExtensionPoint, {
   identifier: 'hed-device-type-explorer',
   Component: DeviceTypeExplorerNavigation,
 });
+registry.addComponent(propertySectionLabelDecoratorExtensionPoint, {
+  identifier: 'hed-supply-circuit-properties',
+  Component: SupplyCircuitPropertyNavigation,
+});
+registry.addComponent(treeItemContextMenuEntryExtensionPoint, {
+  identifier: 'hed-supply-circuit-explorer',
+  Component: SupplyCircuitExplorerNavigation,
+});
 registry.putData(paletteToolExtensionPoint, {
   identifier: 'hed-device-type-palette',
   data: [
@@ -98,6 +111,11 @@ registry.putData(paletteToolExtensionPoint, {
       id: 'hed-navigate-device-type',
       canHandle: (kind) => kind === TREE_REPRESENTATION_KIND,
       component: DeviceTypePaletteNavigation,
+    },
+    {
+      id: 'hed-navigate-supply-circuit',
+      canHandle: (kind) => kind === TREE_REPRESENTATION_KIND,
+      component: SupplyCircuitPaletteNavigation,
     },
   ],
 });

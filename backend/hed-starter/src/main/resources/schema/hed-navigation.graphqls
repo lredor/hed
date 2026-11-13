@@ -8,4 +8,5 @@
 
 extend type EditingContext {
   hedDeviceTypeId(objectId: ID!): ID
+  hedSupplyCircuitId(objectId: ID!): ID
 }

@@ -188,7 +188,14 @@ Pour préciser la destination ou les particularités d’une pièce, utilisez so
 
 Pour accéder au type d’un équipement, utilisez le petit bouton *Naviguer vers le type d’équipement* à côté du champ *Type d’équipement* dans Details, ou l’action de même nom dans le menu de l’équipement dans Model Explorer.
 Le type est sélectionné, ses propriétés s’affichent et son emplacement est révélé dans le catalogue.
+
 La navigation ne modifie pas l’équipement ni son type.
+
+Pour accéder au circuit réellement affecté à un équipement, utilisez *Naviguer vers le circuit d’alimentation* à côté du champ *Circuit d’alimentation* dans Details ou dans le menu de l’équipement dans Model Explorer.
+L’action sélectionne le circuit, affiche ses propriétés et déplie son chemin dans l’arbre.
+Le bouton de Details est grisé sans circuit affecté ; l’action du menu est alors absente.
+La navigation fonctionne également depuis un équipement présenté sous une branche et depuis le circuit parent d’une branche.
+Elle ne modifie aucune affectation.
 
 Les types du catalogue, les niveaux, les pièces, les équipements d’une pièce et les commandes fonctionnelles peuvent être réordonnés avec *Déplacer vers le haut* / *Déplacer vers le bas* dans leur menu.
 Vous pouvez aussi les glisser avant un autre élément du même groupe, ou les déposer sur leur parent actuel pour les placer à la fin.

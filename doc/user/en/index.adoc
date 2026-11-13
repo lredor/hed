@@ -186,7 +186,14 @@ Use a room's *Description* field to describe its purpose or particular features.
 
 To open a device's type, use the small *Navigate to device type* button beside *Device type* in Details, or the action with the same name in the device's Model Explorer menu.
 The type is selected, its properties are displayed and its location is revealed in the catalog.
+
 Navigation does not modify the device or its type.
+
+To open the actual supply circuit, use *Navigate to supply circuit* beside *Supply circuit* in Details or in the equipment’s Model Explorer menu.
+The action selects the circuit, opens its properties and expands its explorer path.
+In Details the button is disabled when no circuit is assigned; the explorer action is then absent.
+It also works from equipment occurrences below branches and from a branch’s parent-circuit field.
+These actions only navigate; they do not change any assignment.
 
 Catalog types, storeys, rooms, room equipment and functional controls can be reordered with *Move up* / *Move down* in their menu.
 You can also drag them before another item in the same group, or drop them onto their current parent to move them to the end.

@@ -60,6 +60,7 @@ import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.ElectricalLoad;
 import hed.homeelectrical.Equipment;
 import hed.homeelectrical.FinalCircuit;
+import hed.homeelectrical.FieldEquipment;
 import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.ServiceCircuitBreaker;
@@ -185,6 +186,11 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
         return "technical";
     }
 
+    /** A selected circuit without branches cannot accept branch assignments; an unassigned device can still choose a branch. */
+    private boolean circuitWithoutBranches(EObject object) {
+        return object instanceof FieldEquipment equipment && equipment.getCircuit() != null && equipment.getCircuit().getBranches().isEmpty();
+    }
+
     private String id(Object value) {
         return value == null ? "" : value instanceof EObject o ? identity.getId(o) : value instanceof Enumerator e ? e.getLiteral() : value.toString();
     }
@@ -214,6 +220,9 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
     }
 
     private List<?> options(EObject owner, EStructuralFeature feature) {
+        if (feature.getName().equals("branch") && circuitWithoutBranches(owner)) {
+            return List.of("");
+        }
         if (feature instanceof EAttribute attribute && attribute.getEAttributeType() instanceof EEnum enumeration) {
             return enumeration.getELiterals().stream().map(EEnumLiteral::getInstance).toList();
         }
@@ -297,11 +306,18 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                         .diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
             }
             return SelectDescription.newSelectDescription(widgetId).idProvider(vm -> widgetId).targetObjectIdProvider(target).labelProvider(title).optionsProvider(vm -> options(self(vm), feature))
-                    .optionIdProvider(vm -> id(vm.get("candidate", Object.class).orElse(null))).optionLabelProvider(vm -> label(vm.get("candidate", Object.class).orElse(null)))
+                    .optionIdProvider(vm -> id(vm.get("candidate", Object.class).orElse(null)))
+                    .optionLabelProvider(
+                            vm -> name.equals("branch") && circuitWithoutBranches(self(vm)) ? Messages.text(locale, "circuitWithoutBranches") : label(vm.get("candidate", Object.class).orElse(null)))
                     .optionIconURLProvider(vm -> icons(vm.get("candidate", Object.class).orElse(null))).styleProvider(vm -> SelectStyle.newSelectStyle().fontSize(14).showIcon(true).build())
-                    .valueProvider(vm -> id(self(vm).eGet(feature))).isReadOnlyProvider(vm -> self(vm) instanceof DeviceType t && name.equals("kind") && HedDomain.inUse(t))
-                    .newValueHandler((vm, value) -> update(() -> HedDomain.set(self(vm), name, selected(self(vm), feature, value)))).diagnosticsProvider(diagnostics).kindProvider(kind)
-                    .messageProvider(message).build();
+                    .valueProvider(vm -> id(self(vm).eGet(feature)))
+                    .isReadOnlyProvider(vm -> self(vm) instanceof DeviceType t && name.equals("kind") && HedDomain.inUse(t) || name.equals("branch") && circuitWithoutBranches(self(vm)))
+                    .newValueHandler((vm, value) -> update(() -> {
+                        if (name.equals("branch") && circuitWithoutBranches(self(vm))) {
+                            throw new IllegalArgumentException("circuitWithoutBranches");
+                        }
+                        HedDomain.set(self(vm), name, selected(self(vm), feature, value));
+                    })).diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
         }
         return TextfieldDescription.newTextfieldDescription(widgetId).idProvider(vm -> widgetId).targetObjectIdProvider(target).labelProvider(title)
                 .isReadOnlyProvider(vm -> self(vm) instanceof Storey && name.equals("planHeight")).valueProvider(vm -> Objects.toString(self(vm).eGet(feature), ""))

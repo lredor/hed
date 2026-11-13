@@ -190,6 +190,11 @@ Pour les équipements terminaux, le compteur et les appareils de protection ou d
   Les équipements terminaux présentent notamment leur pièce, leur circuit et leur branche ; les appareils du tableau présentent leurs relations amont et aval et leur rail DIN lorsqu’il est applicable.
 * *Avancé* : caractéristiques techniques, avec les mêmes règles de modification ou de lecture seule qu’auparavant.
 
+Si le circuit d’un équipement terminal ne possède aucune branche, le champ *Branche* est grisé et affiche *Circuit sans branche*.
+Il redevient disponible lorsque ce circuit possède des branches.
+Sans circuit sélectionné, vous pouvez choisir directement une branche pour raccorder l’équipement à son circuit.
+Ces règles sont indépendantes de l’alimentation monophasée ou triphasée.
+
 Le dépôt d’un type crée un équipement installé ; le type reste dans le catalogue.
 Commencez donc par préparer tous les types d’équipements dont vous aurez besoin, en réutilisant les types fournis et en créant les variantes manquantes.
 Ces types serviront ensuite à choisir les équipements terminaux de votre logement et les modules de votre tableau électrique.

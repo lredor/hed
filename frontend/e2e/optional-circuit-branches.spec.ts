@@ -119,6 +119,12 @@ test('edit direct circuit equipment or display the read-only union of optional b
     await expect(page.getByRole('option').filter({ hasText: new RegExp(`^${escape(circuit)}$`) })).toHaveCount(0);
     await page.keyboard.press('Escape');
     await expect(supply).toHaveText(sampleName('bedroomLighting'));
+    const branch = page.getByTestId(messages['feature.branch']).getByRole('combobox');
+    await expect(branch).toBeDisabled();
+    await expect(branch).toHaveText(messages['circuitWithoutBranches']);
+    await supply.click();
+    await page.getByRole('option', { name: messages['unassigned'], exact: true }).click();
+    await expect(branch).toBeEnabled();
     await page.getByTestId(messages['feature.branch']).getByRole('combobox').click();
     await page
       .getByRole('option')

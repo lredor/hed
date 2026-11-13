@@ -186,6 +186,10 @@ Le champ facultatif *Libellé d’étiquette* contient le texte destiné à l’
 
 Pour préciser la destination ou les particularités d’une pièce, utilisez son champ *Description*.
 
+Pour accéder au type d’un équipement, utilisez le petit bouton *Naviguer vers le type d’équipement* à côté du champ *Type d’équipement* dans Details, ou l’action de même nom dans le menu de l’équipement dans Model Explorer.
+Le type est sélectionné, ses propriétés s’affichent et son emplacement est révélé dans le catalogue.
+La navigation ne modifie pas l’équipement ni son type.
+
 Pour les équipements terminaux, le compteur et les appareils de protection ou de commande du tableau, le panneau *Details* propose deux onglets :
 
 * *Général* : nom, description ou libellé d’étiquette selon l’appareil, type d’équipement, relations applicables et validation.

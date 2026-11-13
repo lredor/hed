@@ -16,5 +16,8 @@
     "uploadError": "Le plan n’a pas pu être importé.",
     "removeEquipment": "Retirer du plan",
     "removeConfirmation": "Seuls les éléments graphiques sélectionnés seront retirés de ce plan. Les équipements et leurs relations resteront dans le modèle. Vous pourrez les replacer depuis le Model Explorer."
+  },
+  "navigation": {
+    "deviceType": "Naviguer vers le type d’équipement"
   }
 }

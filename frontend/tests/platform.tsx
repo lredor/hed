@@ -24,6 +24,8 @@ const platform = vi.hoisted(() => ({
   getNode: vi.fn<(id: string) => Node<NodeData> | undefined>(),
   screenToFlowPosition: vi.fn((position: { x: number; y: number }) => position),
   renderDiagram: vi.fn(),
+  setSelection: vi.fn(),
+  revealSelection: vi.fn(),
 }));
 export { platform };
 
@@ -48,6 +50,8 @@ vi.mock('@eclipse-sirius/sirius-components-core', async () => {
     ConfirmationDialogContext: createContext({ showConfirmation: vi.fn() }),
     representationFactoryExtensionPoint: { identifier: 'representationFactory' },
     useMultiToast: () => ({ addMessages: platform.addMessages, addErrorMessage: platform.addErrorMessage }),
+    useSelection: () => ({ selection: { entries: [] }, setSelection: platform.setSelection }),
+    useSelectionTargets: () => ({ selectionTargets: [{ id: 'explorer', applySelection: platform.revealSelection }] }),
   };
 });
 

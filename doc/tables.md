@@ -10,18 +10,24 @@ SPDX-License-Identifier: EPL-2.0
 
 # Tables
 
-If another explorer is active, choose **Electrical installation** in the explorer selector to use the domain projection. Select an object in Model Explorer, open its context menu and choose **New representation**. The available tables depend on the selected object:
+The electrical-installation explorer opens automatically. Select an object in Model Explorer, open its context menu and choose **New representation**. The available tables depend on the selected object:
 
 | Context | English title | French title | Editable cells |
 | --- | --- | --- | --- |
 | Dwelling | Equipment Table | Inventaire des équipements | Name, rated power |
-| Dwelling | Circuit Table | Liste des circuits | Name, conductor cross-section |
+| Dwelling | Circuit Table | Liste des circuits | Name (when shown), description, conductor section |
 | Distribution board | Distribution Board Table | Composition du tableau | Name, label text |
 | Device catalog | Device Catalog Table | Catalogue des équipements | Name, current/power ratings, module width, residual-current rating, manufacturer, product reference |
 
 Equipment and circuits use a single name. Catalog entries have one stored name seeded in the project's creation language. Neither legacy references nor a second translated catalog name appear in the tables.
 
-The equipment table shows rooms, categories, catalog types, circuit assignments and functional controls. The circuit table shows the source board, use, phase, protective device, upstream residual-current protection, conductor cross-section and served equipment. The board table follows the order of rails and then the order of devices on each rail. Its read-only **Upstream protection** column shows the direct upstream RCCB or service circuit-breaker and participates in searching, filtering and sorting. Device ratings and module widths are read from the catalog type and are read-only on the board's instances. Edit those specifications in the catalog table or its Properties view; dependent values update in the other representations.
+The equipment table shows rooms, categories, catalog types, circuit assignments and functional controls. The board table follows the order of rails and then the order of devices on each rail. Its read-only **Upstream protection** column shows the direct upstream RCCB or service circuit-breaker and participates in searching, filtering and sorting. Device ratings and module widths are read from the catalog type and are read-only on the board's instances. Edit those specifications in the catalog table or its Properties view; dependent values update in the other representations.
+
+## Circuit summary
+
+The Circuit Table shows **Description**, **Source board** (only with several boards), **RCCB** (French: **Inter diff**), **Protection**, **Section (mm²)**, **Equipment**, **Issues** and **Usage**, in that order. Hover over RCCB / Inter diff for its full translated term. An applicable **Phase / supply** column appears immediately after Protection. Description and conductor section remain editable. Summary column order follows this definition, including after optional columns appear; widths remain adjustable.
+
+The row header already identifies the circuit, so **Name** is initially hidden on new tables. Use the standard **Show/Hide columns** menu to display it for inline renaming or column filtering; the choice is saved with the representation. Global search also searches names while the column is hidden. Existing tables retain their explicit visibility choices. The source-board column appears or disappears as boards are added or removed.
 
 The Circuit Table shows its **Phase / supply** column only when the dwelling has a service connection explicitly configured as **Three phase**. The circuit phase selector in Properties follows the same rule, for both final and distribution circuits. With no service connection, unknown supply or single-phase supply, the column and selectors are hidden. Their stored values remain available when three-phase supply is selected again. The service connection’s own supply selector is always available.
 
@@ -35,6 +41,8 @@ Changes are saved by Sirius Web. Reopening the representation restores the edite
 
 ## Implementation
 
-`hed.starter.representations.tables.HedTableDescriptions` builds the four Sirius Web table descriptions. `ViewContribution` registers them in the same view as the domain explorer and assigns stable identifiers independently of translated titles. `HedJavaServices.getHedRows` prepares filtered/sorted rows before the standard Sirius pagination service; `getHedCell` and `editHedCell` supply values and domain edits. The shared icon mapping supplies the table and row pictograms. `ExplorerRepresentations` supplies native representation metadata to the tree once per render; tree services attach each saved representation to its semantic target.
+`hed.starter.representations.tables.HedTableDescriptions` builds the four Sirius Web table descriptions. `HedTableCreationService` delegates to native creation and initializes the summary's Name visibility once; the native renderer and visibility menu then preserve user choices. `ViewContribution` registers the tables in the same view as the domain explorer and assigns stable identifiers independently of translated titles. `HedJavaServices.getHedRows` prepares filtered/sorted rows before the standard Sirius pagination service; `getHedCell` and `editHedCell` supply values and domain edits. The shared icon mapping supplies the table and row pictograms. `ExplorerRepresentations` supplies native representation metadata to the tree once per render; tree services attach each saved representation to its semantic target.
+
+Sirius Web 2026.9.0 exposes neither a header-tooltip setting nor a default position for columns introduced after creation. The guarded `hed-table-presentation-plugin` adds two narrow hooks to its pinned frontend module: HED summary order and an optional heading wrapper. `HedTablePresentation` supplies the ordered projection and the translated RCCB tooltip while retaining native columns, cells, identities and visibility preferences. Other tables keep native column reordering. Unit tests check the installed module boundaries; an incompatible dependency update fails the build explicitly.
 
 Reference: [Sirius Web 2026.9.0 table descriptions](https://github.com/eclipse-sirius/sirius-web/blob/v2026.9.0/doc/content/modules/studio-maker-guide/pages/features/table-description.adoc).

@@ -118,7 +118,7 @@ Create this table on a **Dwelling**. It lists terminal equipment, rooms, catalog
 
 ### Circuit Table
 
-Create this table on a **Dwelling**. It shows circuit uses, source boards, protective devices, conductor cross-sections and served equipment. Names and conductor cross-sections can be edited inline. The **Phase / supply** column and circuit phase selectors appear only for an explicitly three-phase general supply; hidden values are retained.
+Create this table on a **Dwelling**. Columns show description, source board when there are several boards, upstream RCCB, protection, conductor section, equipment, issues and usage last. The duplicate Name column is initially hidden and can be shown through the column-visibility menu. Names, descriptions and conductor sections can be edited inline. The **Phase / supply** column appears after Protection only for an explicitly three-phase general supply; hidden values are retained.
 
 ![Circuit Table](doc/images/representations/circuit-table.png)
 

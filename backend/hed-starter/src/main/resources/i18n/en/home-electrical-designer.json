@@ -1,5 +1,8 @@
 {
   "scope": "Residential electrical design",
+  "tables": {
+    "upstreamRccbShort": "RCCB"
+  },
   "panel": {
     "empty": "Create DIN rails in Model Explorer to populate the board.",
     "modules": "modules"

@@ -9,6 +9,7 @@
  *******************************************************************************/
 import { expect, test } from '@playwright/test';
 import { sampleName } from './sample';
+import { showTableColumn } from './table';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 
@@ -116,6 +117,13 @@ test('create all four tables, filter and edit values, and reopen persisted table
     await expect(editable(equipmentName)).toBeVisible();
     await expand();
     await openTable(messages['class.Dwelling'], 'circuits');
+    await page.setViewportSize({ width: 1900, height: 900 });
+    const fullScreen = page.getByRole('button', { name: /^(Toggle full screen|Passer en plein écran)$/ });
+    await fullScreen.click();
+    await page.screenshot({ path: '../.cache/circuit-table-sample.png' });
+    await fullScreen.click();
+    await page.setViewportSize({ width: 1500, height: 1050 });
+    await showTableColumn(page, messages['feature.name']);
     await expect(editable(sampleName('livingRoomOutlets'))).toBeVisible();
     await openTable(sampleName('mainBoard'), 'board');
     await expect(editable('ID1')).toBeVisible();

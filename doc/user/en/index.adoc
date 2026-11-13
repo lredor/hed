@@ -367,7 +367,7 @@ Deleting a representation retains its semantic owner and equipment.
 |===
 |Table |Create on |Purpose and editing
 |Equipment Table |Dwelling |Rooms, equipment types, circuits, branches and controls. Edit equipment names and power ratings.
-|Circuit Table |Dwelling |Source boards, protection, conductor sections and served equipment. Edit names and conductor sections.
+|Circuit Table |Dwelling |Description, source board when several exist, upstream RCCB, protection, section, equipment, issues and usage last. Edit descriptions, sections and names when shown.
 |Distribution Board Table |Distribution board |Rails, device order, protection and specifications. Edit names and label text; catalog specifications are read-only.
 |Device Catalog Table |Device catalog |Type names, ratings, module widths and product information. Edit catalog data shared by its instances.
 |===
@@ -379,6 +379,10 @@ Refused edits preserve the previous value and show feedback.
 
 image::equipment-table.png[Equipment Table,width=1000]
 image::circuit-table.png[Circuit Table,width=1000]
+
+The Circuit Table initially hides the duplicate *Name* column. Use *Show/Hide columns* to display it for editing or filtering; this choice is saved. Global search finds circuit names even while the column is hidden. *Phase / supply* appears after Protection only for a three-phase supply.
+Hover over *RCCB* to read *Upstream RCCB*. Column order follows the summary definition, including when optional columns appear; their widths remain adjustable.
+
 image::distribution-board-table.png[Distribution Board Table,width=1000]
 image::device-catalog-table.png[Device Catalog Table,width=1000]
 

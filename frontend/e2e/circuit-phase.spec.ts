@@ -81,10 +81,7 @@ test('show circuit phases only with an explicit three-phase supply and retain hi
     await name.press('Tab');
     await expect(item(label)).toBeVisible();
   };
-  const row = (label: string) =>
-    page
-      .getByRole('row')
-      .filter({ has: page.getByRole('cell', { name: label, exact: true }).filter({ has: page.getByRole('textbox') }) });
+  const row = (label: string) => page.getByRole('row').filter({ has: page.getByText(label, { exact: true }) });
   try {
     await page.goto('/');
     await page.locator('a[href="/new/project?templateId=hed-empty"]').click();

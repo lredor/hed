@@ -10,8 +10,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { hedExplorerFilters } from './hed-explorer-filters-plugin';
+import { hedTablePresentation } from './hed-table-presentation-plugin';
 export default defineConfig({
-  plugins: [react(), hedExplorerFilters()],
+  plugins: [react(), hedExplorerFilters(), hedTablePresentation()],
   server: {
     port: 5173,
     proxy: {

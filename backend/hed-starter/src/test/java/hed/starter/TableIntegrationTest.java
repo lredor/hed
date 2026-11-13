@@ -17,8 +17,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.sirius.components.core.api.IObjectSearchService;
+import org.eclipse.sirius.components.interpreter.AQLInterpreter;
+import org.eclipse.sirius.components.tables.Column;
+import org.eclipse.sirius.components.tables.Table;
+import org.eclipse.sirius.components.tables.PaginationData;
 import org.eclipse.sirius.components.tables.ColumnFilter;
 import org.eclipse.sirius.components.tables.ColumnSort;
 import org.eclipse.sirius.components.view.builder.generated.view.ViewBuilders;
@@ -32,13 +38,68 @@ import hed.homeelectrical.ElectricalLoad;
 import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.Outlet;
 import hed.homeelectrical.NamedElement;
+import hed.homeelectrical.HomeElectricalPackage;
 import hed.starter.representations.modelexplorer.HedJavaServices;
 import hed.starter.representations.tables.HedTableDescriptions;
+import hed.starter.representations.tables.HedTableCreationService;
 
 /** Checks table filtering, semantic edits and the boundary between editable and calculated cells. */
 class TableIntegrationTest {
     private HedJavaServices services(BootstrapIntegrationTest.Feedback feedback) {
         return new HedJavaServices(new BootstrapIntegrationTest.Identity(), new IObjectSearchService.NoOp(), feedback, Locale.ENGLISH, dwelling -> dwelling.getName());
+    }
+
+    @Test
+    void circuitSummaryUsesConciseOrderedColumnsAndOnlyShowsTheSourceForSeveralBoards() {
+        var home = HedSamples.example();
+        var view = new ViewBuilders().newView().build();
+        new HedTableDescriptions(Locale.FRENCH).addTo(view);
+        var table = (TableDescription) view.getDescriptions().get(1);
+        assertEquals(List.of("name", "description", "sourceBoard", "upstreamRccb", "protectiveDevice", "phase", "conductorSectionMm2", "served", "issues", "usage"),
+                HedTableDescriptions.fieldsFor("circuits"));
+        var headers = table.getColumnDescriptions().stream().map(column -> column.getHeaderLabelExpression()).toList();
+        assertEquals("Protection", headers.get(4));
+        assertEquals("Section (mm²)", headers.get(6));
+        assertEquals("Équipements", headers.get(7));
+        var source = table.getColumnDescriptions().stream().filter(column -> column.getName().equals("hed-column-sourceBoard")).findFirst().orElseThrow();
+        var interpreter = new AQLInterpreter(List.of(), List.of(), List.of(HomeElectricalPackage.eINSTANCE));
+        assertEquals(List.of("sourceBoard"), interpreter.evaluateExpression(Map.of("self", home), source.getSemanticCandidatesExpression()).asObjects().orElseThrow());
+        home.getBoards().removeLast();
+        assertTrue(interpreter.evaluateExpression(Map.of("self", home), source.getSemanticCandidatesExpression()).asObjects().orElseThrow().isEmpty());
+        home.getBoards().clear();
+        assertTrue(interpreter.evaluateExpression(Map.of("self", home), source.getSemanticCandidatesExpression()).asObjects().orElseThrow().isEmpty());
+        var description = table.getCellDescriptions().stream().filter(cell -> cell.getName().equals("hed-cell-description")).findFirst().orElseThrow();
+        assertInstanceOf(CellTextfieldWidgetDescription.class, description.getCellWidgetDescription());
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        var editableCircuit = HedSamples.example().getCircuits().getFirst();
+        service.editHedCell(editableCircuit, "description", "Circuit côté fenêtre");
+        assertEquals("Circuit côté fenêtre", service.getHedCell(editableCircuit, "description"));
+    }
+
+    @Test
+    void defaultNameVisibilityPreservesNativeTableIdentitiesCellsAndColumnSettings() {
+        var name = Column.newColumn(UUID.randomUUID()).descriptionId("name-description").targetObjectId("name").targetObjectKind("string").headerLabel("Name").headerIconURLs(List.of())
+                .headerIndexLabel("").width(180).resizable(true).hidden(false).filterVariant("text").sortable(true).index(0).build();
+        var source = Column.newColumn(UUID.randomUUID()).descriptionId("source-description").targetObjectId("sourceBoard").targetObjectKind("string").headerLabel("Source").headerIconURLs(List.of())
+                .headerIndexLabel("").width(200).resizable(true).hidden(false).filterVariant("text").sortable(true).index(1).build();
+        var table = Table.newTable("summary").descriptionId("description").targetObjectId("home").targetObjectKind("Dwelling").stripeRow(true).lines(List.of()).columns(List.of(name, source))
+                .paginationData(new PaginationData(false, false, 0)).globalFilter("filter").columnFilters(List.of(new ColumnFilter("name", "Q"))).enableSubRows(false)
+                .columnSort(List.of(new ColumnSort("name", true))).pageSizeOptions(List.of(10, 25)).defaultPageSize(10).build();
+        var result = HedTableCreationService.withHiddenName(table);
+        assertTrue(result.getColumns().getFirst().isHidden());
+        assertFalse(table.getColumns().getFirst().isHidden());
+        assertFalse(result.getColumns().get(1).isHidden());
+        assertEquals(table.getId(), result.getId());
+        assertEquals(table.getDescriptionId(), result.getDescriptionId());
+        assertEquals(table.getTargetObjectId(), result.getTargetObjectId());
+        assertEquals(table.getLines(), result.getLines());
+        assertEquals(table.getColumnFilters(), result.getColumnFilters());
+        assertEquals(table.getColumnSort(), result.getColumnSort());
+        assertEquals(table.getGlobalFilter(), result.getGlobalFilter());
+        assertEquals(name.getId(), result.getColumns().getFirst().getId());
+        assertEquals(name.getWidth(), result.getColumns().getFirst().getWidth());
+        assertEquals(name.getFilterVariant(), result.getColumns().getFirst().getFilterVariant());
+        assertTrue(result.getColumns().getFirst().isSortable());
     }
 
     @Test

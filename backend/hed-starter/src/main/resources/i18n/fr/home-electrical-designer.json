@@ -1,5 +1,8 @@
 {
   "scope": "Conception électrique du logement",
+  "tables": {
+    "upstreamRccbShort": "Inter diff"
+  },
   "panel": {
     "empty": "Créez des rails DIN dans le Model Explorer pour composer le tableau.",
     "modules": "modules"

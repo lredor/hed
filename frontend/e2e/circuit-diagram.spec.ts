@@ -69,6 +69,22 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     projectId = page.url().match(/\/projects\/([^/]+)/)?.[1];
     await item(projectName).waitFor();
     await expand();
+    // A shorter rail must share the complete board width and move down when the preceding rail grows.
+    await item(samplePattern('mainBoard')).locator('../..').getByRole('button').click();
+    await page.getByRole('button', { name: /^(Create DIN rail|Créer Rail DIN)$/, exact: true }).click();
+    await expand();
+    await item(/^(New din rail|Nouveau : Rail DIN)$/)
+      .locator('../..')
+      .getByRole('button')
+      .click();
+    await page
+      .getByRole('menuitem', { name: /^(Rename|Renommer)$/, exact: true })
+      .last()
+      .click();
+    const railName = page.getByTestId('name-edit').getByRole('textbox');
+    await railName.fill('Routing space');
+    await railName.press('Enter');
+    await expect(item('Routing space')).toBeVisible();
     await item(/^(Dwelling|Logement)$/)
       .locator('../..')
       .getByRole('button')
@@ -85,7 +101,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
       .click();
     await dialog.getByRole('textbox').fill('Logical circuits');
     await dialog.getByRole('button', { name: /^(Create|Créer)$/ }).click();
-    await expect.poll(() => flat().length).toBe(27);
+    await expect.poll(() => flat().length).toBe(28);
     await expect.poll(() => diagram?.edges.length).toBe(16);
     await expand();
     await expect(item('Logical circuits')).toBeVisible();
@@ -144,15 +160,38 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await expect.poll(async () => new Set((await positions()).map((p) => p.y)).size).toBe(1);
     const placed = await positions();
     expect(placed.map((p) => p.x)).toEqual([...placed.map((p) => p.x)].sort((a, b) => a - b));
-    expect(semantic('Q1').defaultWidth).toBe(32);
+    expect(semantic('Q1').defaultWidth).toBe(64);
     expect(semantic('Q1').defaultHeight).toBe(112);
-    await expect.poll(() => node('Q1').evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(32);
+    await expect.poll(() => node('Q1').evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(64);
     await expect.poll(() => node('Q1').evaluate((element) => parseFloat(getComputedStyle(element).height))).toBe(112);
     const railNode = page.locator(`.react-flow__node[data-id="${rail.id}"]`);
-    await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(232);
+    await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(424);
+    await expect
+      .poll(() => node('Routing space').evaluate((element) => parseFloat(getComputedStyle(element).width)))
+      .toBe(424);
+    await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).height))).toBe(260);
+    await expect
+      .poll(() => node(sampleName('sofaOutlet')).evaluate((element) => parseFloat(getComputedStyle(element).width)))
+      .toBe(48);
+    const protection = link(semantic('ID1'), semantic('Q1'));
+    const anchor = (label: string) =>
+      diagram.layoutData.nodeLayoutData
+        .find((entry: any) => entry.id === semantic(label).id)
+        ?.handleLayoutData.find((entry: any) => entry.edgeId === protection.id);
+    await railNode
+      .getByRole('button', {
+        name: /^(Route protection links above devices|Faire passer les protections par le haut)$/,
+      })
+      .click();
+    await expect.poll(() => anchor('ID1')?.handlePosition).toBe('top');
+    await expect.poll(() => anchor('Q1')?.handlePosition).toBe('top');
+    const protectionPath = page.locator(`.react-flow__edge[data-id="${protection.id}"] .react-flow__edge-path`).first();
+    await expect
+      .poll(async () => (await node('Q1').boundingBox())!.y - (await protectionPath.boundingBox())!.y)
+      .toBeGreaterThan(3);
     await expect
       .poll(() => node(sampleName('mainBoard')).evaluate((element) => parseFloat(getComputedStyle(element).width)))
-      .toBe(234);
+      .toBe(426);
     await expect(page.getByTestId(`circuit-device-${semantic('Q1').targetObjectId}`).locator('img')).toHaveAttribute(
       'src',
       /electric-switch.svg$/
@@ -174,8 +213,8 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     expect(semantic(sampleName('sofaOutlet')).style.imageURL).toBe('/api/images/hed/mdi/power-socket-fr.svg');
     expect(semantic(sampleName('livingRoom')).style.__typename).toBe('RectangularNodeStyle');
     expect(semantic(sampleName('sofaOutlet')).type).toBe('node:image');
-    expect(semantic(sampleName('sofaOutlet')).defaultWidth).toBe(24);
-    await expect.poll(() => diagram.layoutData?.nodeLayoutData.length ?? 0).toBe(27);
+    expect(semantic(sampleName('sofaOutlet')).defaultWidth).toBe(48);
+    await expect.poll(() => diagram.layoutData?.nodeLayoutData.length ?? 0).toBe(28);
     expect((await request.get(semantic(sampleName('sofaOutlet')).style.imageURL)).ok()).toBe(true);
     const roots = await Promise.all(
       diagram.nodes.map((root: any) => page.locator(`.react-flow__node[data-id="${root.id}"]`).boundingBox())
@@ -200,6 +239,30 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
           })
         ).toBe(true);
       }
+    const nextRailBefore = await position('Routing space');
+    await railNode.locator('.hed-circuit-caption').click();
+    const railResize = railNode.locator('.react-flow__resize-control.line.bottom').first();
+    await expect(railResize).toBeVisible();
+    const railGrip = await railResize.boundingBox();
+    const zoom = await page
+      .locator('.react-flow__viewport')
+      .evaluate((element) => new DOMMatrix(getComputedStyle(element).transform).a);
+    const railResized = page.waitForResponse(
+      (response) =>
+        response.url().endsWith('/api/graphql') && (response.request().postData() ?? '').includes('layoutDiagram')
+    );
+    await page.mouse.move(railGrip!.x + railGrip!.width * 0.96, railGrip!.y + railGrip!.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(railGrip!.x + railGrip!.width * 0.96, railGrip!.y + railGrip!.height / 2 + 80 * zoom, {
+      steps: 12,
+    });
+    await page.mouse.up();
+    await railResized;
+    const railHeight = () => railNode.evaluate((element) => parseFloat(getComputedStyle(element).height));
+    await expect.poll(railHeight).toBeGreaterThan(330);
+    const resizedRailHeight = await railHeight();
+    await expect.poll(async () => (await position('Routing space')).y - nextRailBefore.y).toBeGreaterThan(70);
+    await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(424);
     const before = await position(sampleName('sofaOutlet')),
       box = await node(sampleName('sofaOutlet')).boundingBox();
     const saved = page.waitForResponse(
@@ -236,8 +299,9 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.reload();
     await expect(node(sampleName('sofaOutlet'))).toBeVisible();
     await expect.poll(() => position(sampleName('sofaOutlet'))).toEqual(moved);
+    await expect.poll(railHeight).toBe(resizedRailHeight);
     await expect.poll(() => diagram.edges.length).toBe(16);
-    await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(232);
+    await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(424);
     // Reordering in Model Explorer refreshes the horizontal row, including after a saved-layout reload.
     await expand();
     await item(/^Q1 - /)
@@ -250,7 +314,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.reload();
     await expect(node('Q1')).toBeVisible();
     await expect(page.locator('[data-testid^="circuit-device-"]')).toHaveCount(6);
-    await expect(page.locator('[data-testid^="circuit-rail-"]')).toHaveCount(2);
+    await expect(page.locator('[data-testid^="circuit-rail-"]')).toHaveCount(3);
     for (const device of ['ID1', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5']) {
       await expect(node(device)).toBeVisible();
       await expect
@@ -264,7 +328,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await expect.poll(async () => (await position('Q2')).x < (await position('Q1')).x).toBe(true);
     await expect
       .poll(() => node(sampleName('mainBoard')).evaluate((element) => parseFloat(getComputedStyle(element).width)))
-      .toBe(234);
+      .toBe(426);
     // Select the equipment by its outside label: freely placed edge labels may cover the pictogram's centre.
     await node(sampleName('sofaOutlet')).getByText(sampleName('sofaOutlet'), { exact: true }).click();
     await expect(page.getByRole('textbox', { name: /^(Name|Nom)$/, exact: true })).toHaveValue(
@@ -297,7 +361,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
       .filter({ hasText: samplePattern('bedroom') })
       .click();
     await expect.poll(() => semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('bedroom')).id);
-    await expect.poll(() => flat().length).toBe(27);
+    await expect.poll(() => flat().length).toBe(28);
     await page.reload();
     await expect(node(sampleName('sofaOutlet'))).toBeVisible();
     await expect.poll(() => semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('bedroom')).id);

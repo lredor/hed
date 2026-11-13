@@ -55,9 +55,9 @@ public final class CircuitDiagram {
      */
     public DiagramDescription create() {
         var channel = pictogram("channel", "ControlChannel", "aql:self.getHedCircuitChannels()", 16);
-        var equipment = pictogram("equipment", "FieldEquipment", "aql:self.getHedCircuitRoomEquipment()", 24);
+        var equipment = pictogram("equipment", "FieldEquipment", "aql:self.getHedCircuitRoomEquipment()", 48);
         equipment.getBorderNodesDescriptions().add(channel);
-        var unlocated = pictogram("unlocated-equipment", "FieldEquipment", "aql:self.equipment->select(e | e.room = null)", 24);
+        var unlocated = pictogram("unlocated-equipment", "FieldEquipment", "aql:self.equipment->select(e | e.room = null)", 48);
         unlocated.getReusedBorderNodeDescriptions().add(channel);
         var room = container("room", "Room", "aql:self.rooms", "#ffffff", equipment);
         var storey = container("storey", "Storey", "aql:self.storeys", "#eff6ff", room);
@@ -66,7 +66,8 @@ public final class CircuitDiagram {
         modular.setDefaultHeightExpression("112");
         var rail = boardNode("rail", "DINRail", "aql:self.rails", "rail", modular);
         rail.setDefaultWidthExpression("aql:self.getHedCircuitRailWidth()");
-        rail.setDefaultHeightExpression("160");
+        rail.setDefaultHeightExpression("260");
+        rail.setUserResizable(UserResizableDirection.VERTICAL);
         var board = container("board", "DistributionBoard", "aql:self.boards", "#fff7ed", rail);
         board.setUserResizable(UserResizableDirection.NONE);
         board.setDefaultWidthExpression("aql:self.getHedCircuitBoardWidth()");

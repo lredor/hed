@@ -1,5 +1,8 @@
 {
   "scope": "Conception électrique du logement",
+  "circuits": {
+    "routeProtectionsAbove": "Faire passer les protections par le haut"
+  },
   "tables": {
     "upstreamRccbShort": "Inter diff"
   },

@@ -95,18 +95,22 @@ public class CircuitServices {
     /**
      * Sizes logical modular rectangles from their catalog's module width.
      * @param device the rail-mounted device
-     * @return width in diagram units, using 32 units per module
+     * @return width in diagram units, using 64 units per module
      */
     public int getHedCircuitDeviceWidth(ModularDevice device) {
-        return (int) Math.ceil(Math.max(32, 32 * HedDomain.moduleWidth(device)));
+        return (int) Math.ceil(Math.max(64, 64 * HedDomain.moduleWidth(device)));
     }
 
     /**
-     * Sizes a horizontal rail before automatic arrangement, including device gaps and side padding.
+     * Gives every rail the board's inner width, independently of its own number of devices.
      * @param rail the ordered semantic rail
      * @return its minimum width in diagram units
      */
     public int getHedCircuitRailWidth(DINRail rail) {
+        return rail.eContainer() instanceof DistributionBoard board ? getHedCircuitBoardWidth(board) - 2 : railContentWidth(rail);
+    }
+
+    private int railContentWidth(DINRail rail) {
         return Math.max(160, 24 + rail.getDevices().stream().mapToInt(this::getHedCircuitDeviceWidth).sum() + Math.max(0, rail.getDevices().size() - 1) * 4);
     }
 
@@ -116,7 +120,7 @@ public class CircuitServices {
      * @return its minimum width, including the native one-unit borders
      */
     public int getHedCircuitBoardWidth(DistributionBoard board) {
-        return Math.max(184, 2 + board.getRails().stream().mapToInt(this::getHedCircuitRailWidth).max().orElse(160));
+        return Math.max(184, 2 + board.getRails().stream().mapToInt(this::railContentWidth).max().orElse(160));
     }
 
     private EObject chainOwner(FieldEquipment equipment) {

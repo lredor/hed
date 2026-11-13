@@ -11,10 +11,12 @@ import { parse, print } from 'graphql';
 import { describe, expect, it } from 'vitest';
 import { panelDocumentTransform } from '../src/representations/diagrams/panel/PanelDiagram';
 import { floorPlanDocumentTransform } from '../src/representations/diagrams/floorplan/FloorPlanDiagram';
+import { circuitBoardDocumentTransform } from '../src/representations/diagrams/circuits/CircuitBoard';
 
 describe.each([
   ['PanelNodeStyle', panelDocumentTransform],
   ['FloorPlanNodeStyle', floorPlanDocumentTransform],
+  ['CircuitBoardNodeStyle', circuitBoardDocumentTransform],
 ] as const)('%s subscription fields', (style, transform) => {
   it('adds custom fields to diagram subscriptions without duplicating them', () => {
     const input = parse(

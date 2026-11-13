@@ -36,11 +36,22 @@ test('create named branches, associate equipment through Explorer and retain cir
   const flat = (nodes: any[] = diagram?.nodes ?? []): any[] =>
     nodes.flatMap((node) => [node, ...flat(node.childNodes ?? []), ...flat(node.borderNodes ?? [])]);
   const semantic = (label: string) => flat().find((node) => node.targetObjectLabel === label);
-  const linked = (from: string, to: string) =>
-    !!diagram?.edges.some((edge: any) => edge.sourceId === semantic(from)?.id && edge.targetId === semantic(to)?.id);
+  const linked = (from: string, to: string) => {
+    const source = semantic(from),
+      target = semantic(to);
+    return !!diagram?.edges.some((edge: any) =>
+      source && target
+        ? edge.sourceId === source.id && edge.targetId === target.id
+        : source
+        ? edge.sourceId === source.id && edge.centerLabel?.text === to
+        : target
+        ? edge.targetId === target.id && edge.centerLabel?.text === from
+        : false
+    );
+  };
   const item = (label: string | RegExp) =>
     page
-      .locator('p')
+      .locator('[data-treeitemid] p')
       .filter({ hasText: typeof label === 'string' ? new RegExp('^' + label + '$') : label })
       .first();
   const treeBranch = (label: string) => item(label).locator('xpath=ancestor::li[1]');
@@ -55,6 +66,7 @@ test('create named branches, associate equipment through Explorer and retain cir
   const supply = () => page.getByTestId(/^(Supply circuit|Circuit d’alimentation)$/).getByRole('combobox');
   const branchProperty = () => page.getByTestId(/^(Branch|Branche)$/).getByRole('combobox');
   const createBranch = async (label: string) => {
+    await expand();
     await item(sampleName('livingRoomOutlets')).locator('../..').getByRole('button').click();
     await page.getByRole('button', { name: /^(Create Branch|Créer Branche)$/ }).click();
     await expand();
@@ -85,14 +97,22 @@ test('create named branches, associate equipment through Explorer and retain cir
     await page.getByRole('option', { name: /^(Circuit Diagram|Schéma des circuits)$/ }).click();
     await dialog.getByRole('textbox').fill('Branch circuit diagram');
     await dialog.getByRole('button', { name: /^(Create|Créer)$/ }).click();
-    await expect.poll(() => flat().length).toBe(32);
+    await expect.poll(() => flat().length).toBe(27);
     await createBranch('Window side');
     await createBranch('Door side');
     await createBranch('Desk side');
-    await expect.poll(() => flat().length).toBe(35);
+    await expect.poll(() => flat().length).toBe(28);
     await expect.poll(() => linked(sampleName('livingRoomOutlets'), 'Window side')).toBe(true);
-    expect(semantic('Window side').style.imageURL).toBe('/api/images/hed/mdi/source-branch.svg');
-    expect((await request.get(semantic('Window side').style.imageURL)).ok()).toBe(true);
+    expect(semantic('Window side')).toBeUndefined();
+    const junction = semantic(sampleName('livingRoomOutlets'));
+    expect(junction.defaultWidth).toBe(3);
+    expect(junction.defaultHeight).toBe(3);
+    expect(junction.insideLabel).toBeNull();
+    expect(junction.outsideLabels).toEqual([]);
+    expect(junction.style.background).toBe('#000000');
+    await expect.poll(() => linked('Q2', sampleName('livingRoomOutlets'))).toBe(true);
+    const junctionNode = page.locator(`.react-flow__node[data-id="${junction.id}"]`);
+    await expect.poll(() => junctionNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(3);
     const room = treeBranch(sampleName('livingRoom'));
     const originalOutlet = room
       .locator('p')
@@ -121,7 +141,11 @@ test('create named branches, associate equipment through Explorer and retain cir
     await expect(branchProperty()).toContainText('Window side');
     await expect(supply()).toContainText(sampleName('livingRoomOutlets'));
     await expect.poll(() => linked('Window side', sampleName('sofaOutlet'))).toBe(true);
-    expect(linked(sampleName('livingRoomOutlets'), sampleName('sofaOutlet'))).toBe(false);
+    expect(
+      diagram.edges.find(
+        (edge: any) => edge.sourceId === junction.id && edge.targetId === semantic(sampleName('sofaOutlet')).id
+      ).centerLabel.text
+    ).toBe('Window side');
     // Renaming the linked tree occurrence edits the original equipment, including its room occurrence.
     await alias().locator('../..').getByRole('button').click();
     await page
@@ -155,6 +179,29 @@ test('create named branches, associate equipment through Explorer and retain cir
       .filter({ hasText: samplePattern('garage') })
       .click();
     await expect.poll(() => linked('Door side', 'Door outlet')).toBe(true);
+    // Two members of the same branch form a chain, rather than parallel edges from the junction.
+    await room
+      .locator('p')
+      .filter({ hasText: /^Window outlet$/ })
+      .click();
+    await branchProperty().click();
+    await page
+      .getByRole('option')
+      .filter({ hasText: /^Door side$/ })
+      .click();
+    await expect.poll(() => linked('Door outlet', 'Window outlet')).toBe(true);
+    expect(
+      diagram.edges.find(
+        (edge: any) => edge.sourceId === semantic('Door outlet').id && edge.targetId === semantic('Window outlet').id
+      ).centerLabel.text
+    ).toBe('Door side');
+    expect(linked(sampleName('livingRoomOutlets'), 'Window outlet')).toBe(false);
+    await branchProperty().click();
+    await page
+      .getByRole('option')
+      .filter({ hasText: /^Window side$/ })
+      .click();
+    await expect.poll(() => linked('Window side', 'Window outlet')).toBe(true);
     await item('Window side').click();
     await supply().click();
     await page
@@ -180,7 +227,7 @@ test('create named branches, associate equipment through Explorer and retain cir
       .map((node) => node.targetObjectId)
       .sort();
     await page.reload();
-    await expect.poll(() => flat().length).toBe(36);
+    await expect.poll(() => flat().length).toBe(30);
     await expect.poll(() => linked(sampleName('groundFloorLighting'), 'Window side')).toBe(true);
     expect(
       flat()
@@ -225,7 +272,7 @@ test('create named branches, associate equipment through Explorer and retain cir
         .filter({ hasText: /^Door outlet$/ })
     ).toBeVisible();
     await page.reload();
-    await expect.poll(() => flat().length).toBe(35);
+    await expect.poll(() => flat().length).toBe(30);
     await expect.poll(() => linked(sampleName('livingRoomOutlets'), 'Door outlet')).toBe(false);
     await expand();
     await expect(item('Door side')).toHaveCount(0);
@@ -253,7 +300,7 @@ test('create named branches, associate equipment through Explorer and retain cir
       .getByRole('button', { name: /^(Delete|Supprimer)$/, exact: true })
       .click();
     await expect(page.locator('p').filter({ hasText: /^Window outlet$/ })).toHaveCount(0);
-    await expect.poll(() => flat().length).toBe(34);
+    await expect.poll(() => flat().length).toBe(29);
     await expect(item('Desk side')).toBeVisible();
     await expect.poll(() => linked(sampleName('livingRoomOutlets'), 'Door outlet')).toBe(false);
     await page.screenshot({ path: '../.cache/circuit-branches-checked.png' });

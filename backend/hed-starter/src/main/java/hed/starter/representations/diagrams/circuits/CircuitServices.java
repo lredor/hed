@@ -9,25 +9,26 @@
  *******************************************************************************/
 package hed.starter.representations.diagrams.circuits;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.math.BigDecimal;
 import org.eclipse.emf.ecore.EObject;
 import org.springframework.stereotype.Service;
 import hed.domain.HedDomain;
-import hed.domain.Messages;
 import hed.homeelectrical.Circuit;
 import hed.homeelectrical.CircuitBranch;
 import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.ControlChannel;
 import hed.homeelectrical.ControlDevice;
+import hed.homeelectrical.ControlFunction;
+import hed.homeelectrical.DINRail;
 import hed.homeelectrical.DistributionBoard;
+import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.Equipment;
 import hed.homeelectrical.FieldEquipment;
 import hed.homeelectrical.Room;
+import hed.starter.representations.CircuitEquipment;
 
 /** Projections of existing logical connections; no inferred wiring or presentation state in Ecore. */
 @Service
@@ -36,7 +37,7 @@ public class CircuitServices {
 
     /**
      * Creates the AQL services used by the logical circuit diagram.
-     * @param locale selects fallback labels and circuit-phase translations
+     * @param locale selects fallback container labels
      */
     public CircuitServices(Locale locale) {
         this.locale = locale;
@@ -53,64 +54,122 @@ public class CircuitServices {
     }
 
     /**
-     * Finds circuits whose explicit source is the selected distribution board.
-     * @param board the diagram's board container
-     * @return circuits in model order, or an empty list for a detached board
+     * Finds the circuits requiring one graphical junction, without creating semantic junction objects.
+     * @param home the diagram's dwelling
+     * @return final circuits with at least one branch, in model order
      */
-    public List<Circuit> getHedCircuitBoardCircuits(DistributionBoard board) {
-        var home = HedDomain.dwelling(board);
-        return home == null ? List.of() : home.getCircuits().stream().filter(circuit -> circuit.getSourceBoard() == board).toList();
+    public List<FinalCircuit> getHedCircuitJunctions(Dwelling home) {
+        return home.getCircuits().stream().filter(FinalCircuit.class::isInstance).map(FinalCircuit.class::cast).filter(circuit -> !circuit.getBranches().isEmpty()).toList();
     }
 
     /**
-     * Collects branches for a final circuit, its source board, or the dwelling's circuits without a source board.
-     * @param owner a diagram container or final circuit
-     * @return branches in model order; unrelated owners produce an empty list
+     * Resolves the first terminal endpoint of a circuit or branch.
+     * @param owner a final circuit or one of its branches
+     * @return its first associated device, or no endpoint when empty or when the circuit has branches
      */
-    public List<CircuitBranch> getHedCircuitBranches(EObject owner) {
-        if (owner instanceof FinalCircuit circuit) {
-            return List.copyOf(circuit.getBranches());
+    public List<FieldEquipment> getHedCircuitFirstEquipment(EObject owner) {
+        return members(owner).stream().limit(1).toList();
+    }
+
+    /**
+     * Resolves the preceding member of the same chain. Graphical positions never determine wiring order.
+     * @param equipment the target of a continuation edge
+     * @return the previous member, or no endpoint for an unassigned or first device
+     */
+    public List<FieldEquipment> getHedCircuitPreviousEquipment(FieldEquipment equipment) {
+        var members = members(chainOwner(equipment));
+        int index = members.indexOf(equipment);
+        return index > 0 ? List.of(members.get(index - 1)) : List.of();
+    }
+
+    /**
+     * Names a continuation edge after its circuit or branch, without a translated fallback.
+     * @param equipment the device at the end of the segment
+     * @return the stored chain name, or an empty label for an unassigned device
+     */
+    public String getHedCircuitChainLabel(FieldEquipment equipment) {
+        var owner = chainOwner(equipment);
+        return owner instanceof CircuitBranch branch ? Objects.toString(branch.getName(), "")
+                : owner instanceof Circuit circuit ? Objects.toString(circuit.getName(), "") : "";
+    }
+
+    /**
+     * Sizes logical modular rectangles from their catalog's module width.
+     * @param device the rail-mounted device
+     * @return width in diagram units, using 32 units per module
+     */
+    public int getHedCircuitDeviceWidth(ModularDevice device) {
+        return (int) Math.ceil(Math.max(32, 32 * HedDomain.moduleWidth(device)));
+    }
+
+    /**
+     * Sizes a horizontal rail before automatic arrangement, including device gaps and side padding.
+     * @param rail the ordered semantic rail
+     * @return its minimum width in diagram units
+     */
+    public int getHedCircuitRailWidth(DINRail rail) {
+        return Math.max(160, 24 + rail.getDevices().stream().mapToInt(this::getHedCircuitDeviceWidth).sum() + Math.max(0, rail.getDevices().size() - 1) * 4);
+    }
+
+    /**
+     * Supplies the native board list's initial width so its rails fit before and after arrangement.
+     * @param board the board containing the vertically stacked rails
+     * @return its minimum width, including the native one-unit borders
+     */
+    public int getHedCircuitBoardWidth(DistributionBoard board) {
+        return Math.max(184, 2 + board.getRails().stream().mapToInt(this::getHedCircuitRailWidth).max().orElse(160));
+    }
+
+    private EObject chainOwner(FieldEquipment equipment) {
+        var circuit = equipment.getCircuit();
+        if (circuit == null) {
+            return null;
         }
-        if (owner instanceof DistributionBoard board) {
-            return getHedCircuitBoardCircuits(board).stream().filter(FinalCircuit.class::isInstance).map(FinalCircuit.class::cast).flatMap(circuit -> circuit.getBranches().stream()).toList();
+        if (circuit.getBranches().isEmpty()) {
+            return circuit;
         }
-        if (owner instanceof Dwelling home) {
-            return home.getCircuits().stream().filter(FinalCircuit.class::isInstance).map(FinalCircuit.class::cast).filter(circuit -> circuit.getSourceBoard() == null)
-                    .flatMap(circuit -> circuit.getBranches().stream()).toList();
+        var branch = equipment.getBranch();
+        return branch != null && branch.getCircuit() == circuit ? branch : null;
+    }
+
+    private List<FieldEquipment> members(EObject owner) {
+        if (owner instanceof FinalCircuit circuit && circuit.getBranches().isEmpty()) {
+            return CircuitEquipment.getAssociatedEquipment(circuit);
+        }
+        if (owner instanceof CircuitBranch branch && branch.getCircuit() != null) {
+            return branch.getEquipment().stream().filter(equipment -> equipment.getCircuit() == branch.getCircuit() && equipment.getBranch() == branch).toList();
         }
         return List.of();
     }
 
     /**
-     * Exposes each independent channel as a border-node connection endpoint.
+     * Exposes independent channels only when their device has several channels.
      * @param equipment the device represented by the owning node
-     * @return its channels for a control device, otherwise an empty list
+     * @return its channels for a multi-channel control device, otherwise an empty list
      */
     public List<ControlChannel> getHedCircuitChannels(FieldEquipment equipment) {
-        return equipment instanceof ControlDevice control ? control.getChannels() : List.of();
+        return equipment instanceof ControlDevice control && control.getChannels().size() > 1 ? control.getChannels() : List.of();
     }
 
     /**
-     * Labels devices with their stored name and circuits with their name and applicable electrical details.
-     * The phase is omitted unless the dwelling has an explicit three-phase general supply.
+     * Projects command channels onto their graphical endpoint, using the parent for a single-channel device.
+     * @param function the functional command represented by the edge
+     * @return distinct device or border-channel endpoints, preserving channel selection order
+     */
+    public List<EObject> getHedCircuitControlSources(ControlFunction function) {
+        return function.getChannels().stream().map(channel -> channel.eContainer() instanceof ControlDevice control && control.getChannels().size() == 1 ? (EObject) control : channel)
+                .distinct().toList();
+    }
+
+    /**
+     * Labels devices with their stored name and containers with the existing localized domain label.
      * @param object the semantic object represented by the node
-     * @return an outside pictogram label or inside container label, with optional circuit details on a second line
+     * @return an outside pictogram label or inside container label
      */
     public String getHedCircuitNodeLabel(EObject object) {
         if (object instanceof Equipment equipment) {
             return Objects.toString(equipment.getName(), "");
         }
-        if (!(object instanceof Circuit circuit)) {
-            return HedDomain.label(object, locale);
-        }
-        var label = HedDomain.label(circuit, locale);
-        var details = new ArrayList<String>();
-        if (circuit.getConductorSectionMm2() != null) {
-            details.add(BigDecimal.valueOf(circuit.getConductorSectionMm2()).stripTrailingZeros().toPlainString() + " mm²");
-        }
-        if (HedDomain.hasThreePhaseSupply(circuit)) {
-            details.add(Messages.text(locale, "enum.CircuitPhase." + circuit.getPhase().getName()));
-        }
-        return label + (details.isEmpty() ? "" : "\n" + String.join(" · ", details));
+        return HedDomain.label(object, locale);
     }
 }

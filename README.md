@@ -104,6 +104,8 @@ The explorer's native **Filters** menu includes **Highlight equipments not in fl
 
 The explorer, creation menus and reference selectors share the local [Material Design Icons selection](doc/icons.md), with visual previews and author credits. The SVGs retain their upstream licenses.
 
+The **Associated equipment** property of final circuits and branches uses Sirius Web's native transfer dialog (**…**). Add/remove members with the central arrows and drag the grips in the right-hand list to define their saved circuit order, independently of room/explorer order. Circuits with branches display the branch union read-only; edit each branch instead.
+
 ## Representations
 
 The same residential electrical model can be viewed through several representations. Each representation is associated with a model element and shares its data with Model Explorer and Properties. Table columns can be resized to suit the information being displayed. Create a view using **New representation** on its owner in Model Explorer. Saved representations appear beneath that owner and can be opened, renamed or deleted there; deleting a representation preserves the model element.

@@ -269,6 +269,20 @@ L’ordre est enregistré ; la disposition des nœuds du schéma des circuits re
 . Sans branche, modifiez sa liste *Équipements associés*, ou choisissez ce circuit dans le champ *Circuit d’alimentation* d’un équipement.
 . Pour distinguer plusieurs départs, créez des *Branches* sous le circuit terminal.
 
+
+Pour ordonner les équipements, ouvrez le bouton *…* de *Équipements associés* dans Details.
+Le dialogue natif affiche les choix à gauche et les équipements associés à droite.
+Sélectionnez des équipements puis utilisez les flèches centrales pour les ajouter ou les retirer.
+L’ajout d’un équipement déjà alimenté par un autre circuit ou une autre branche déplace son affectation. Le retrait efface son circuit et sa branche, sans supprimer l’équipement ni changer sa pièce.
+À droite, survolez une ligne et faites glisser sa poignée pour changer sa position ; effacez d’abord le filtre de recherche pour voir toute la liste.
+Chaque modification est enregistrée immédiatement : le bouton *Fermer* ferme le dialogue.
+L’ordre est propre au circuit sans branche, ou à chaque branche ; il ne modifie ni les pièces ni leur ordre dans Model Explorer.
+Il détermine l’enchaînement des équipements dans le Schéma des circuits.
+La première branche reprend cet ordre et supprimer la dernière branche le conserve sur le circuit.
+La liste cumulée d’un circuit avec branches reste en lecture seule : modifiez les branches individuellement.
+
+image::equipment-order.png[Dialogue natif pour ordonner les équipements,width=1000]
+
 La première branche reçoit les équipements déjà associés au circuit.
 Les suivantes sont créées vides.
 Dès qu’il existe des branches, la liste du circuit devient leur cumul en lecture seule.

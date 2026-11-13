@@ -27,7 +27,6 @@ import hed.domain.HedSamples;
 import hed.domain.Messages;
 import hed.homeelectrical.ControlDevice;
 import hed.homeelectrical.ControlFunction;
-import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfigurer;
 
 /** Verifies distinguishable channel choices, stable selections and live device/channel renaming in Details. */
 class ControlChannelPropertiesTest {
@@ -41,7 +40,7 @@ class ControlChannelPropertiesTest {
 
     private MultiSelectDescription channels(ControlFunction function, Locale locale) {
         var pages = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(identity, locale).addPropertiesDescriptions(pages::add);
+        BootstrapIntegrationTest.properties(identity, locale).addPropertiesDescriptions(pages::add);
         var variables = variables(function);
         return pages.stream().filter(page -> page.getCanCreatePredicate().test(variables)).flatMap(page -> page.getGroupDescriptions().stream())
                 .flatMap(group -> group.getControlDescriptions().stream()).filter(IfDescription.class::isInstance).map(IfDescription.class::cast)

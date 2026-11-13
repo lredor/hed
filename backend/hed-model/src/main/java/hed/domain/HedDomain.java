@@ -237,11 +237,20 @@ public final class HedDomain {
             throw new IllegalArgumentException("typeInUse");
         }
         var home = dwelling(object);
+        if (object instanceof FinalCircuit circuit && feature.equals("equipment") && !circuit.getBranches().isEmpty()) {
+            throw new IllegalArgumentException("circuitEquipmentFromBranches");
+        }
         if (object instanceof FieldEquipment equipment && feature.equals("circuit") && value instanceof FinalCircuit circuit && !circuit.getBranches().isEmpty()
                 && (equipment.getBranch() == null || equipment.getBranch().getCircuit() != circuit)) {
             throw new IllegalArgumentException("requiredBranch");
         }
-        boolean branchChange = object instanceof FieldEquipment && Set.of("circuit", "branch").contains(feature) || object instanceof CircuitBranch && Set.of("circuit", "equipment").contains(feature);
+        boolean circuitMembersChange = object instanceof FinalCircuit && feature.equals("equipment");
+        if (circuitMembersChange) {
+            // Materialize assignments from resources saved before the inverse collection existed, even without a prior form render.
+            served((FinalCircuit) object);
+        }
+        boolean branchChange = circuitMembersChange || object instanceof FieldEquipment && Set.of("circuit", "branch").contains(feature)
+                || object instanceof CircuitBranch && Set.of("circuit", "equipment").contains(feature);
         if (branchChange) {
             var targets = value instanceof Collection<?> collection ? collection : value == null ? List.of() : List.of(value);
             for (var target : targets) {
@@ -293,6 +302,14 @@ public final class HedDomain {
             }
         }
         object.eSet(f, value);
+        if (circuitMembersChange && home != null) {
+            // Inverse circuit references are updated by EMF; detach a moved device from its former branch as well.
+            for (var equipment : home.getEquipment()) {
+                if (equipment.getBranch() != null && equipment.getBranch().getCircuit() != equipment.getCircuit()) {
+                    equipment.setBranch(null);
+                }
+            }
+        }
         if (object instanceof FieldEquipment equipment) {
             if (feature.equals("branch") && equipment.getBranch() != null) {
                 equipment.setCircuit(equipment.getBranch().getCircuit());
@@ -347,6 +364,8 @@ public final class HedDomain {
 
         private final Map<CircuitBranch, List<FieldEquipment>> members = new IdentityHashMap<>();
 
+        private final Map<FinalCircuit, List<FieldEquipment>> circuitMembers = new IdentityHashMap<>();
+
         BranchState(Dwelling home) {
             if (home != null) {
                 for (var equipment : home.getEquipment()) {
@@ -355,6 +374,7 @@ public final class HedDomain {
                 }
                 for (var circuit : home.getCircuits()) {
                     if (circuit instanceof FinalCircuit terminal) {
+                        circuitMembers.put(terminal, served(terminal));
                         for (var branch : terminal.getBranches()) {
                             members.put(branch, List.copyOf(branch.getEquipment()));
                         }
@@ -367,6 +387,7 @@ public final class HedDomain {
             circuits.forEach(FieldEquipment::setCircuit);
             branches.forEach(FieldEquipment::setBranch);
             members.forEach((branch, equipment) -> branch.eSet(HomeElectricalPackage.Literals.CIRCUIT_BRANCH__EQUIPMENT, equipment));
+            circuitMembers.forEach((circuit, equipment) -> circuit.eSet(HomeElectricalPackage.Literals.FINAL_CIRCUIT__EQUIPMENT, equipment));
         }
     }
 
@@ -470,11 +491,25 @@ public final class HedDomain {
         if (circuit != null && !circuit.getBranches().isEmpty()) {
             // Retain direct assignments only when deleting the last branch restores direct mode.
             members.stream().filter(equipment -> equipment.getBranch() == null && equipment.getCircuit() == circuit).forEach(equipment -> equipment.setCircuit(null));
+        } else if (circuit != null) {
+            // Returning to direct mode keeps the last branch's explicit order.
+            for (int index = 0; index < members.size(); index++) {
+                circuit.getEquipment().move(index, members.get(index));
+            }
         }
     }
 
     public static List<FieldEquipment> served(FinalCircuit circuit) {
-        return dwelling(circuit).getEquipment().stream().filter(e -> e.getCircuit() == circuit).toList();
+        var home = dwelling(circuit);
+        if (home != null) {
+            // Older resources only store FieldEquipment.circuit; recover the new inverse in their original order.
+            for (var equipment : home.getEquipment()) {
+                if (equipment.getCircuit() == circuit && !circuit.getEquipment().contains(equipment)) {
+                    circuit.getEquipment().add(equipment);
+                }
+            }
+        }
+        return List.copyOf(circuit.getEquipment());
     }
 
     public static List<Circuit> protectedCircuits(ModularDevice device) {

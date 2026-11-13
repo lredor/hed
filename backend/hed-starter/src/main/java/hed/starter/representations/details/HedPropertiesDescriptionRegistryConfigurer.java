@@ -31,6 +31,7 @@ import org.eclipse.sirius.components.collaborative.api.ChangeKind;
 import org.eclipse.sirius.components.collaborative.forms.services.api.IPropertiesDescriptionRegistry;
 import org.eclipse.sirius.components.collaborative.forms.services.api.IPropertiesDescriptionRegistryConfigurer;
 import org.eclipse.sirius.components.core.api.IIdentityService;
+import org.eclipse.sirius.components.emf.services.api.IEMFKindService;
 import org.eclipse.sirius.components.forms.description.AbstractControlDescription;
 import org.eclipse.sirius.components.forms.description.GroupDescription;
 import org.eclipse.sirius.components.forms.description.IfDescription;
@@ -66,7 +67,6 @@ import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.ServiceCircuitBreaker;
 import hed.homeelectrical.Storey;
 import hed.starter.HedDomainIcons;
-import hed.starter.representations.CircuitEquipment;
 
 /** Builds localized properties pages with controls filtered by device kind and supply configuration. */
 @Service
@@ -75,15 +75,19 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
 
     private final Locale locale;
 
+    private final HedEquipmentReferenceDescriptionFactory equipmentReferences;
+
     /**
      * Creates the properties description contribution.
      *
      * @param identity supplies stable identifiers for semantic targets
      * @param locale selects property labels and validation messages
+     * @param kinds supplies EMF type identifiers to the native reference browser
      */
-    public HedPropertiesDescriptionRegistryConfigurer(IIdentityService identity, Locale locale) {
+    public HedPropertiesDescriptionRegistryConfigurer(IIdentityService identity, Locale locale, IEMFKindService kinds) {
         this.identity = identity;
         this.locale = locale;
+        this.equipmentReferences = new HedEquipmentReferenceDescriptionFactory(identity, kinds, locale, this::update);
     }
 
     @Override
@@ -100,6 +104,9 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                     }));
                 }
                 for (var feature : features) {
+                    if (type == HomeElectricalPackage.Literals.FINAL_CIRCUIT && feature.getName().equals("equipment")) {
+                        continue;
+                    }
                     // Image identity and reference proportions belong to the image-import tool.
                     if (type == HomeElectricalPackage.Literals.STOREY && List.of("planImageId", "planAspectRatio").contains(feature.getName())) {
                         continue;
@@ -125,7 +132,7 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                     }
                 }
                 if (type == HomeElectricalPackage.Literals.FINAL_CIRCUIT) {
-                    groups.computeIfAbsent("connections", k -> new ArrayList<>()).add(circuitEquipment());
+                    groups.computeIfAbsent("connections", k -> new ArrayList<>()).add(equipmentReferences.create("FinalCircuit"));
                 }
                 groups.computeIfAbsent("validation", k -> new ArrayList<>()).add(validation(type));
                 if (HomeElectricalPackage.Literals.EQUIPMENT.isSuperTypeOf(type)) {
@@ -291,6 +298,9 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
 
     private AbstractControlDescription control(EClass type, EStructuralFeature feature) {
         String name = feature.getName(), widgetId = "hed." + type.getName() + "." + name;
+        if (type == HomeElectricalPackage.Literals.CIRCUIT_BRANCH && name.equals("equipment")) {
+            return equipmentReferences.create("CircuitBranch");
+        }
         Function<VariableManager, String> target = vm -> identity.getId(self(vm));
         Function<VariableManager, String> title = vm -> Messages.text(locale, "feature." + name);
         Function<VariableManager, List<?>> diagnostics = vm -> List.of();
@@ -322,28 +332,6 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
         return TextfieldDescription.newTextfieldDescription(widgetId).idProvider(vm -> widgetId).targetObjectIdProvider(target).labelProvider(title)
                 .isReadOnlyProvider(vm -> self(vm) instanceof Storey && name.equals("planHeight")).valueProvider(vm -> Objects.toString(self(vm).eGet(feature), ""))
                 .newValueHandler((vm, value) -> update(() -> HedDomain.setText(self(vm), name, value))).diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
-    }
-
-    /** Shows editable direct assignments until branches make the equipment list derived. */
-    private MultiSelectDescription circuitEquipment() {
-        String widgetId = "hed.FinalCircuit.equipment";
-        return MultiSelectDescription.newMultiSelectDescription(widgetId).idProvider(vm -> widgetId).targetObjectIdProvider(vm -> identity.getId(self(vm)))
-                .labelProvider(vm -> Messages.text(locale, "feature.equipment")).optionsProvider(vm -> {
-                    var home = HedDomain.dwelling(self(vm));
-                    return home == null ? List.of() : List.copyOf(home.getEquipment());
-                }).optionIdProvider(vm -> id(vm.get("candidate", Object.class).orElse(null))).optionLabelProvider(vm -> label(vm.get("candidate", Object.class).orElse(null)))
-                .optionIconURLProvider(vm -> icons(vm.get("candidate", Object.class).orElse(null))).styleProvider(vm -> MultiSelectStyle.newMultiSelectStyle().fontSize(14).showIcon(true).build())
-                .valuesProvider(vm -> CircuitEquipment.getAssociatedEquipment((FinalCircuit) self(vm)).stream().map(this::id).toList())
-                .isReadOnlyProvider(vm -> !((FinalCircuit) self(vm)).getBranches().isEmpty()).newValuesHandler((vm, ids) -> update(() -> {
-                    var home = HedDomain.dwelling(self(vm));
-                    if (home == null) {
-                        throw new IllegalArgumentException("foreignReference");
-                    }
-                    var devices = ids.stream().map(
-                            selectedId -> home.getEquipment().stream().filter(device -> id(device).equals(selectedId)).findFirst().orElseThrow(() -> new IllegalArgumentException("foreignReference")))
-                            .toList();
-                    CircuitEquipment.setAssociatedEquipment((FinalCircuit) self(vm), devices);
-                })).diagnosticsProvider(vm -> List.of()).kindProvider(Object::toString).messageProvider(Object::toString).build();
     }
 
     private TextfieldDescription validation(EClass type) {

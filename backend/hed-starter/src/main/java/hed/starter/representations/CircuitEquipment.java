@@ -9,7 +9,6 @@
  *******************************************************************************/
 package hed.starter.representations;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import hed.domain.HedDomain;
 import hed.homeelectrical.CircuitBranch;
@@ -30,8 +29,7 @@ public final class CircuitEquipment {
         if (!circuit.getBranches().isEmpty()) {
             return circuit.getBranches().stream().flatMap(branch -> branch.getEquipment().stream()).distinct().toList();
         }
-        var home = HedDomain.dwelling(circuit);
-        return home == null ? List.of() : home.getEquipment().stream().filter(equipment -> equipment.getCircuit() == circuit).toList();
+        return HedDomain.served(circuit);
     }
 
     /**
@@ -59,35 +57,6 @@ public final class CircuitEquipment {
         if (home == null || equipment.stream().anyMatch(device -> device == null || HedDomain.dwelling(device) != home)) {
             throw new IllegalArgumentException("foreignReference");
         }
-        var circuits = new IdentityHashMap<FieldEquipment, FinalCircuit>();
-        var branches = new IdentityHashMap<FieldEquipment, CircuitBranch>();
-        var members = new IdentityHashMap<CircuitBranch, List<FieldEquipment>>();
-        for (var device : home.getEquipment()) {
-            circuits.put(device, device.getCircuit());
-            branches.put(device, device.getBranch());
-        }
-        home.getCircuits().stream().filter(FinalCircuit.class::isInstance).map(FinalCircuit.class::cast).flatMap(owner -> owner.getBranches().stream())
-                .forEach(branch -> members.put(branch, List.copyOf(branch.getEquipment())));
-        try {
-            for (var device : home.getEquipment()) {
-                if (device.getCircuit() == circuit && !equipment.contains(device)) {
-                    HedDomain.set(device, "circuit", null);
-                }
-            }
-            for (var device : equipment) {
-                if (device.getCircuit() != circuit) {
-                    HedDomain.set(device, "circuit", circuit);
-                }
-            }
-        } catch (IllegalArgumentException exception) {
-            // A multi-selection edit must also restore the inverse branch list order when a later item fails.
-            circuits.forEach(FieldEquipment::setCircuit);
-            branches.forEach(FieldEquipment::setBranch);
-            members.forEach((branch, devices) -> {
-                branch.getEquipment().clear();
-                branch.getEquipment().addAll(devices);
-            });
-            throw exception;
-        }
+        HedDomain.set(circuit, "equipment", equipment);
     }
 }

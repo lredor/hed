@@ -479,12 +479,41 @@ public abstract class FieldEquipmentImpl extends EquipmentImpl implements FieldE
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
-    public void setCircuit(FinalCircuit newCircuit) {
+    public NotificationChain basicSetCircuit(FinalCircuit newCircuit, NotificationChain msgs) {
         FinalCircuit oldCircuit = circuit;
         circuit = newCircuit;
         if (eNotificationRequired()) {
-            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.FIELD_EQUIPMENT__CIRCUIT, oldCircuit, circuit));
+            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.FIELD_EQUIPMENT__CIRCUIT, oldCircuit, newCircuit);
+            if (msgs == null) {
+                msgs = notification;
+            } else {
+                msgs.add(notification);
+            }
+        }
+        return msgs;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void setCircuit(FinalCircuit newCircuit) {
+        if (newCircuit != circuit) {
+            NotificationChain msgs = null;
+            if (circuit != null) {
+                msgs = ((InternalEObject) circuit).eInverseRemove(this, HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT, FinalCircuit.class, msgs);
+            }
+            if (newCircuit != null) {
+                msgs = ((InternalEObject) newCircuit).eInverseAdd(this, HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT, FinalCircuit.class, msgs);
+            }
+            msgs = basicSetCircuit(newCircuit, msgs);
+            if (msgs != null) {
+                msgs.dispatch();
+            }
+        } else if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.FIELD_EQUIPMENT__CIRCUIT, newCircuit, newCircuit));
         }
     }
 
@@ -567,6 +596,11 @@ public abstract class FieldEquipmentImpl extends EquipmentImpl implements FieldE
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
+            case HomeElectricalPackage.FIELD_EQUIPMENT__CIRCUIT:
+                if (circuit != null) {
+                    msgs = ((InternalEObject) circuit).eInverseRemove(this, HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT, FinalCircuit.class, msgs);
+                }
+                return basicSetCircuit((FinalCircuit) otherEnd, msgs);
             case HomeElectricalPackage.FIELD_EQUIPMENT__BRANCH:
                 if (branch != null) {
                     msgs = ((InternalEObject) branch).eInverseRemove(this, HomeElectricalPackage.CIRCUIT_BRANCH__EQUIPMENT, CircuitBranch.class, msgs);
@@ -584,6 +618,8 @@ public abstract class FieldEquipmentImpl extends EquipmentImpl implements FieldE
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
+            case HomeElectricalPackage.FIELD_EQUIPMENT__CIRCUIT:
+                return basicSetCircuit(null, msgs);
             case HomeElectricalPackage.FIELD_EQUIPMENT__BRANCH:
                 return basicSetBranch(null, msgs);
         }

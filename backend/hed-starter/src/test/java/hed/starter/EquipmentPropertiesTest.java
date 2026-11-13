@@ -25,7 +25,6 @@ import hed.domain.HedSamples;
 import hed.homeelectrical.Equipment;
 import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.EnergyMeter;
-import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfigurer;
 
 /** Verifies localized equipment tabs, ordered groups and retained catalog specifications. */
 class EquipmentPropertiesTest {
@@ -39,7 +38,7 @@ class EquipmentPropertiesTest {
 
     private List<PageDescription> pages(EObject object, Locale locale) {
         var descriptions = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(identity, locale).addPropertiesDescriptions(descriptions::add);
+        BootstrapIntegrationTest.properties(identity, locale).addPropertiesDescriptions(descriptions::add);
         return descriptions.stream().filter(page -> page.getCanCreatePredicate().test(variables(object))).toList();
     }
 

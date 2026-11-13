@@ -46,6 +46,8 @@ import org.junit.jupiter.api.Test;
 import hed.domain.HedDomain;
 import hed.domain.HedSamples;
 import hed.domain.HedValidation;
+import org.eclipse.sirius.components.core.URLParser;
+import org.eclipse.sirius.components.emf.services.EMFKindService;
 import hed.homeelectrical.CircuitBranch;
 import hed.homeelectrical.DeviceKind;
 import hed.homeelectrical.Dwelling;
@@ -61,6 +63,11 @@ import hed.starter.representations.modelexplorer.ViewContribution;
 import hed.starter.representations.tables.HedTableDescriptions;
 
 class BootstrapIntegrationTest {
+    /** Uses the native EMF-kind service so reference-browser contracts are exercised by property tests. */
+    static HedPropertiesDescriptionRegistryConfigurer properties(IIdentityService identity, Locale locale) {
+        return new HedPropertiesDescriptionRegistryConfigurer(identity, locale, new EMFKindService(new URLParser()));
+    }
+
     static final class Identity implements IIdentityService {
         final Map<Object, String> ids = new IdentityHashMap<>();
 
@@ -122,6 +129,45 @@ class BootstrapIntegrationTest {
         assertTrue(copy.getCatalog().getDeviceTypes().contains(rccb.getDeviceType()));
         assertTrue(rccb.getDeviceType().getName().startsWith("Interrupteur différentiel"));
         assertEquals("Prise de courant", HedDomain.label(HedDomain.type(copy, DeviceKind.OUTLET), Locale.ENGLISH));
+    }
+
+    @Test
+    void nativeJsonPreservesIndependentCircuitOrderAndRecoversOlderAssignments() throws Exception {
+        var home = HedSamples.example();
+        var circuit = (FinalCircuit) home.getCircuits().getFirst();
+        var original = HedDomain.served(circuit).stream().map(hed.homeelectrical.FieldEquipment::getName).toList();
+        circuit.getEquipment().move(0, circuit.getEquipment().getLast());
+        var expected = HedDomain.served(circuit).stream().map(hed.homeelectrical.FieldEquipment::getName).toList();
+        var set = new ResourceSetImpl();
+        set.getPackageRegistry().put(HomeElectricalPackage.eNS_URI, HomeElectricalPackage.eINSTANCE);
+        var source = new JSONResourceFactory().createResourceFromPath(UUID.randomUUID().toString());
+        set.getResources().add(source);
+        source.getContents().add(home);
+        var bytes = new ByteArrayOutputStream();
+        source.save(bytes, Map.of());
+        var json = com.google.gson.JsonParser.parseString(bytes.toString(java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+        for (boolean legacy : List.of(false, true)) {
+            if (legacy) {
+                for (var entry : json.getAsJsonArray("content").get(0).getAsJsonObject().getAsJsonObject("data").getAsJsonArray("circuits")) {
+                    entry.getAsJsonObject().getAsJsonObject("data").remove("equipment");
+                }
+            }
+            var loadedSet = new ResourceSetImpl();
+            loadedSet.getPackageRegistry().put(HomeElectricalPackage.eNS_URI, HomeElectricalPackage.eINSTANCE);
+            var loaded = new JSONResourceFactory().createResource(source.getURI());
+            loadedSet.getResources().add(loaded);
+            loaded.load(new ByteArrayInputStream(json.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8)), Map.of());
+            var copy = (Dwelling) loaded.getContents().getFirst();
+            assertEquals(legacy ? original : expected, HedDomain.served((FinalCircuit) copy.getCircuits().getFirst()).stream().map(hed.homeelectrical.FieldEquipment::getName).toList());
+            assertEquals(List.of(), new HedValidation().validate(copy));
+            if (legacy) {
+                var direct = (FinalCircuit) copy.getCircuits().getFirst();
+                var members = List.copyOf(HedDomain.served(direct));
+                HedDomain.set(direct, "equipment", List.of());
+                assertTrue(HedDomain.served(direct).isEmpty());
+                members.forEach(equipment -> assertNull(equipment.getCircuit()));
+            }
+        }
     }
 
     @Test
@@ -194,7 +240,7 @@ class BootstrapIntegrationTest {
     @Test
     void propertiesReadModularRatingsFromCatalogAndRejectInstanceEdits() {
         var pages = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(new Identity(), Locale.ENGLISH).addPropertiesDescriptions(pages::add);
+        BootstrapIntegrationTest.properties(new Identity(), Locale.ENGLISH).addPropertiesDescriptions(pages::add);
         var rccb = HedSamples.example().getBoards().get(0).getDevices().get(0);
         var vm = new VariableManager();
         vm.put(VariableManager.SELF, rccb);

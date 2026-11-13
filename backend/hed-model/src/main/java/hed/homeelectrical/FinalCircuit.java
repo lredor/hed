@@ -21,6 +21,7 @@ import org.eclipse.emf.common.util.EList;
  * </p>
  * <ul>
  *   <li>{@link hed.homeelectrical.FinalCircuit#getUsage <em>Usage</em>}</li>
+ *   <li>{@link hed.homeelectrical.FinalCircuit#getEquipment <em>Equipment</em>}</li>
  *   <li>{@link hed.homeelectrical.FinalCircuit#getBranches <em>Branches</em>}</li>
  * </ul>
  *
@@ -53,6 +54,23 @@ public interface FinalCircuit extends Circuit {
      * @generated
      */
     void setUsage(CircuitUse value);
+
+    /**
+     * Returns the value of the '<em><b>Equipment</b></em>' reference list.
+     * The list contents are of type {@link hed.homeelectrical.FieldEquipment}.
+     * It is bidirectional and its opposite is '{@link hed.homeelectrical.FieldEquipment#getCircuit <em>Circuit</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Ordered terminal equipment supplied by this circuit, independently of room order. In branched mode, edit the ordered members on each branch instead.
+     * <!-- end-model-doc -->
+     * @return the value of the '<em>Equipment</em>' reference list.
+     * @see hed.homeelectrical.HomeElectricalPackage#getFinalCircuit_Equipment()
+     * @see hed.homeelectrical.FieldEquipment#getCircuit
+     * @model opposite="circuit"
+     * @generated
+     */
+    EList<FieldEquipment> getEquipment();
 
     /**
      * Returns the value of the '<em><b>Branches</b></em>' containment reference list.

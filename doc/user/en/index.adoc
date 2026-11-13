@@ -188,6 +188,11 @@ For terminal equipment, the meter and distribution-board protection or control d
   Terminal equipment includes room, circuit and branch; board devices include upstream/downstream connections and their DIN rail where applicable.
 * *Advanced*: technical characteristics, retaining their existing editable or read-only behavior.
 
+When a terminal device's circuit has no branches, *Branch* is disabled and displays *Circuit without branches*.
+It becomes available when the circuit has branches.
+Without a selected circuit, you can choose a branch directly to connect the device to that branch's circuit.
+These rules are independent of single-phase or three-phase supply.
+
 A catalog drop creates an installed instance; the type stays in the catalog.
 Start by preparing the device types you need, reusing the supplied types and adding missing variants.
 These types will define the terminal equipment in your dwelling and the modular devices in your distribution board.

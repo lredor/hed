@@ -192,7 +192,8 @@ class CircuitDiagramTest {
         assertEquals(List.of(equipment), service.getHedCircuitFirstEquipment(circuit));
         assertEquals(List.of(equipment), service.getHedCircuitPreviousEquipment(second));
         assertEquals(List.of(second), service.getHedCircuitPreviousEquipment(third));
-        home.getEquipment().move(0, third);
+        circuit.getEquipment().move(0, third);
+        home.getEquipment().move(0, second);
         var projection = new Projection(home);
         assertTrue(projection.connects(circuit.getProtectiveDevice(), third));
         assertTrue(projection.connects(third, equipment));

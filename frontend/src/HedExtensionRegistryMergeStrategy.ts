@@ -8,17 +8,21 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import type { DataExtension } from '@eclipse-sirius/sirius-components-core';
+import { apolloClientOptionsConfigurersExtensionPoint } from '@eclipse-sirius/sirius-web-application';
 import { paletteToolExtensionPoint } from '@eclipse-sirius/sirius-components-palette';
 import { FloorPlanConfirmationMergeStrategy } from './representations/diagrams/floorplan/FloorPlanRemovalConfirmation';
 
-/** Adds HED palette navigation while preserving native tools and the floor-plan representation factory. */
+/** Adds HED tools and query extensions while preserving native widgets and the floor-plan representation factory. */
 export class HedExtensionRegistryMergeStrategy extends FloorPlanConfirmationMergeStrategy {
   override mergeDataExtensions(
     identifier: string,
     existing: DataExtension<unknown>,
     contribution: DataExtension<unknown>
   ): DataExtension<unknown> {
-    if (identifier === paletteToolExtensionPoint.identifier) {
+    if (
+      identifier === paletteToolExtensionPoint.identifier ||
+      identifier === apolloClientOptionsConfigurersExtensionPoint.identifier
+    ) {
       return {
         identifier: contribution.identifier,
         data: [...(existing.data as unknown[]), ...(contribution.data as unknown[])],

@@ -373,6 +373,9 @@ SPDX-License-Identifier: EPL-2.0
             <genFeatures createChild="false">
                 <ecoreFeature href="homeelectrical.ecore#//FinalCircuit/usage" xsi:type="ecore:EAttribute"/>
             </genFeatures>
+            <genFeatures createChild="false" notify="false" propertySortChoices="true">
+                <ecoreFeature href="homeelectrical.ecore#//FinalCircuit/equipment" xsi:type="ecore:EReference"/>
+            </genFeatures>
             <genFeatures children="true" createChild="true" property="None">
                 <ecoreFeature href="homeelectrical.ecore#//FinalCircuit/branches" xsi:type="ecore:EReference"/>
             </genFeatures>

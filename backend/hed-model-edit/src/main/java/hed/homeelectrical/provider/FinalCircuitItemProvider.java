@@ -55,6 +55,7 @@ public class FinalCircuitItemProvider extends CircuitItemProvider {
             super.getPropertyDescriptors(object);
 
             addUsagePropertyDescriptor(object);
+            addEquipmentPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -69,6 +70,18 @@ public class FinalCircuitItemProvider extends CircuitItemProvider {
         itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
                 getString("_UI_FinalCircuit_usage_feature"), getString("_UI_PropertyDescriptor_description", "_UI_FinalCircuit_usage_feature", "_UI_FinalCircuit_type"),
                 HomeElectricalPackage.Literals.FINAL_CIRCUIT__USAGE, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Equipment feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addEquipmentPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+                getString("_UI_FinalCircuit_equipment_feature"), getString("_UI_PropertyDescriptor_description", "_UI_FinalCircuit_equipment_feature", "_UI_FinalCircuit_type"),
+                HomeElectricalPackage.Literals.FINAL_CIRCUIT__EQUIPMENT, true, false, true, null, null, null));
     }
 
     /**

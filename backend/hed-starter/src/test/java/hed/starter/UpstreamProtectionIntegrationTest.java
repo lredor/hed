@@ -23,7 +23,6 @@ import org.eclipse.sirius.components.representations.VariableManager;
 import org.junit.jupiter.api.Test;
 import hed.domain.HedDomain;
 import hed.domain.HedSamples;
-import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfigurer;
 
 class UpstreamProtectionIntegrationTest {
     @Test
@@ -32,7 +31,7 @@ class UpstreamProtectionIntegrationTest {
         var rccb = home.getBoards().get(0).getDevices().get(0);
         var breaker = home.getBoards().get(0).getDevices().get(1);
         var pages = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(new BootstrapIntegrationTest.Identity(), Locale.ENGLISH).addPropertiesDescriptions(pages::add);
+        BootstrapIntegrationTest.properties(new BootstrapIntegrationTest.Identity(), Locale.ENGLISH).addPropertiesDescriptions(pages::add);
         var vm = new VariableManager();
         vm.put(VariableManager.SELF, rccb);
         var page = pages.stream().filter(description -> description.getCanCreatePredicate().test(vm)).findFirst().orElseThrow();

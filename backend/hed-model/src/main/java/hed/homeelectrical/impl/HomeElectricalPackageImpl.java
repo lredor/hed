@@ -969,8 +969,18 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
      * @generated
      */
     @Override
-    public EReference getFinalCircuit_Branches() {
+    public EReference getFinalCircuit_Equipment() {
         return (EReference) finalCircuitEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EReference getFinalCircuit_Branches() {
+        return (EReference) finalCircuitEClass.getEStructuralFeatures().get(2);
     }
 
     /**
@@ -1325,6 +1335,7 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
 
         finalCircuitEClass = createEClass(FINAL_CIRCUIT);
         createEAttribute(finalCircuitEClass, FINAL_CIRCUIT__USAGE);
+        createEReference(finalCircuitEClass, FINAL_CIRCUIT__EQUIPMENT);
         createEReference(finalCircuitEClass, FINAL_CIRCUIT__BRANCHES);
 
         distributionCircuitEClass = createEClass(DISTRIBUTION_CIRCUIT);
@@ -1493,8 +1504,8 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         initEClass(fieldEquipmentEClass, FieldEquipment.class, "FieldEquipment", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getFieldEquipment_Room(), this.getRoom(), null, "room", null, 0, 1, FieldEquipment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES,
                 !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getFieldEquipment_Circuit(), this.getFinalCircuit(), null, "circuit", null, 0, 1, FieldEquipment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE,
-                IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getFieldEquipment_Circuit(), this.getFinalCircuit(), this.getFinalCircuit_Equipment(), "circuit", null, 0, 1, FieldEquipment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+                !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getFieldEquipment_Branch(), this.getCircuitBranch(), this.getCircuitBranch_Equipment(), "branch", null, 0, 1, FieldEquipment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
                 !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -1545,6 +1556,8 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         initEClass(finalCircuitEClass, FinalCircuit.class, "FinalCircuit", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getFinalCircuit_Usage(), this.getCircuitUse(), "usage", null, 0, 1, FinalCircuit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
                 !IS_DERIVED, IS_ORDERED);
+        initEReference(getFinalCircuit_Equipment(), this.getFieldEquipment(), this.getFieldEquipment_Circuit(), "equipment", null, 0, -1, FinalCircuit.class, !IS_TRANSIENT, !IS_VOLATILE,
+                IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getFinalCircuit_Branches(), this.getCircuitBranch(), this.getCircuitBranch_Circuit(), "branches", null, 0, -1, FinalCircuit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
                 IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

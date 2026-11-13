@@ -1594,13 +1594,22 @@ public interface HomeElectricalPackage extends EPackage {
     int FINAL_CIRCUIT__USAGE = CIRCUIT_FEATURE_COUNT + 0;
 
     /**
+     * The feature id for the '<em><b>Equipment</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int FINAL_CIRCUIT__EQUIPMENT = CIRCUIT_FEATURE_COUNT + 1;
+
+    /**
      * The feature id for the '<em><b>Branches</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int FINAL_CIRCUIT__BRANCHES = CIRCUIT_FEATURE_COUNT + 1;
+    int FINAL_CIRCUIT__BRANCHES = CIRCUIT_FEATURE_COUNT + 2;
 
     /**
      * The number of structural features of the '<em>Final Circuit</em>' class.
@@ -1609,7 +1618,7 @@ public interface HomeElectricalPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int FINAL_CIRCUIT_FEATURE_COUNT = CIRCUIT_FEATURE_COUNT + 2;
+    int FINAL_CIRCUIT_FEATURE_COUNT = CIRCUIT_FEATURE_COUNT + 3;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.impl.DistributionCircuitImpl <em>Distribution Circuit</em>}' class.
@@ -2867,6 +2876,17 @@ public interface HomeElectricalPackage extends EPackage {
     EAttribute getFinalCircuit_Usage();
 
     /**
+     * Returns the meta object for the reference list '{@link hed.homeelectrical.FinalCircuit#getEquipment <em>Equipment</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Equipment</em>'.
+     * @see hed.homeelectrical.FinalCircuit#getEquipment()
+     * @see #getFinalCircuit()
+     * @generated
+     */
+    EReference getFinalCircuit_Equipment();
+
+    /**
      * Returns the meta object for the containment reference list '{@link hed.homeelectrical.FinalCircuit#getBranches <em>Branches</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3699,6 +3719,14 @@ public interface HomeElectricalPackage extends EPackage {
          * @generated
          */
         EAttribute FINAL_CIRCUIT__USAGE = eINSTANCE.getFinalCircuit_Usage();
+
+        /**
+         * The meta object literal for the '<em><b>Equipment</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference FINAL_CIRCUIT__EQUIPMENT = eINSTANCE.getFinalCircuit_Equipment();
 
         /**
          * The meta object literal for the '<em><b>Branches</b></em>' containment reference list feature.

@@ -80,6 +80,7 @@ vi.mock('@eclipse-sirius/sirius-components-diagrams', async () => {
 
 vi.mock('@eclipse-sirius/sirius-web-application', () => ({
   sendFile: platform.sendFile,
+  apolloClientOptionsConfigurersExtensionPoint: { identifier: 'apolloClientOptionsConfigurers' },
   DefaultExtensionRegistryMergeStrategy: class {
     mergeDataExtensions(_identifier: string, existing: unknown) {
       return existing;

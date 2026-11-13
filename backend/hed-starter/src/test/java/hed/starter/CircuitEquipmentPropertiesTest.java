@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.eclipse.sirius.components.forms.description.MultiSelectDescription;
+import org.eclipse.sirius.components.widget.reference.ReferenceWidgetDescription;
 import org.eclipse.sirius.components.forms.description.PageDescription;
 import org.eclipse.sirius.components.forms.description.IfDescription;
 import org.eclipse.sirius.components.forms.description.SelectDescription;
@@ -31,7 +31,6 @@ import hed.domain.HedDomain;
 import hed.domain.HedSamples;
 import hed.homeelectrical.FinalCircuit;
 import hed.starter.representations.CircuitEquipment;
-import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfigurer;
 
 /** Checks editable direct circuit assignments and the live, protected union of optional branch members in Details. */
 class CircuitEquipmentPropertiesTest {
@@ -43,12 +42,12 @@ class CircuitEquipmentPropertiesTest {
         return variables;
     }
 
-    private MultiSelectDescription equipmentControl(FinalCircuit circuit) {
+    private ReferenceWidgetDescription equipmentControl(FinalCircuit circuit) {
         var pages = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(identity, Locale.ENGLISH).addPropertiesDescriptions(pages::add);
+        BootstrapIntegrationTest.properties(identity, Locale.ENGLISH).addPropertiesDescriptions(pages::add);
         var variables = variables(circuit);
         return pages.stream().filter(page -> page.getCanCreatePredicate().test(variables)).flatMap(page -> page.getGroupDescriptions().stream())
-                .flatMap(group -> group.getControlDescriptions().stream()).filter(MultiSelectDescription.class::isInstance).map(MultiSelectDescription.class::cast)
+                .flatMap(group -> group.getControlDescriptions().stream()).filter(ReferenceWidgetDescription.class::isInstance).map(ReferenceWidgetDescription.class::cast)
                 .filter(control -> control.getIdProvider().apply(variables).equals("hed.FinalCircuit.equipment")).findFirst().orElseThrow();
     }
 
@@ -61,12 +60,13 @@ class CircuitEquipmentPropertiesTest {
         var widget = equipmentControl(circuit);
         var variables = variables(circuit);
         assertFalse(widget.getIsReadOnlyProvider().apply(variables));
-        assertInstanceOf(Success.class, widget.getNewValuesHandler().apply(variables, List.of(identity.getId(equipment))));
+        variables.put("newValue", equipment);
+        assertInstanceOf(Success.class, widget.getSetHandlerProvider().apply(variables));
         assertEquals(List.of(equipment), CircuitEquipment.getAssociatedEquipment(circuit));
         assertSame(circuit, equipment.getCircuit());
         assertSame(room, equipment.getRoom());
-        assertEquals(List.of(identity.getId(equipment)), widget.getValuesProvider().apply(variables));
-        assertInstanceOf(Success.class, widget.getNewValuesHandler().apply(variables, List.of()));
+        assertEquals(List.of(equipment), widget.getItemsProvider().apply(variables));
+        assertInstanceOf(Success.class, widget.getClearHandlerProvider().apply(variables));
         assertTrue(CircuitEquipment.getAssociatedEquipment(circuit).isEmpty());
     }
 
@@ -88,8 +88,8 @@ class CircuitEquipmentPropertiesTest {
         HedDomain.assignToBranch(second, List.of(two));
         assertTrue(widget.getIsReadOnlyProvider().apply(variables));
         assertEquals(List.of(one, two), CircuitEquipment.getAssociatedEquipment(circuit));
-        assertEquals(List.of(identity.getId(one), identity.getId(two)), widget.getValuesProvider().apply(variables));
-        assertInstanceOf(Failure.class, widget.getNewValuesHandler().apply(variables, List.of()));
+        assertEquals(List.of(one, two), widget.getItemsProvider().apply(variables));
+        assertInstanceOf(Failure.class, widget.getClearHandlerProvider().apply(variables));
         assertEquals(List.of(one), first.getEquipment());
         assertEquals(List.of(two), second.getEquipment());
         HedDomain.delete(first);
@@ -107,8 +107,68 @@ class CircuitEquipmentPropertiesTest {
         var before = CircuitEquipment.getAssociatedEquipment(circuit);
         assertThrows(IllegalArgumentException.class, () -> CircuitEquipment.setAssociatedEquipment(circuit, List.of(home.getEquipment().get(0), foreign.getEquipment().get(0))));
         assertEquals(before, CircuitEquipment.getAssociatedEquipment(circuit));
-        assertInstanceOf(Failure.class, equipmentControl(circuit).getNewValuesHandler().apply(variables(circuit), List.of("unknown")));
+        var invalid = variables(circuit);
+        invalid.put("newValue", List.of("unknown"));
+        assertInstanceOf(Failure.class, equipmentControl(circuit).getAddHandlerProvider().apply(invalid));
         assertEquals(before, CircuitEquipment.getAssociatedEquipment(circuit));
+    }
+
+    @Test
+    void nativeTransferDialogReordersMembersAndRejectsStaleIndices() {
+        var home = HedSamples.example();
+        var circuit = (FinalCircuit) home.getCircuits().getFirst();
+        var widget = equipmentControl(circuit);
+        var before = List.copyOf(CircuitEquipment.getAssociatedEquipment(circuit));
+        var variables = variables(circuit);
+        variables.put("item", before.getFirst());
+        variables.put("fromIndex", 0);
+        variables.put("toIndex", before.size() - 1);
+        assertInstanceOf(Success.class, widget.getMoveHandlerProvider().apply(variables));
+        var reordered = new ArrayList<>(before);
+        reordered.add(reordered.removeFirst());
+        assertEquals(reordered, CircuitEquipment.getAssociatedEquipment(circuit));
+        assertInstanceOf(Failure.class, widget.getMoveHandlerProvider().apply(variables));
+        assertEquals(reordered, CircuitEquipment.getAssociatedEquipment(circuit));
+        variables.put("fromIndex", -1);
+        assertInstanceOf(Failure.class, widget.getMoveHandlerProvider().apply(variables));
+        var branch = HedDomain.F.createCircuitBranch();
+        circuit.getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
+        variables.put("fromIndex", reordered.size() - 1);
+        variables.put("toIndex", 0);
+        assertInstanceOf(Failure.class, widget.getMoveHandlerProvider().apply(variables));
+        assertEquals(reordered, branch.getEquipment());
+    }
+
+    @Test
+    void branchUsesTheSameNativeOrderedReferenceEditor() {
+        var home = HedSamples.example();
+        var circuit = (FinalCircuit) home.getCircuits().getFirst();
+        var branch = HedDomain.F.createCircuitBranch();
+        circuit.getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
+        var pages = new ArrayList<PageDescription>();
+        BootstrapIntegrationTest.properties(identity, Locale.ENGLISH).addPropertiesDescriptions(pages::add);
+        var variables = new VariableManager();
+        variables.put(VariableManager.SELF, branch);
+        var widget = pages.stream().filter(page -> page.getCanCreatePredicate().test(variables)).flatMap(page -> page.getGroupDescriptions().stream())
+                .flatMap(group -> group.getControlDescriptions().stream()).filter(IfDescription.class::isInstance).map(IfDescription.class::cast)
+                .flatMap(condition -> condition.getControlDescriptions().stream()).filter(ReferenceWidgetDescription.class::isInstance).map(ReferenceWidgetDescription.class::cast).findFirst()
+                .orElseThrow();
+        var first = branch.getEquipment().getFirst();
+        variables.put("item", first);
+        variables.put("fromIndex", 0);
+        variables.put("toIndex", 2);
+        assertInstanceOf(Success.class, widget.getMoveHandlerProvider().apply(variables));
+        assertSame(first, branch.getEquipment().getLast());
+        assertEquals(branch.getEquipment(), CircuitEquipment.getAssociatedEquipment(circuit));
+        assertInstanceOf(Success.class, widget.getItemRemoveHandlerProvider().apply(variables));
+        assertNull(first.getCircuit());
+        assertNull(first.getBranch());
+        variables.put("newValue", List.of(first));
+        assertInstanceOf(Success.class, widget.getAddHandlerProvider().apply(variables));
+        assertSame(branch, first.getBranch());
+        assertSame(circuit, first.getCircuit());
     }
 
     @Test
@@ -118,7 +178,7 @@ class CircuitEquipmentPropertiesTest {
         var equipment = home.getEquipment().get(3);
         var originalCircuit = equipment.getCircuit();
         var pages = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(identity, Locale.ENGLISH).addPropertiesDescriptions(pages::add);
+        BootstrapIntegrationTest.properties(identity, Locale.ENGLISH).addPropertiesDescriptions(pages::add);
         var variables = new VariableManager();
         variables.put(VariableManager.SELF, equipment);
         var selector = pages.stream().filter(page -> page.getCanCreatePredicate().test(variables)).flatMap(page -> page.getGroupDescriptions().stream())

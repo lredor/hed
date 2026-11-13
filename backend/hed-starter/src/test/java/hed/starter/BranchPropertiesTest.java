@@ -32,7 +32,6 @@ import hed.domain.HedSamples;
 import hed.homeelectrical.CircuitPhase;
 import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.SupplyPhase;
-import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfigurer;
 
 /** Verifies contextual branch availability and live circuit assignments in Details. */
 class BranchPropertiesTest {
@@ -46,7 +45,7 @@ class BranchPropertiesTest {
 
     private List<PageDescription> pages(EObject object, Locale locale) {
         var descriptions = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(identity, locale).addPropertiesDescriptions(descriptions::add);
+        BootstrapIntegrationTest.properties(identity, locale).addPropertiesDescriptions(descriptions::add);
         return descriptions.stream().filter(page -> page.getCanCreatePredicate().test(variables(object))).toList();
     }
 

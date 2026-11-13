@@ -27,7 +27,6 @@ import hed.domain.HedDomain;
 import hed.domain.HedSamples;
 import hed.homeelectrical.CircuitPhase;
 import hed.homeelectrical.SupplyPhase;
-import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfigurer;
 import hed.starter.representations.modelexplorer.HedJavaServices;
 
 /** Verifies supply-dependent circuit controls and retention of phase assignments while those controls are hidden. */
@@ -45,7 +44,7 @@ class CircuitPhaseVisibilityTest {
     /** Finds the actual generated phase condition on the properties page selected for this semantic type. */
     private IfDescription phaseCondition(EObject object) {
         var pages = new ArrayList<PageDescription>();
-        new HedPropertiesDescriptionRegistryConfigurer(identity, Locale.ENGLISH).addPropertiesDescriptions(pages::add);
+        BootstrapIntegrationTest.properties(identity, Locale.ENGLISH).addPropertiesDescriptions(pages::add);
         var variables = variables(object);
         var page = pages.stream().filter(candidate -> candidate.getCanCreatePredicate().test(variables)).findFirst().orElseThrow();
         return page.getGroupDescriptions().stream().flatMap(group -> group.getControlDescriptions().stream()).filter(IfDescription.class::isInstance).map(IfDescription.class::cast).filter(

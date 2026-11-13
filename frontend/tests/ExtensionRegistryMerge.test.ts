@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { describe, expect, it } from 'vitest';
+import { apolloClientOptionsConfigurersExtensionPoint } from '@eclipse-sirius/sirius-web-application';
 import { paletteToolExtensionPoint } from '@eclipse-sirius/sirius-components-palette';
 import { representationFactoryExtensionPoint } from '@eclipse-sirius/sirius-components-core';
 import { HedExtensionRegistryMergeStrategy } from '../src/HedExtensionRegistryMergeStrategy';
@@ -23,6 +24,23 @@ describe('application extension merging', () => {
     );
     expect(result.data).toEqual([...native.data, ...hed.data]);
     expect(native.data).toHaveLength(2);
+    expect(hed.data).toHaveLength(1);
+  });
+
+  it('retains native reference-widget query fields before adding HED diagram styles', () => {
+    const native = { identifier: 'native', data: [(options: object) => ({ ...options, referenceFields: true })] };
+    const hed = { identifier: 'hed', data: [(options: object) => ({ ...options, panelStyles: true })] };
+    const merged = new HedExtensionRegistryMergeStrategy().mergeDataExtensions(
+      apolloClientOptionsConfigurersExtensionPoint.identifier,
+      native,
+      hed
+    );
+    const configurers = merged.data as ((options: object) => object)[];
+    expect(configurers.reduce((options, configure) => configure(options), {})).toEqual({
+      referenceFields: true,
+      panelStyles: true,
+    });
+    expect(native.data).toHaveLength(1);
     expect(hed.data).toHaveLength(1);
   });
 

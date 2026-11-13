@@ -188,7 +188,11 @@ SPDX-License-Identifier: EPL-2.0
         name="FieldEquipment"
         xsi:type="ecore:EClass">
         <eStructuralFeatures eType="#//Room" name="room" xsi:type="ecore:EReference"/>
-        <eStructuralFeatures eType="#//FinalCircuit" name="circuit" xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            eOpposite="#//FinalCircuit/equipment"
+            eType="#//FinalCircuit"
+            name="circuit"
+            xsi:type="ecore:EReference"/>
         <eStructuralFeatures
             eOpposite="#//CircuitBranch/equipment"
             eType="#//CircuitBranch"
@@ -264,6 +268,18 @@ SPDX-License-Identifier: EPL-2.0
     </eClassifiers>
     <eClassifiers eSuperTypes="#//Circuit" name="FinalCircuit" xsi:type="ecore:EClass">
         <eStructuralFeatures eType="#//CircuitUse" name="usage" xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            eOpposite="#//FieldEquipment/circuit"
+            eType="#//FieldEquipment"
+            name="equipment"
+            upperBound="-1"
+            xsi:type="ecore:EReference">
+            <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+                <details
+                    key="documentation"
+                    value="Ordered terminal equipment supplied by this circuit, independently of room order. In branched mode, edit the ordered members on each branch instead."/>
+            </eAnnotations>
+        </eStructuralFeatures>
         <eStructuralFeatures
             containment="true"
             eOpposite="#//CircuitBranch/circuit"

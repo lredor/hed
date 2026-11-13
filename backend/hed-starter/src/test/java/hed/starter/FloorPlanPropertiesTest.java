@@ -25,7 +25,6 @@ import org.eclipse.sirius.components.representations.VariableManager;
 import org.junit.jupiter.api.Test;
 import hed.domain.HedSamples;
 import hed.domain.Messages;
-import hed.starter.representations.details.HedPropertiesDescriptionRegistryConfigurer;
 
 /** Verifies localized, editable width controls and calculated read-only height controls on storeys. */
 class FloorPlanPropertiesTest {
@@ -36,7 +35,7 @@ class FloorPlanPropertiesTest {
             var variables = new VariableManager();
             variables.put(VariableManager.SELF, storey);
             var pages = new ArrayList<PageDescription>();
-            new HedPropertiesDescriptionRegistryConfigurer(new BootstrapIntegrationTest.Identity(), locale).addPropertiesDescriptions(pages::add);
+            BootstrapIntegrationTest.properties(new BootstrapIntegrationTest.Identity(), locale).addPropertiesDescriptions(pages::add);
             var controls = pages.stream().filter(page -> page.getCanCreatePredicate().test(variables)).flatMap(page -> page.getGroupDescriptions().stream())
                     .flatMap(group -> group.getControlDescriptions().stream()).filter(IfDescription.class::isInstance).map(IfDescription.class::cast)
                     .filter(condition -> condition.getPredicate().apply(variables)).flatMap(condition -> condition.getControlDescriptions().stream()).filter(TextfieldDescription.class::isInstance)

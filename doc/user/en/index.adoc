@@ -267,6 +267,20 @@ The order is saved; Circuit Diagram node positions remain independent.
 . Without branches, edit the circuit's *Associated equipment* list, or select the circuit from an equipment's *Supply circuit* field.
 . For separate runs, create *Branch* objects below the final circuit.
 
+
+To order equipment, open the *…* button beside *Associated equipment* in Details.
+The native dialog shows choices on the left and associated equipment on the right.
+Select equipment and use the central arrows to add or remove it.
+Adding equipment supplied by another circuit or branch moves its assignment. Removing it clears its supply circuit and branch without deleting the equipment or changing its room.
+On the right, hover over a row and drag its grip to change its position; clear the search filter first to see the entire list.
+Each change is saved immediately; *Close* closes the dialog.
+The order belongs to the branchless circuit, or to each individual branch; it does not change rooms or their order in Model Explorer.
+It determines the equipment chain in the Circuit Diagram.
+The first branch inherits this order, and deleting the last branch preserves it on the circuit.
+A circuit with branches displays their combined list read-only: edit each branch instead.
+
+image::equipment-order.png[Native equipment ordering dialog,width=1000]
+
 The first branch receives the circuit's existing equipment.
 Further branches start empty.
 Once branches exist, the circuit's Associated equipment list becomes their combined, read-only list.

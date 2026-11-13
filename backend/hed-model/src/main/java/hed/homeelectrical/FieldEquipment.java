@@ -52,12 +52,14 @@ public interface FieldEquipment extends Equipment, TechnicalElement {
 
     /**
      * Returns the value of the '<em><b>Circuit</b></em>' reference.
+     * It is bidirectional and its opposite is '{@link hed.homeelectrical.FinalCircuit#getEquipment <em>Equipment</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @return the value of the '<em>Circuit</em>' reference.
      * @see #setCircuit(FinalCircuit)
      * @see hed.homeelectrical.HomeElectricalPackage#getFieldEquipment_Circuit()
-     * @model
+     * @see hed.homeelectrical.FinalCircuit#getEquipment
+     * @model opposite="equipment"
      * @generated
      */
     FinalCircuit getCircuit();

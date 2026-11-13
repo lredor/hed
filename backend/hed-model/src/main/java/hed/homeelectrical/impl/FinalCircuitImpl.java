@@ -11,6 +11,7 @@ package hed.homeelectrical.impl;
 
 import hed.homeelectrical.CircuitBranch;
 import hed.homeelectrical.CircuitUse;
+import hed.homeelectrical.FieldEquipment;
 import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.HomeElectricalPackage;
 
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -38,6 +40,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  * <ul>
  *   <li>{@link hed.homeelectrical.impl.FinalCircuitImpl#getUsage <em>Usage</em>}</li>
+ *   <li>{@link hed.homeelectrical.impl.FinalCircuitImpl#getEquipment <em>Equipment</em>}</li>
  *   <li>{@link hed.homeelectrical.impl.FinalCircuitImpl#getBranches <em>Branches</em>}</li>
  * </ul>
  *
@@ -63,6 +66,16 @@ public class FinalCircuitImpl extends CircuitImpl implements FinalCircuit {
      * @ordered
      */
     protected CircuitUse usage = USAGE_EDEFAULT;
+
+    /**
+     * The cached value of the '{@link #getEquipment() <em>Equipment</em>}' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getEquipment()
+     * @generated
+     * @ordered
+     */
+    protected EList<FieldEquipment> equipment;
 
     /**
      * The cached value of the '{@link #getBranches() <em>Branches</em>}' containment reference list.
@@ -123,6 +136,20 @@ public class FinalCircuitImpl extends CircuitImpl implements FinalCircuit {
      * @generated
      */
     @Override
+    public EList<FieldEquipment> getEquipment() {
+        if (equipment == null) {
+            equipment = new EObjectWithInverseResolvingEList<FieldEquipment>(FieldEquipment.class, this, HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT,
+                    HomeElectricalPackage.FIELD_EQUIPMENT__CIRCUIT);
+        }
+        return equipment;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public EList<CircuitBranch> getBranches() {
         if (branches == null) {
             branches = new EObjectContainmentWithInverseEList<CircuitBranch>(CircuitBranch.class, this, HomeElectricalPackage.FINAL_CIRCUIT__BRANCHES, HomeElectricalPackage.CIRCUIT_BRANCH__CIRCUIT);
@@ -139,6 +166,8 @@ public class FinalCircuitImpl extends CircuitImpl implements FinalCircuit {
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
+            case HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT:
+                return ((InternalEList<InternalEObject>) (InternalEList<?>) getEquipment()).basicAdd(otherEnd, msgs);
             case HomeElectricalPackage.FINAL_CIRCUIT__BRANCHES:
                 return ((InternalEList<InternalEObject>) (InternalEList<?>) getBranches()).basicAdd(otherEnd, msgs);
         }
@@ -153,6 +182,8 @@ public class FinalCircuitImpl extends CircuitImpl implements FinalCircuit {
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
+            case HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT:
+                return ((InternalEList<?>) getEquipment()).basicRemove(otherEnd, msgs);
             case HomeElectricalPackage.FINAL_CIRCUIT__BRANCHES:
                 return ((InternalEList<?>) getBranches()).basicRemove(otherEnd, msgs);
         }
@@ -169,6 +200,8 @@ public class FinalCircuitImpl extends CircuitImpl implements FinalCircuit {
         switch (featureID) {
             case HomeElectricalPackage.FINAL_CIRCUIT__USAGE:
                 return getUsage();
+            case HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT:
+                return getEquipment();
             case HomeElectricalPackage.FINAL_CIRCUIT__BRANCHES:
                 return getBranches();
         }
@@ -186,6 +219,10 @@ public class FinalCircuitImpl extends CircuitImpl implements FinalCircuit {
         switch (featureID) {
             case HomeElectricalPackage.FINAL_CIRCUIT__USAGE:
                 setUsage((CircuitUse) newValue);
+                return;
+            case HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT:
+                getEquipment().clear();
+                getEquipment().addAll((Collection<? extends FieldEquipment>) newValue);
                 return;
             case HomeElectricalPackage.FINAL_CIRCUIT__BRANCHES:
                 getBranches().clear();
@@ -206,6 +243,9 @@ public class FinalCircuitImpl extends CircuitImpl implements FinalCircuit {
             case HomeElectricalPackage.FINAL_CIRCUIT__USAGE:
                 setUsage(USAGE_EDEFAULT);
                 return;
+            case HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT:
+                getEquipment().clear();
+                return;
             case HomeElectricalPackage.FINAL_CIRCUIT__BRANCHES:
                 getBranches().clear();
                 return;
@@ -223,6 +263,8 @@ public class FinalCircuitImpl extends CircuitImpl implements FinalCircuit {
         switch (featureID) {
             case HomeElectricalPackage.FINAL_CIRCUIT__USAGE:
                 return usage != USAGE_EDEFAULT;
+            case HomeElectricalPackage.FINAL_CIRCUIT__EQUIPMENT:
+                return equipment != null && !equipment.isEmpty();
             case HomeElectricalPackage.FINAL_CIRCUIT__BRANCHES:
                 return branches != null && !branches.isEmpty();
         }

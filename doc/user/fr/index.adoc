@@ -369,7 +369,7 @@ Supprimer une représentation conserve son élément sémantique et les équipem
 |===
 |Tableau |Création sur |Contenu et édition
 |Inventaire des équipements |Logement |Pièces, types, circuits, branches et commandes. Noms et puissances modifiables.
-|Liste des circuits |Logement |Tableaux sources, protections, sections et équipements alimentés. Noms et sections modifiables.
+|Liste des circuits |Logement |Description, tableau d’origine s’il y en a plusieurs, interrupteur différentiel amont, protection, section, équipements, anomalies et usage en dernier. Descriptions, sections et noms lorsqu’ils sont affichés sont modifiables.
 |Composition du tableau |Tableau de répartition |Rails, ordre des appareils, protections et caractéristiques. Noms et libellés étiquette modifiables ; caractéristiques du catalogue en lecture seule.
 |Catalogue des équipements |Catalogue |Noms des types, valeurs assignées, encombrements et références produit. Données partagées par les appareils utilisant les types.
 |===
@@ -381,6 +381,10 @@ Une édition refusée conserve la valeur précédente et affiche un message.
 
 image::equipment-table.png[Inventaire des équipements,width=1000]
 image::circuit-table.png[Liste des circuits,width=1000]
+
+La Liste des circuits masque initialement la colonne *Nom*, déjà présente dans l’en-tête de ligne. Réaffichez-la avec *Afficher/Masquer les colonnes* pour éditer les noms ou les filtrer ; ce choix est conservé. La recherche globale retrouve les noms même si la colonne est masquée. *Phase / alimentation* apparaît après Protection uniquement en triphasé.
+Survolez *Inter diff* pour lire *Interrupteur différentiel amont*. L’ordre des colonnes suit celui du résumé, y compris lorsqu’une colonne conditionnelle apparaît ; leurs largeurs restent ajustables.
+
 image::distribution-board-table.png[Composition du tableau,width=1000]
 image::device-catalog-table.png[Catalogue des équipements,width=1000]
 

@@ -29,7 +29,7 @@ import hed.starter.representations.HedRepresentationIcons;
 @Service
 public class HedTableDescriptions {
     private static final Map<String, List<String>> FIELDS = Map.of("equipment", List.of("name", "room", "category", "deviceType", "circuit", "controls", "ratedPowerW", "issues", "branch"), "circuits",
-            List.of("name", "sourceBoard", "usage", "phase", "protectiveDevice", "upstreamRccb", "conductorSectionMm2", "served", "issues"), "board",
+            List.of("name", "description", "sourceBoard", "upstreamRccb", "protectiveDevice", "phase", "conductorSectionMm2", "served", "issues", "usage"), "board",
             List.of("name", "labelText", "rail", "order", "category", "ratedCurrentA", "residualCurrentMa", "residualType", "widthModules", "protectedCircuits", "issues", "upstreamProtection"),
             "catalog", List.of("name", "kind", "ratedCurrentA", "ratedPowerW", "widthModules", "residualCurrentMa", "manufacturer", "productReference"));
 
@@ -61,7 +61,7 @@ public class HedTableDescriptions {
      */
     public void addTo(View view) {
         view.getDescriptions().add(table("equipment", "Dwelling", Set.of("name", "ratedPowerW")));
-        view.getDescriptions().add(table("circuits", "Dwelling", Set.of("name", "conductorSectionMm2")));
+        view.getDescriptions().add(table("circuits", "Dwelling", Set.of("name", "description", "conductorSectionMm2")));
         view.getDescriptions().add(table("board", "DistributionBoard", Set.of("name", "labelText")));
         view.getDescriptions().add(table("catalog", "Catalog", Set.of("name", "ratedCurrentA", "ratedPowerW", "widthModules", "residualCurrentMa", "manufacturer", "productReference")));
     }
@@ -74,8 +74,14 @@ public class HedTableDescriptions {
         var cells = new ArrayList<CellDescription>();
         for (String field : fieldsFor(table)) {
             // Empty candidates hide the runtime column while keeping the description's stable identifier.
-            String candidates = table.equals("circuits") && field.equals("phase") ? "aql:if self.hasHedThreePhaseSupply() then 'phase' else Sequence{} endif" : "aql:'" + field + "'";
-            columns.add(builders.newColumnDescription().name("hed-column-" + field).semanticCandidatesExpression(candidates).headerLabelExpression(Messages.text(locale, "feature." + field))
+            String candidates = "aql:'" + field + "'";
+            if (table.equals("circuits") && field.equals("phase")) {
+                candidates = "aql:if self.hasHedThreePhaseSupply() then 'phase' else Sequence{} endif";
+            } else if (table.equals("circuits") && field.equals("sourceBoard")) {
+                candidates = "aql:if self.boards->size() > 1 then 'sourceBoard' else Sequence{} endif";
+            }
+            String headerKey = table.equals("circuits") && Set.of("protectiveDevice", "conductorSectionMm2", "served").contains(field) ? "table.column.circuits." + field : "feature." + field;
+            columns.add(builders.newColumnDescription().name("hed-column-" + field).semanticCandidatesExpression(candidates).headerLabelExpression(Messages.text(locale, headerKey))
                     .initialWidthExpression("180").isResizableExpression("aql:true").isSortableExpression("aql:true").build());
             CellWidgetDescription widget = editable.contains(field)
                     ? builders.newCellTextfieldWidgetDescription().body(operations.newChangeContext().expression("aql:self.editHedCell('" + field + "',newValue)").build()).build()

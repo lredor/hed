@@ -76,8 +76,8 @@ public final class CircuitDiagram {
                 .setChildrenLayoutStrategy(b.newListLayoutStrategyDescription().areChildNodesDraggableExpression("aql:false").topGapExpression("12").bottomGapExpression("12").build());
         // A junction is only a graphical view of the circuit; no additional semantic object is needed.
         var junction = b.newNodeDescription().name("hed-circuits-junction").domainType("homeelectrical::FinalCircuit").semanticCandidatesExpression("aql:self.getHedCircuitJunctions()")
-                .preconditionExpression("aql:true").synchronizationPolicy(SynchronizationPolicy.SYNCHRONIZED).defaultWidthExpression("3").defaultHeightExpression("3")
-                .userResizable(UserResizableDirection.NONE).style(b.newRectangularNodeStyleDescription().background(color("#000000")).borderSize(0).borderRadius(0).build()).palette(palette()).build();
+                .preconditionExpression("aql:true").synchronizationPolicy(SynchronizationPolicy.SYNCHRONIZED).defaultWidthExpression("24").defaultHeightExpression("24")
+                .userResizable(UserResizableDirection.NONE).style(b.newImageNodeStyleDescription().shape("hed-circuits:junction").borderSize(0).build()).palette(palette()).build();
         var meter = pictogram("meter", "EnergyMeter", "aql:self.meter", 24);
         var serviceBreaker = pictogram("service-breaker", "ServiceCircuitBreaker", "aql:self.mainBreaker", 24);
         var supply = container("supply", "ServiceConnection", "aql:self.serviceConnection", "#f8fafc", meter, serviceBreaker);

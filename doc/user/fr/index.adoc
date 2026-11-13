@@ -427,7 +427,9 @@ Chaque rail réserve initialement 260 unités de hauteur pour le passage des lie
 Les circuits et les branches sont portés par les liens, avec leur nom comme libellé :
 
 * Sans branche : protection → premier équipement associé → deuxième → suivant, avec le nom du circuit sur le premier segment.
-* Avec branches : protection → carré noir de dérivation de 3 × 3 (nom du circuit), puis une chaîne par branche non vide (nom de la branche sur le premier segment).
+* Avec branches : protection → carré noir de dérivation de 8 × 8 (nom du circuit), puis une chaîne par branche non vide (nom de la branche sur le premier segment).
+
+Le carré noir de la jonction mesure 8 × 8, avec un halo blanc et une zone de manipulation transparente de 24 × 24. Survolez-le pour afficher son cadre et le nom du circuit. Glissez le carré ou sa marge pour le déplacer : la jonction a priorité sur les liens à cet endroit, même si un lien est sélectionné. Les liens restent raccordés au centre et la position est conservée à la réouverture. Une jonction épinglée ou un diagramme en lecture seule ne peut pas être déplacé.
 
 Les chaînes suivent l’ordre des associations, pas les positions graphiques ni un cheminement physique de câbles.
 Les liens entre deux équipements affectés à la même pièce n’affichent pas de libellé. Le nom reste affiché sur le départ du circuit ou de la branche, entre pièces différentes et lorsque la pièce d’une extrémité n’est pas renseignée.

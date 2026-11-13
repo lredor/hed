@@ -28,6 +28,10 @@ import {
   circuitBoardDocumentTransform,
   circuitBoardNodeRegistry,
 } from './representations/diagrams/circuits/CircuitBoard';
+import {
+  circuitJunctionDocumentTransform,
+  circuitJunctionNodeRegistry,
+} from './representations/diagrams/circuits/CircuitJunction';
 import { diagramRendererReactFlowPropsCustomizerExtensionPoint } from '@eclipse-sirius/sirius-components-diagrams';
 import { usePanelRailDropProps } from './representations/diagrams/panel/PanelRailDrop';
 import { ExplorerDragSourcesProvider } from './representations/modelexplorer/ExplorerDragSources';
@@ -129,7 +133,11 @@ registry.putData(apolloClientOptionsConfigurersExtensionPoint, {
             .concat(panelDocumentTransform)
             .concat(floorPlanDocumentTransform)
             .concat(circuitBoardDocumentTransform)
-        : panelDocumentTransform.concat(floorPlanDocumentTransform).concat(circuitBoardDocumentTransform),
+            .concat(circuitJunctionDocumentTransform)
+        : panelDocumentTransform
+            .concat(floorPlanDocumentTransform)
+            .concat(circuitBoardDocumentTransform)
+            .concat(circuitJunctionDocumentTransform),
     }),
   ],
 });
@@ -154,16 +162,19 @@ createRoot(document.getElementById('root')!).render(
             ...panelNodeRegistry.nodeConverters,
             ...floorPlanNodeRegistry.nodeConverters,
             ...circuitBoardNodeRegistry.nodeConverters,
+            ...circuitJunctionNodeRegistry.nodeConverters,
           ],
           nodeLayoutHandlers: [
             ...panelNodeRegistry.nodeLayoutHandlers,
             ...floorPlanNodeRegistry.nodeLayoutHandlers,
             ...circuitBoardNodeRegistry.nodeLayoutHandlers,
+            ...circuitJunctionNodeRegistry.nodeLayoutHandlers,
           ],
           nodeTypeContributions: [
             ...panelNodeRegistry.nodeTypeContributions,
             ...floorPlanNodeRegistry.nodeTypeContributions,
             ...circuitBoardNodeRegistry.nodeTypeContributions,
+            ...circuitJunctionNodeRegistry.nodeTypeContributions,
           ],
         }}
       />

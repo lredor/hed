@@ -110,14 +110,14 @@ test('create named branches, associate equipment through Explorer and retain cir
     await expect.poll(() => linked(sampleName('livingRoomOutlets'), 'Window side')).toBe(true);
     expect(semantic('Window side')).toBeUndefined();
     const junction = semantic(sampleName('livingRoomOutlets'));
-    expect(junction.defaultWidth).toBe(3);
-    expect(junction.defaultHeight).toBe(3);
+    expect(junction.defaultWidth).toBe(24);
+    expect(junction.defaultHeight).toBe(24);
     expect(junction.insideLabel).toBeNull();
     expect(junction.outsideLabels).toEqual([]);
-    expect(junction.style.background).toBe('#000000');
+    expect(junction.style.__typename).toBe('CircuitJunctionNodeStyle');
     await expect.poll(() => linked('Q2', sampleName('livingRoomOutlets'))).toBe(true);
     const junctionNode = page.locator(`.react-flow__node[data-id="${junction.id}"]`);
-    await expect.poll(() => junctionNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(3);
+    await expect.poll(() => junctionNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(24);
     const room = treeBranch(sampleName('livingRoom'));
     const originalOutlet = room
       .locator('p')

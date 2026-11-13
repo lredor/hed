@@ -103,9 +103,11 @@ class CircuitDiagramTest {
     }
 
     private void completeCoverage(Dwelling home, Projection projection) {
-        var expected = HedDomain.contents(home).stream().filter(object -> object instanceof Storey || object instanceof Room || object instanceof DistributionBoard || object instanceof DINRail
-                || object instanceof FinalCircuit circuit && !circuit.getBranches().isEmpty() || object instanceof Equipment
-                || object instanceof ControlChannel channel && ((ControlDevice) channel.eContainer()).getChannels().size() > 1 || object instanceof ServiceConnection).toList();
+        var expected = HedDomain.contents(home).stream()
+                .filter(object -> object instanceof Storey || object instanceof Room || object instanceof DistributionBoard || object instanceof DINRail
+                        || object instanceof FinalCircuit circuit && !circuit.getBranches().isEmpty() || object instanceof Equipment
+                        || object instanceof ControlChannel channel && ((ControlDevice) channel.eContainer()).getChannels().size() > 1 || object instanceof ServiceConnection)
+                .toList();
         assertEquals(new HashSet<>(expected), projection.nodes.keySet());
     }
 
@@ -125,7 +127,8 @@ class CircuitDiagramTest {
         assertTrue(projection.connects(home.getEquipment().get(4), home.getEquipment().get(5)));
         assertFalse(projection.connects(circuit.getProtectiveDevice(), home.getEquipment().get(5)));
         assertTrue(projection.links.stream().filter(link -> link.kind().equals("hed-circuits-circuit-start") || link.kind().equals("hed-circuits-equipment-chain"))
-                .filter(link -> link.target() == light || link.target() == home.getEquipment().get(4) || link.target() == home.getEquipment().get(5)).allMatch(link -> circuit.getName().equals(link.label())));
+                .filter(link -> link.target() == light || link.target() == home.getEquipment().get(4) || link.target() == home.getEquipment().get(5))
+                .allMatch(link -> circuit.getName().equals(link.label())));
         var lighting = home.getControlFunctions().get(0);
         assertEquals(2, lighting.getChannels().size());
         for (var channel : lighting.getChannels()) {
@@ -313,8 +316,8 @@ class CircuitDiagramTest {
         var shutter = home.getEquipment().get(2);
         for (var receiver : List.of(light, shutter)) {
             assertTrue(projection.nodes.containsKey(receiver));
-            assertTrue(projection.links.stream().noneMatch(link -> (link.source() == receiver || link.target() == receiver)
-                    && (link.kind().equals("hed-circuits-circuit-start") || link.kind().equals("hed-circuits-equipment-chain"))));
+            assertTrue(projection.links.stream().noneMatch(
+                    link -> (link.source() == receiver || link.target() == receiver) && (link.kind().equals("hed-circuits-circuit-start") || link.kind().equals("hed-circuits-equipment-chain"))));
             assertTrue(projection.links.stream().anyMatch(link -> link.target() == receiver && link.kind().equals("hed-circuits-direct-control")));
             assertTrue(hed.starter.representations.CircuitEquipment.getAssociatedEquipment(receiver.getCircuit()).contains(receiver));
         }

@@ -151,6 +151,10 @@ The application results already include the domain tests: these two job summarie
 
 The **Playwright (English)** and **Playwright (French)** sections show each browser workflow's result and duration directly on the same Summary page, with expandable failure details. These are functional browser checks, separate from the Java test counts. A setup failure explains that no browser tests could run.
 
+Browser workflows explicitly select the applicable Details tab: installed-device ratings are checked read-only under **Advanced**, then rail assignments under **General**. Explorer operations locate tree occurrences and expand their owners before using contextual tools. The circuit-branch regression deliberately starts with the Circuits group collapsed, so the test also covers this state instead of relying on expansion left by an earlier action. Table visibility tests wait for the server's refresh before asserting the controlled switch state.
+
+The circuit-completeness highlighting scenario prepares its objects with Model Explorer's native **Rename** action. Its assertions then depend on explorer state rather than on an unrelated Details subscription becoming editable. Details editing is covered by separate property workflows.
+
 The summaries are generated even after test failures. The pinned [JUnit Report Action](https://github.com/mikepenz/action-junit-report/tree/v6.7.1) writes the native job summaries with annotations and pull-request comments disabled, so reporting needs no write permissions and also works on fork pull requests. Malformed reports and reported test failures fail the reporting step; a successful Maven run must produce test results.
 
 Raw reports remain available as artifacts for detailed troubleshooting. Open the same workflow run to download them or the application:

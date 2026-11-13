@@ -89,8 +89,7 @@ public class CircuitServices {
      */
     public String getHedCircuitChainLabel(FieldEquipment equipment) {
         var owner = chainOwner(equipment);
-        return owner instanceof CircuitBranch branch ? Objects.toString(branch.getName(), "")
-                : owner instanceof Circuit circuit ? Objects.toString(circuit.getName(), "") : "";
+        return owner instanceof CircuitBranch branch ? Objects.toString(branch.getName(), "") : owner instanceof Circuit circuit ? Objects.toString(circuit.getName(), "") : "";
     }
 
     /**
@@ -147,9 +146,8 @@ public class CircuitServices {
     private boolean controlledOnSameCircuit(FieldEquipment equipment) {
         var circuit = equipment.getCircuit();
         var home = HedDomain.dwelling(equipment);
-        return circuit != null && home != null && home.getControlFunctions().stream().filter(function -> function.getTargets().contains(equipment))
-                .flatMap(function -> function.getChannels().stream()).map(EObject::eContainer).filter(ControlDevice.class::isInstance).map(ControlDevice.class::cast)
-                .anyMatch(control -> control != equipment && control.getCircuit() == circuit);
+        return circuit != null && home != null && home.getControlFunctions().stream().filter(function -> function.getTargets().contains(equipment)).flatMap(function -> function.getChannels().stream())
+                .map(EObject::eContainer).filter(ControlDevice.class::isInstance).map(ControlDevice.class::cast).anyMatch(control -> control != equipment && control.getCircuit() == circuit);
     }
 
     /**
@@ -167,8 +165,8 @@ public class CircuitServices {
      * @return distinct device or border-channel endpoints, preserving channel selection order
      */
     public List<EObject> getHedCircuitControlSources(ControlFunction function) {
-        return function.getChannels().stream().map(channel -> channel.eContainer() instanceof ControlDevice control && control.getChannels().size() == 1 ? (EObject) control : channel)
-                .distinct().toList();
+        return function.getChannels().stream().map(channel -> channel.eContainer() instanceof ControlDevice control && control.getChannels().size() == 1 ? (EObject) control : channel).distinct()
+                .toList();
     }
 
     /**

@@ -67,6 +67,7 @@ test('create named branches, associate equipment through Explorer and retain cir
   const branchProperty = () => page.getByTestId(/^(Branch|Branche)$/).getByRole('combobox');
   const createBranch = async (label: string) => {
     await expand();
+    await expect(item(sampleName('livingRoomOutlets'))).toBeVisible();
     await item(sampleName('livingRoomOutlets')).locator('../..').getByRole('button').click();
     await page.getByRole('button', { name: /^(Create Branch|Créer Branche)$/ }).click();
     await expand();
@@ -98,6 +99,10 @@ test('create named branches, associate equipment through Explorer and retain cir
     await dialog.getByRole('textbox').fill('Branch circuit diagram');
     await dialog.getByRole('button', { name: /^(Create|Créer)$/ }).click();
     await expect.poll(() => flat().length).toBe(27);
+    // Creating/opening a representation must not make this workflow depend on prior tree expansion.
+    await expand();
+    await page.getByTestId('Circuits-toggle').click();
+    await expect(item(sampleName('livingRoomOutlets'))).toBeHidden();
     await createBranch('Window side');
     await createBranch('Door side');
     await createBranch('Desk side');

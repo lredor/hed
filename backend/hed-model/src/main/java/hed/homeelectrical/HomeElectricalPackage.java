@@ -420,22 +420,13 @@ public interface HomeElectricalPackage extends EPackage {
     int ROOM__DESCRIPTION = NAMED_ELEMENT__DESCRIPTION;
 
     /**
-     * The feature id for the '<em><b>Usage</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ROOM__USAGE = NAMED_ELEMENT_FEATURE_COUNT + 0;
-
-    /**
      * The number of structural features of the '<em>Room</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int ROOM_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 1;
+    int ROOM_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 0;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.impl.CatalogImpl <em>Catalog</em>}' class.
@@ -2482,17 +2473,6 @@ public interface HomeElectricalPackage extends EPackage {
     EClass getRoom();
 
     /**
-     * Returns the meta object for the attribute '{@link hed.homeelectrical.Room#getUsage <em>Usage</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Usage</em>'.
-     * @see hed.homeelectrical.Room#getUsage()
-     * @see #getRoom()
-     * @generated
-     */
-    EAttribute getRoom_Usage();
-
-    /**
      * Returns the meta object for class '{@link hed.homeelectrical.Catalog <em>Catalog</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3397,14 +3377,6 @@ public interface HomeElectricalPackage extends EPackage {
          * @generated
          */
         EClass ROOM = eINSTANCE.getRoom();
-
-        /**
-         * The meta object literal for the '<em><b>Usage</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute ROOM__USAGE = eINSTANCE.getRoom_Usage();
 
         /**
          * The meta object literal for the '{@link hed.homeelectrical.impl.CatalogImpl <em>Catalog</em>}' class.

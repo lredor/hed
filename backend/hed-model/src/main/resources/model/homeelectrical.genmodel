@@ -260,9 +260,6 @@ SPDX-License-Identifier: EPL-2.0
         </genClasses>
         <genClasses>
             <ecoreClass href="homeelectrical.ecore#//Room"/>
-            <genFeatures createChild="false">
-                <ecoreFeature href="homeelectrical.ecore#//Room/usage" xsi:type="ecore:EAttribute"/>
-            </genFeatures>
         </genClasses>
         <genClasses>
             <ecoreClass href="homeelectrical.ecore#//Catalog"/>

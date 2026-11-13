@@ -184,6 +184,8 @@ Le champ facultatif *Libellé d’étiquette* contient le texte destiné à l’
 . Créez les équipements terminaux depuis le menu d’une pièce, ou glissez un type d’équipement terminal du catalogue sur cette pièce.
 . Sélectionnez un équipement pour modifier son nom, sa pièce et ses relations dans les propriétés.
 
+Pour préciser la destination ou les particularités d’une pièce, utilisez son champ *Description*.
+
 Pour les équipements terminaux, le compteur et les appareils de protection ou de commande du tableau, le panneau *Details* propose deux onglets :
 
 * *Général* : nom, description ou libellé d’étiquette selon l’appareil, type d’équipement, relations applicables et validation.

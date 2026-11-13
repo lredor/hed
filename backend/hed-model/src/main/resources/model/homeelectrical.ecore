@@ -154,12 +154,7 @@ SPDX-License-Identifier: EPL-2.0
             </eAnnotations>
         </eStructuralFeatures>
     </eClassifiers>
-    <eClassifiers eSuperTypes="#//NamedElement" name="Room" xsi:type="ecore:EClass">
-        <eStructuralFeatures
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-            name="usage"
-            xsi:type="ecore:EAttribute"/>
-    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="Room" xsi:type="ecore:EClass"/>
     <eClassifiers eSuperTypes="#//NamedElement" name="Catalog" xsi:type="ecore:EClass">
         <eStructuralFeatures
             containment="true"

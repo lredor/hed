@@ -182,6 +182,8 @@ Its optional *Label text* is the wording to print on the board label.
 . Create terminal equipment from a room's menu, or drag a terminal-equipment type from the catalog onto the room.
 . Select an equipment instance to edit its name, room and connections in Properties.
 
+Use a room's *Description* field to describe its purpose or particular features.
+
 For terminal equipment, the meter and distribution-board protection or control devices, the *Details* panel provides two tabs:
 
 * *General*: name, description or label text depending on the device, device type, applicable connections and validation.

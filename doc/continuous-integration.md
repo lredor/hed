@@ -21,10 +21,33 @@ GitHub Actions checks pushes to `master` and pull requests targeting `master`. B
 | **Build / Full application build** | Locked frontend dependency installation, Prettier, TypeScript checking including unit tests, Vite assets, both user guides, `npm run test:coverage`, and `mvn -B -ntp -s .github/maven-settings.xml -Papplication,coverage clean verify`. Vitest reports targeted frontend coverage; JaCoCo aggregates Java-test coverage across modules. The application profile includes starter tests and packages the executable JAR. A final check verifies that it contains the frontend and both guides. |
 | **Build / Playwright (English)** | All browser workflows against the packaged application started with `HED_LOCALE=en_GB`, a fresh PostgreSQL 17 service and an English Chrome locale. |
 | **Build / Playwright (French)** | The same browser workflows with `HED_LOCALE=fr_FR`, a separate fresh database and a French Chrome locale. |
+| **Build / Container image** | Builds `Dockerfile.runtime` from the same verified JAR, starts it with PostgreSQL through `compose.run.yaml` without package credentials, checks readiness and both guides, and uploads the tested image. Runs on the same trusted builds as the application, including repository PRs. |
+| **Build / Publish Docker image** | Publishes that tested image only after domain, application, both browser jobs and container checks succeed, and only on pushes to `lredor/hed` master. |
 
 Jobs run on Ubuntu 24.04 with Temurin Java 21 and Maven 3.9.9. The frontend uses Node 22.16.0. The shared Java/Maven action downloads Maven from Apache and checks a pinned SHA-512 checksum. External actions are pinned to commit hashes, with version comments for maintenance. Maven and npm dependency caches speed up subsequent runs; model, formatter and full-application Maven caches use separate dependency fingerprints.
 
-Java verification and coverage run without starting the application or a database. Browser verification starts its own application and PostgreSQL service per language. Container publication and deployment are separate steps in the CI rollout.
+Java verification and coverage run without starting the application or a database. Browser verification starts its own application and PostgreSQL service per language. The container check starts a separate isolated installation. Publication does not deploy or modify any running installation.
+
+## Container image publication
+
+`Dockerfile.runtime` packages the already tested JAR with Java 21, OCI source/license/revision labels, an unprivileged runtime user and a readiness health check. It does not download Maven/npm dependencies or receive their credentials. The first distribution targets **linux/amd64**.
+
+The **Container image** job runs on trusted PR, master and manual builds. It uses the executable artifact from the same run and commit, builds the runtime once, checks it with `compose.run.yaml`, retains startup logs as **container-logs**, and uploads **hed-image-<commit>** as a compressed image archive for one day. Its test installation is removed after the check.
+
+The **Publish Docker image** job waits for that check and both Playwright matrix entries as well as domain/application verification. It downloads and loads that exact image rather than rebuilding it, then pushes `ghcr.io/lredor/hed:latest` and `ghcr.io/lredor/hed:sha-<full-commit-id>`. It runs only for a push to `master` in `lredor/hed`; PRs, forks and manual runs never publish. No release/version tag is created. The workflow's existing master concurrency cancels obsolete runs.
+
+Only the publication job requests `packages: write`, using its automatic `GITHUB_TOKEN`. There is no new PAT or registry secret to configure. Compilation retains the existing optional upstream package-read credentials in the application job. The publisher has no checkout and receives neither those credentials nor source build scripts.
+
+After the **first publication**, the repository owner must open **GitHub profile → Packages → hed → Package settings → Change visibility**, choose **Public** and confirm GitHub's prompts. Public repository visibility alone does not make the container public. If a package with that name already exists, check that it is linked to `lredor/hed` and allows its Actions workflows to write. See [GitHub's registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+
+Verify an anonymous pull using an empty Docker credential directory, rather than relying on a logged-in account. For example, in a temporary Bash directory:
+
+```sh
+mkdir anonymous-docker
+docker --config anonymous-docker pull ghcr.io/lredor/hed:latest
+```
+
+Until the first image exists and is public, the new user installation instructions are not yet usable. Publication success does not itself verify anonymous access; the visibility change and this pull check complete the initial setup. The publication summary reminds the owner of this action. No image is published during local validation of this change.
 
 Only the `application` profile declares GitHub Packages repositories. Model/edit builds resolve public dependencies from Maven Central. Checkstyle examines Java production and test sources only: it skips resource directories, including the repository root used to package license files. Its Java-only rules therefore do not traverse npm dependencies or local caches.
 
@@ -45,7 +68,7 @@ Only the dependency installation and Maven build steps receive the package token
 
 ## Fork and Dependabot pull requests
 
-Formatting and domain verification run without repository secrets. The full application job is explicitly skipped for pull requests from forks and Dependabot because repository package credentials are unavailable to them. Its dependent Playwright jobs are skipped as well. A summary explains this limitation; a skipped job does **not** establish that the application builds or its browser workflows pass.
+Formatting and domain verification run without repository secrets. The full application job is explicitly skipped for pull requests from forks and Dependabot because repository package credentials are unavailable to them. Its dependent Playwright and container-image jobs are skipped as well. A summary explains this limitation; a skipped job does **not** establish that the application builds or its browser workflows pass.
 
 Before merging such a contribution, a maintainer must review its code, copy the reviewed commits to a branch in this repository, and run **Build** manually on that branch. The full application build and both Playwright jobs must pass for the reviewed code that will be merged. Review build scripts and dependency changes before allowing them access to the package token.
 

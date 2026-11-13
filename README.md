@@ -22,7 +22,7 @@ Read the [English user guide](doc/user/en/index.adoc) or the [guide utilisateur 
 
 New sample projects use that same creation language for their names. Existing and user-edited names remain unchanged.
 
-For a first installation, follow the step-by-step [Windows/Docker installation guide in English](doc/user/en/index.adoc#installation) or [l’installation pas à pas en français](doc/user/fr/index.adoc#installation). They cover downloading the source ZIP, GitHub Packages access, startup, backups and updates, with a macOS/Linux alternative.
+For a first installation, follow the step-by-step [Windows/Docker installation guide in English](doc/user/en/index.adoc#installation) or [l’installation pas à pas en français](doc/user/fr/index.adoc#installation). Users download only [compose.run.yaml](compose.run.yaml) and the public `ghcr.io/lredor/hed` image, without compilation, a GitHub account or a package token. The maintainer must complete the first publication and make the package public before this distribution is available.
 
 ## Domain build
 
@@ -53,7 +53,16 @@ Build the frontend before packaging the application, then run it against Postgre
 
 ## Docker launch
 
-Docker builds the frontend and backend from source, runs the Maven tests, and starts the application with PostgreSQL. See [the Docker launch and persistence workflow](doc/docker.md) and [GitHub Packages access](doc/github-packages.md).
+Once the public image is available, start it with PostgreSQL using:
+
+```sh
+docker compose -p hed -f compose.run.yaml pull
+docker compose -p hed -f compose.run.yaml up -d --wait
+```
+
+Open [HED](http://localhost:8080). English is the default; put `HED_LOCALE=fr_FR` in a local `.env` file for French. Keep the same installation name to retain its database volume. The initial image is Linux amd64; ARM hosts need emulation.
+
+Developers can still build from source with `compose.yaml`, which requires package credentials. See [both Docker workflows](doc/docker.md) and [GitHub Packages access](doc/github-packages.md).
 
 ## Continuous integration
 

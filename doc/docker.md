@@ -10,7 +10,26 @@ SPDX-License-Identifier: EPL-2.0
 
 # Docker launch
 
-For a first installation without development experience, use the illustrated user guide's [English installation walkthrough](user/en/index.adoc#installation) or [procédure en français](user/fr/index.adoc#installation). It explains Docker Desktop, ZIP extraction, credentials, settings, startup and data preservation. The commands below are the shorter developer workflow.
+For a first installation without development experience, use the [English installation walkthrough](user/en/index.adoc#installation) or [procédure en français](user/fr/index.adoc#installation). They explain Docker Desktop, downloading the standalone launcher, startup, backups and updates without build credentials.
+
+## Ready-to-run public image
+
+After the maintainer's first successful publication and change of package visibility to **Public**, users need only `compose.run.yaml`:
+
+```sh
+docker compose -p hed -f compose.run.yaml pull
+docker compose -p hed -f compose.run.yaml up -d --wait
+```
+
+This independent Compose file has no `build` or `secrets` section. It downloads `ghcr.io/lredor/hed:latest` and PostgreSQL 17, binds only HTTP port 8080 to localhost and retains data in the `hed-postgres-data` volume for the selected project name. Its application image has a readiness health check and runs as user 10001. The image is Linux amd64; the launcher explicitly requests that platform, so ARM hosts require emulation.
+
+Set `HED_LOCALE=fr_FR` in `.env` for French. `HED_IMAGE` can select an already published `sha-<full-commit-id>` tag or image digest. `latest` follows validated `master` commits, not numbered stable releases. Updating with `pull` then `up -d --wait` preserves the volume. Back up projects before updates.
+
+For an existing source installation, retain its Compose project name (`-p`), database password and volume. Changing the project name would select a different database. The source and runtime launchers use the same volume key to support this transition. Do not replace the data volume or reset its password as part of switching launchers.
+
+See [publication and the one-time public visibility setting](continuous-integration.md#container-image-publication).
+
+## Developer source build
 
 Docker must be running with Linux containers. Set GH_PACKAGES_TOKEN as described in [GitHub Packages access](github-packages.md).
 

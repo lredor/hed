@@ -24,162 +24,120 @@ The application documents a design; it does not certify electrical compliance.
 [[installation]]
 == Install the application on your computer
 
-If someone has already installed HED for you, open the address they supplied and continue with <<_start_with_a_project>>.
-For a personal installation, this walkthrough uses *Docker Desktop*, which builds and runs HED together with its database.
-The database stores your projects; your browser lets you view and edit them.
-You do not need to install Java, Maven, Node.js or Git separately.
-The first build and updates require Internet access and a GitHub account with access to the dependencies.
+If HED is already installed for you, open the supplied address and continue with <<_start_with_a_project>>.
+For a personal installation, *Docker Desktop* downloads a ready-to-run HED image and runs it alongside its database.
+You do not need to compile anything, supply a GitHub account or token, or install Java, Maven, Node.js or Git separately.
+Internet access is required to download images and updates.
+
+IMPORTANT: This procedure requires the maintainer to have published `ghcr.io/lredor/hed` and made it public. If the download is denied, contact the maintainer rather than creating a token to work around it.
 
 === 1. Install Docker Desktop
 
-. Download Docker Desktop from the https://docs.docker.com/desktop/setup/install/windows-install/[official Windows installation page] and follow the instructions for your computer.
-. On Windows, use the *WSL 2* backend and *Linux containers*. Complete any requested WSL setup and Windows restart before continuing.
-. Start Docker Desktop from the Start menu and wait until its engine is running.
+. Follow the https://docs.docker.com/desktop/setup/install/windows-install/[official Windows instructions].
+. Use the *WSL 2* backend and *Linux containers*. Complete any requested WSL setup and Windows restart.
+. Start Docker Desktop from the Start menu and wait for its engine to run.
 
-WSL 2 is the Windows component that lets Docker run these Linux programs.
-You do not need to open a Linux console to use HED.
-The official installation page lists the current Windows and hardware requirements.
+WSL 2 lets Docker run these Linux programs on Windows; you do not need to open a Linux console.
+The official page lists Windows and hardware requirements.
+This initial HED distribution uses *Linux amd64*; ARM computers need Docker emulation for that architecture. This is not a native ARM image.
 
-=== 2. Download HED
+=== 2. Download the launcher
 
-. Open the https://github.com/lredor/hed[HED repository on GitHub].
-. On the *master* branch, choose *Code → Download ZIP*.
-. Right-click the downloaded ZIP in Windows File Explorer and choose *Extract All*.
-. Keep the extracted folder somewhere permanent, for example under *Documents → HED*.
+. Create a permanent folder, such as *Documents → HED*.
+. Open the https://github.com/lredor/hed/blob/master/compose.run.yaml[launcher file on GitHub] and choose *Download raw file*.
+. Save it in that folder as exactly `compose.run.yaml`, without an extra `.txt` extension.
 
-Use the folder directly containing `compose.yaml`, `Dockerfile` and `.env.example`, usually `hed-master`.
-Do not run the application from inside the ZIP.
+This single file describes HED and PostgreSQL, which stores your projects.
+You do not need the modeler's source files.
 
-=== 3. Allow dependency downloads
+=== 3. Choose the language
 
-The build retrieves Sirius Web components from *GitHub Packages*.
-GitHub requires a personal access token for this, even when the source ZIP can be downloaded without one.
-See https://docs.github.com/en/packages/learn-github-packages/about-permissions-for-github-packages[GitHub's package permissions documentation].
+. Open the folder containing `compose.run.yaml` in File Explorer.
+. Type `powershell` in its address bar and press Enter to open a command window there.
+. Run `docker compose version` to check that Docker Compose is available.
+. Run `notepad .env`, accept file creation if requested and enter:
 
-. Sign in to GitHub and open https://github.com/settings/tokens/new[the classic personal access token creation page], under *Developer settings → Personal access tokens → Tokens (classic)*.
-. Give the token a name such as `HED local`, choose an expiration date, select *read:packages* and generate it. Copy its value; GitHub will not show it again.
-. In the Windows Start menu, search for *Edit environment variables for your account* and open that setting.
-. Under *User variables*, choose *New*. Set the name to `GH_PACKAGES_TOKEN`, paste the token as its value and confirm the dialogs.
+[source,text]
+----
+HED_LOCALE=en_GB
+DATABASE_PASSWORD=hed-local
+----
 
-Do not put the token in project files or share it.
-If it expires or is revoked, replace this same variable's value and open a new PowerShell window before rebuilding.
-Your GitHub account must also have access to the relevant packages; a token alone does not grant access to private packages.
+Save and close Notepad. The filename must be exactly `.env`, without `.txt`.
+Use `HED_LOCALE=fr_FR` for French; without a settings file, English is the default.
+The password above is for a local installation. Do not simply change it after creating the database, as this does not change the password already stored in PostgreSQL.
+Neither `GH_PACKAGES_TOKEN` nor `GITHUB_ACTOR` is needed.
 
-=== 4. Set the language and open PowerShell
+=== 4. Download and start HED
 
-. In File Explorer, open the folder containing `compose.yaml`.
-. Click its address bar, type `powershell` and press Enter. The command window opens in that folder.
-. Copy these commands one line at a time, pressing Enter after each:
+In the same PowerShell window, run each line with Enter:
 
 [source,powershell]
 ----
-docker compose version
-Copy-Item .env.example .env
-notepad .env
+docker compose -p hed -f compose.run.yaml pull
+docker compose -p hed -f compose.run.yaml up -d --wait
+docker compose -p hed -f compose.run.yaml ps
 ----
 
-The first command should print a Docker Compose version.
-The second creates your local settings file; do not repeat it if you already have a `.env` file to keep.
-In Notepad, replace the `GITHUB_ACTOR` value with your GitHub username.
-Keep `HED_LOCALE=en_GB` for English, or use `HED_LOCALE=fr_FR` for French.
-Keep the initial `DATABASE_PASSWORD=hed-local` setting for this first local startup.
-Save and close Notepad. The filename must be exactly `.env`, without a `.txt` extension.
-The token stays in the Windows environment variable, not this file.
-
-=== 5. Build and start
-
-In the same PowerShell window:
-
-[source,powershell]
-----
-docker compose -p hed up --build -d
-docker compose -p hed ps
-----
-
-The first command downloads components, builds HED and starts `postgres` for the data and `application` for HED.
-The initial build may take several minutes. Wait for the command prompt to return; later starts reuse the build.
-The second command lists their status. Wait until both show `healthy`, repeating that second command if necessary.
-You can also find the *hed* group in Docker Desktop's *Containers* section.
-
-Open http://localhost:8080[http://localhost:8080] in your browser.
+The first download may take several minutes; it retrieves the built application and PostgreSQL.
+The second command waits for readiness; the last should show both services as `healthy`.
+Open http://localhost:8080[http://localhost:8080] in your browser. The home page should offer *Empty dwelling* and *Sample dwelling*.
+Create a sample project to check that you can open it and edit an object.
 `localhost` means your own computer; this installation is local.
-You should see *Empty dwelling* and *Sample dwelling* on the home page.
-Create a sample project and check that you can open it and edit an object.
 
-Every command in this guide uses the installation name `hed`, through `-p hed`.
-If you already have an installation under another name, retain that name instead of creating a second installation.
+These commands use the installation name `hed` through `-p hed`.
+If you already have an installation under another name, retain its name and `.env` file to reuse its data instead of inadvertently creating a second installation.
 
-=== 6. Stop, reopen and back up projects
+=== 5. Stop, resume and back up
 
-To stop HED cleanly from the same folder:
+To stop the services from that folder:
 
 [source,powershell]
 ----
-docker compose -p hed stop
+docker compose -p hed -f compose.run.yaml stop
 ----
 
-On another day, start Docker Desktop, open PowerShell in that folder and run:
+On another day, start Docker Desktop, reopen PowerShell in the same folder and run:
 
 [source,powershell]
 ----
-docker compose -p hed start
-docker compose -p hed ps
+docker compose -p hed -f compose.run.yaml up -d --wait
 ----
 
-Reopen http://localhost:8080 and your project.
-Closing the browser tab does not stop the services.
-Your projects live in Docker's data storage named `hed_hed-postgres-data`, called a *volume*, rather than the source folder or application image.
-Stopping the services retains that volume. Do not delete it in Docker Desktop or use `docker compose down --volumes` for a normal stop: that would erase the data.
+Reopen http://localhost:8080 and your project. Closing the browser tab does not stop the services.
+Data lives in the Docker *volume* `hed_hed-postgres-data`, independently of the application image.
+Do not delete that volume or use `down --volumes` for an ordinary stop, as this would erase your data.
+Download your projects regularly from their home-page menu and keep those archives in a separate backup location.
+Use project upload on the home page to import them again.
 
-Also download your projects regularly from their menu on the home page and keep those archives in a separate location, such as your usual backup.
-Use the home page's project upload action to restore an archive.
-Keeping the volume supports normal restarts; archives let you recover projects if Docker's data is lost.
+=== 6. Update HED
 
-=== 7. Update the application
+Back up your projects, then use the same `pull` and `up -d --wait` commands as for the initial start.
+Keep `.env` and the same installation name. Refresh the browser with Ctrl+F5 afterward.
+The download replaces the application image while retaining the data volume.
+The `latest` tag follows the last tested and published `master` state; it is not a numbered stable release.
+To keep a specific image, an advanced user can add `HED_IMAGE=ghcr.io/lredor/hed:sha-<full-commit-id>` to `.env`, using a tag that has actually been published.
+This fixes the application image; PostgreSQL still uses the image specified by the launcher.
 
-. Back up your projects using those archives.
-. Download and extract the new ZIP into a new folder.
-. Copy `.env` from the old folder to the new one to retain your language, GitHub username and database password. Keep the Windows `GH_PACKAGES_TOKEN` variable and renew the token if it has expired.
-. Open PowerShell in the new folder containing `compose.yaml`, run `docker compose -p hed up --build -d` and wait for `healthy` status.
-. Refresh the browser with Ctrl+F5.
-
-Keeping the installation name `hed` reuses the same data volume even when the source folder changes.
-Do not simply change `DATABASE_PASSWORD` for an existing database: this does not change the password already stored in PostgreSQL.
-
-=== If startup fails
+=== Resolve startup problems
 
 [cols="2,3",options="header"]
 |===
-|Message or symptom |What to do
-|`docker` not found |Finish installing Docker Desktop and open a new PowerShell window.
-|Cannot connect to Docker |Start Docker Desktop, wait for its engine and check that Linux containers are selected.
-|`no configuration file provided` |Open PowerShell in the folder containing `compose.yaml`.
-|Missing token, `Permission denied`, `401` or `403` during the build |Check the user variable `GH_PACKAGES_TOKEN`, expiration, `read:packages` permission and `GITHUB_ACTOR` username. Open a new PowerShell window after changing environment variables.
-|Port `8080` or `5437` is already in use |Another application or installation is using it. First check Docker Desktop for an existing HED installation; retain that installation if it contains your projects.
-|The page will not open |Check both services with `docker compose -p hed ps`. Read recent messages with `docker compose -p hed logs --tail 100 application postgres`.
-|The application remains in the wrong language |Check `HED_LOCALE` in `.env`, then run `docker compose -p hed up -d`. Existing object names are not translated again.
+|Symptom |What to do
+|`docker` not found or engine unavailable |Finish setup, start Docker Desktop with Linux containers and reopen PowerShell.
+|`compose.run.yaml` not found |Open PowerShell in its folder and check the filename, including any unwanted `.txt` suffix.
+|Download denied (`denied`, `unauthorized`, `manifest unknown`) |Check the image name and ask the maintainer to verify publication and public visibility. Public images do not require a user token.
+|Port `8080` already in use |Check Docker Desktop for an existing HED installation and retain the one containing your projects.
+|Page unavailable or a service fails |Check `docker compose -p hed -f compose.run.yaml ps`, then `docker compose -p hed -f compose.run.yaml logs --tail 100 application postgres`.
+|Wrong language |Check `HED_LOCALE` in `.env`, rerun `up -d --wait` and refresh the browser. Stored names are not translated again.
 |===
 
-=== On macOS or Linux
+=== On macOS or Linux, or to build from source
 
-Install https://docs.docker.com/desktop/setup/install/mac-install/[Docker Desktop for macOS], or https://docs.docker.com/engine/install/[Docker Engine for your Linux distribution] with the https://docs.docker.com/compose/install/[Docker Compose plugin].
-Download and extract the same ZIP, then open a terminal in the folder containing `compose.yaml`.
-After creating the same classic token, first run this command alone in Bash or Zsh:
-
-[source,bash]
-----
-read -r -s GH_PACKAGES_TOKEN
-----
-
-Then paste the token and press Enter; its characters are not displayed. Continue with:
-
-[source,bash]
-----
-export GH_PACKAGES_TOKEN
-cp .env.example .env
-----
-Open `.env` in your text editor, enter your `GITHUB_ACTOR` username and desired language, then use the same `docker compose -p hed` commands as on Windows.
-This token is available only in that terminal; enter it again in a new terminal before building or updating.
+Install https://docs.docker.com/desktop/setup/install/mac-install/[Docker Desktop for macOS], or https://docs.docker.com/engine/install/[Docker Engine for Linux] with https://docs.docker.com/compose/install/[Docker Compose].
+Download the same file, open a terminal in its folder and use the same Docker commands. Create `.env` in your text editor to change the language if needed.
+The launcher requests `linux/amd64` for HED; on ARM, check that your Docker engine supports this emulation.
+Developers building from source can follow the https://github.com/lredor/hed/blob/master/doc/docker.md[Docker source-build walkthrough] and its GitHub Packages instructions. Those credentials are for compilation, not for installing the public image.
 
 == Start with a project
 

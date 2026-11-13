@@ -1,0 +1,21 @@
+# Copyright (c) 2026 Laurent Redor.
+# This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v2.0
+# which accompanies this distribution, and is available at
+# https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+
+# Build context: the directory containing the already verified application JAR.
+FROM eclipse-temurin:21-jre-alpine
+LABEL org.opencontainers.image.source="https://github.com/lredor/hed" \
+      org.opencontainers.image.title="Home Electrical Designer" \
+      org.opencontainers.image.licenses="EPL-2.0"
+RUN addgroup -g 10001 hed && adduser -D -u 10001 -G hed hed
+WORKDIR /app
+COPY --chown=10001:10001 hed-application-*.jar app.jar
+USER 10001:10001
+EXPOSE 8080
+HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=30 \
+    CMD wget -q -O /dev/null http://localhost:8080/actuator/health/readiness || exit 1
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

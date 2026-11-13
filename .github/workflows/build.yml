@@ -237,6 +237,106 @@ jobs:
           compression-level: 0
           retention-days: 7
 
+  image:
+    name: Container image
+    needs: application
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Download the tested application
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: hed-application-${{ github.sha }}
+          path: ${{ runner.temp }}/hed-application
+      - name: Build the runtime image from the verified JAR
+        env:
+          REVISION: ${{ github.sha }}
+        run: |
+          docker build --platform linux/amd64 --file Dockerfile.runtime \
+            --label "org.opencontainers.image.revision=$REVISION" \
+            --tag "ghcr.io/lredor/hed:sha-$REVISION" \
+            --tag ghcr.io/lredor/hed:latest \
+            "$RUNNER_TEMP/hed-application"
+      - name: Start the image and database without build credentials
+        env:
+          HED_IMAGE: ghcr.io/lredor/hed:latest
+        run: |
+          docker compose -p hed-image-ci -f compose.run.yaml up -d --wait --wait-timeout 180
+          curl --fail --silent --show-error http://localhost:8080/actuator/health/readiness
+          curl --fail --silent --show-error http://localhost:8080/help/en/index.html --output /dev/null
+          curl --fail --silent --show-error http://localhost:8080/help/fr/index.html --output /dev/null
+          {
+            echo '## Container image verification'
+            echo
+            echo 'The Linux amd64 runtime image started successfully with PostgreSQL using compose.run.yaml and no package-build credentials.'
+            echo 'Readiness and both bundled user guides responded successfully. This image will be reused for publication after the other checks pass on master.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Collect container logs and stop the isolated installation
+        if: ${{ always() }}
+        run: |
+          mkdir -p container-results
+          docker compose -p hed-image-ci -f compose.run.yaml logs --no-color > container-results/startup.log 2>&1 || true
+          docker compose -p hed-image-ci -f compose.run.yaml down --volumes
+      - name: Upload container logs
+        if: ${{ always() && !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: container-logs
+          path: container-results/
+          retention-days: 7
+      - name: Save the tested runtime image
+        run: docker image save ghcr.io/lredor/hed:latest | gzip -1 > "$RUNNER_TEMP/hed-image.tar.gz"
+      - name: Upload the tested runtime image
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: hed-image-${{ github.sha }}
+          path: ${{ runner.temp }}/hed-image.tar.gz
+          compression-level: 0
+          retention-days: 1
+
+  publish:
+    name: Publish Docker image
+    needs: [domain, application, playwright, image]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'lredor/hed'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      packages: write
+    steps:
+      - name: Download the tested runtime image
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: hed-image-${{ github.sha }}
+          path: ${{ runner.temp }}/hed-image
+      - name: Load the tested image without rebuilding
+        env:
+          REVISION: ${{ github.sha }}
+        run: |
+          docker image load --input "$RUNNER_TEMP/hed-image/hed-image.tar.gz"
+          docker tag ghcr.io/lredor/hed:latest "ghcr.io/lredor/hed:sha-$REVISION"
+      - name: Publish to GitHub Container Registry
+        env:
+          PUBLISH_TOKEN: ${{ github.token }}
+          REGISTRY_USER: ${{ github.actor }}
+          REVISION: ${{ github.sha }}
+        run: |
+          printf '%s' "$PUBLISH_TOKEN" | docker login ghcr.io --username "$REGISTRY_USER" --password-stdin
+          trap 'docker logout ghcr.io' EXIT
+          docker push "ghcr.io/lredor/hed:sha-$REVISION"
+          docker push ghcr.io/lredor/hed:latest
+          {
+            echo '## Docker image'
+            echo
+            echo 'Published `ghcr.io/lredor/hed:latest` and `ghcr.io/lredor/hed:sha-'"$REVISION"'` (linux/amd64).'
+            echo 'After the first publication, the owner must make the hed package Public in GitHub package settings to enable anonymous pulls.'
+            echo 'Users can then start it with compose.run.yaml without building or supplying a GitHub token.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
   playwright:
     name: Playwright (${{ matrix.language }})
     needs: application

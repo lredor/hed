@@ -27,18 +27,25 @@ import { panelDocumentTransform, panelNodeRegistry } from './representations/dia
 import { diagramRendererReactFlowPropsCustomizerExtensionPoint } from '@eclipse-sirius/sirius-components-diagrams';
 import { usePanelRailDropProps } from './representations/diagrams/panel/PanelRailDrop';
 import { ExplorerDragSourcesProvider } from './representations/modelexplorer/ExplorerDragSources';
+import { propertySectionLabelDecoratorExtensionPoint } from '@eclipse-sirius/sirius-components-forms';
+import { treeItemContextMenuEntryExtensionPoint } from '@eclipse-sirius/sirius-components-trees';
+import { TREE_REPRESENTATION_KIND } from '@eclipse-sirius/sirius-components-trees';
+import { paletteToolExtensionPoint } from '@eclipse-sirius/sirius-components-palette';
+import {
+  DeviceTypeExplorerNavigation,
+  DeviceTypePaletteNavigation,
+  DeviceTypePropertyNavigation,
+} from './representations/navigation/DeviceTypeNavigation';
 import {
   floorPlanDocumentTransform,
   floorPlanNodeRegistry,
 } from './representations/diagrams/floorplan/FloorPlanDiagram';
-import {
-  floorPlanConfirmationFactory,
-  FloorPlanConfirmationMergeStrategy,
-} from './representations/diagrams/floorplan/FloorPlanRemovalConfirmation';
+import { floorPlanConfirmationFactory } from './representations/diagrams/floorplan/FloorPlanRemovalConfirmation';
+import { HedExtensionRegistryMergeStrategy } from './HedExtensionRegistryMergeStrategy';
 const httpOrigin = import.meta.env.VITE_BACKEND_URL || window.location.origin;
 const wsOrigin = httpOrigin.replace(/^http/, 'ws');
 const registry = new ExtensionRegistry();
-const registryMergeStrategy = new FloorPlanConfirmationMergeStrategy();
+const registryMergeStrategy = new HedExtensionRegistryMergeStrategy();
 function Brand() {
   const { t } = useTranslation('sirius-web-application', { keyPrefix: 'navigationBarIcon' });
   const label = t('backToHomepage');
@@ -72,6 +79,24 @@ registry.putData(navigationBarMenuHelpURLExtensionPoint, {
   data: httpOrigin + '/api/hed/help',
 });
 registry.addComponent(footerExtensionPoint, { identifier: 'hed-footer', Component: Footer });
+registry.addComponent(propertySectionLabelDecoratorExtensionPoint, {
+  identifier: 'hed-device-type-properties',
+  Component: DeviceTypePropertyNavigation,
+});
+registry.addComponent(treeItemContextMenuEntryExtensionPoint, {
+  identifier: 'hed-device-type-explorer',
+  Component: DeviceTypeExplorerNavigation,
+});
+registry.putData(paletteToolExtensionPoint, {
+  identifier: 'hed-device-type-palette',
+  data: [
+    {
+      id: 'hed-navigate-device-type',
+      canHandle: (kind) => kind === TREE_REPRESENTATION_KIND,
+      component: DeviceTypePaletteNavigation,
+    },
+  ],
+});
 registry.putData(apolloClientOptionsConfigurersExtensionPoint, {
   identifier: 'hed-diagram-styles',
   data: [

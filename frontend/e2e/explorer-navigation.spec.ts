@@ -65,7 +65,17 @@ test('navigate from Details, the palette and branch occurrences to catalog types
     await page.getByRole('tab', { name: messages['properties.general'], exact: true }).click();
     const breakerTypeName = await page.getByTestId(messages['feature.deviceType']).getByRole('combobox').textContent();
     await item('Q1').first().locator('../..').getByRole('button').click();
-    await page.getByRole('navigation').getByRole('button', { name: label, exact: true }).click();
+    const palette = page.getByRole('navigation');
+    const navigationTool = palette.getByTestId(`tool-${label}`);
+    const renameTool = palette.getByRole('menuitem', { name: french ? 'Renommer' : 'Rename', exact: true });
+    for (const selector of ['.MuiListItemIcon-root', '.MuiListItemText-root']) {
+      const navigationBounds = await navigationTool.locator(selector).boundingBox();
+      const renameBounds = await renameTool.locator(selector).boundingBox();
+      expect(Math.abs(navigationBounds!.x - renameBounds!.x)).toBeLessThan(1);
+    }
+    await navigationTool.hover();
+    await expect(page.getByRole('tooltip', { name: label, exact: true })).toBeVisible();
+    await page.getByRole('navigation').getByTestId(`tool-${label}`).click();
     await expect(name).toHaveValue(breakerTypeName!);
     await expect(item(breakerTypeName!).first()).toBeVisible();
 
@@ -77,7 +87,7 @@ test('navigate from Details, the palette and branch occurrences to catalog types
     await expand();
     await expect(item(sampleName('sofaOutlet'))).toHaveCount(2);
     await item(sampleName('sofaOutlet')).last().locator('../..').getByRole('button').click();
-    await page.getByRole('navigation').getByRole('button', { name: label, exact: true }).click();
+    await page.getByRole('navigation').getByTestId(`tool-${label}`).click();
     await expect(name).toHaveValue(messages['kind.OUTLET']);
     await expect.poll(() => new URL(page.url()).searchParams.get('selection')).toBe(outletTypeId);
 

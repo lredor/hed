@@ -7,6 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { MockedProvider } from '@apollo/client/testing';
 import type { GQLSelect } from '@eclipse-sirius/sirius-components-forms';
 import type { TreeItemContextMenuComponentProps } from '@eclipse-sirius/sirius-components-trees';
@@ -18,6 +19,7 @@ import {
   DeviceTypePropertyNavigation,
   deviceTypeQuery,
 } from '../src/representations/navigation/DeviceTypeNavigation';
+import { NavigationPaletteTool } from '../src/representations/navigation/SemanticNavigation';
 import { platform } from './platform';
 
 const widget = (value: string): GQLSelect =>
@@ -98,5 +100,30 @@ describe('device type navigation', () => {
     );
     await waitFor(() => expect(resolved).toHaveBeenCalledOnce());
     expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
+  });
+});
+
+describe('native navigation palette entries', () => {
+  it('filters labels and invokes menu or last-used navigation without changing selection itself', async () => {
+    const invoke = vi.fn();
+    const props = { toolId: 'navigate', label: 'Navigate to supply circuit', onInvoke: invoke, asLastToolUsed: false };
+    const theme = createTheme({
+      palette: {
+        navigation: { leftBackground: '#eee', rightBackground: '#fff' },
+        navigationBar: { border: '#ddd', background: '#fff' },
+        selected: '#ddd',
+      },
+    });
+    const { rerender } = render(<NavigationPaletteTool {...props} searchedValue="missing" />, {
+      wrapper: ({ children }) => <ThemeProvider theme={theme}>{children}</ThemeProvider>,
+    });
+    expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
+    rerender(<NavigationPaletteTool {...props} searchedValue="supply" />);
+    await userEvent.click(screen.getByRole('menuitem', { name: props.label }));
+    expect(invoke).toHaveBeenCalledOnce();
+    expect(platform.setSelection).not.toHaveBeenCalled();
+    rerender(<NavigationPaletteTool {...props} asLastToolUsed={true} searchedValue={null} />);
+    await userEvent.click(screen.getByRole('button', { name: props.label }));
+    expect(invoke).toHaveBeenCalledTimes(2);
   });
 });

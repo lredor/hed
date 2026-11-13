@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 import { gql, useQuery } from '@apollo/client';
-import { useMultiToast, useSelection, useSelectionTargets } from '@eclipse-sirius/sirius-components-core';
+import { useMultiToast } from '@eclipse-sirius/sirius-components-core';
 import type { GQLSelect, PropertySectionLabelDecoratorProps } from '@eclipse-sirius/sirius-components-forms';
 import type { TreeItemContextMenuComponentProps } from '@eclipse-sirius/sirius-components-trees';
 import { TreePaletteContext } from '@eclipse-sirius/sirius-components-trees';
@@ -19,10 +19,11 @@ import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
 import { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { NavigationPaletteTool, useNavigateToSemanticElement } from './SemanticNavigation';
 
 export const deviceTypeQuery = gql`
   query HedDeviceType($editingContextId: ID!, $objectId: ID!) {
@@ -34,20 +35,9 @@ export const deviceTypeQuery = gql`
   }
 `;
 
-/** Updates the workbench selection and uses the native explorer target to expand the catalog path. */
-export function useNavigateToDeviceType() {
-  const { setSelection } = useSelection();
-  const { selectionTargets } = useSelectionTargets();
-  return (id: string) => {
-    const selection = { entries: [{ id }] };
-    setSelection(selection);
-    selectionTargets.find((target) => target.id === 'explorer')?.applySelection(selection);
-  };
-}
-
 /** Adds navigation beside the installed device's type selector, including in read-only views. */
 export function DeviceTypePropertyNavigation({ widget }: PropertySectionLabelDecoratorProps) {
-  const navigate = useNavigateToDeviceType();
+  const navigate = useNavigateToSemanticElement();
   const { t } = useTranslation('home-electrical-designer');
   if (
     widget.__typename !== 'Select' ||
@@ -88,7 +78,7 @@ function useDeviceTypeId(editingContextId: string, objectId: string | undefined)
 
 /** Resolves the clicked occurrence's current type and contributes a read-only action only when it exists. */
 export function DeviceTypeExplorerNavigation({ editingContextId, item, onClose }: TreeItemContextMenuComponentProps) {
-  const navigate = useNavigateToDeviceType();
+  const navigate = useNavigateToSemanticElement();
   const { t } = useTranslation('home-electrical-designer');
   const id = useDeviceTypeId(editingContextId, item.id);
   if (!id) return null;
@@ -114,31 +104,24 @@ export function DeviceTypePaletteNavigation({
 }: PaletteToolContributionComponentProps) {
   const { editingContextId, item, onClose } = useContext(TreePaletteContext);
   const id = useDeviceTypeId(editingContextId, item?.id);
-  const navigate = useNavigateToDeviceType();
+  const navigate = useNavigateToSemanticElement();
   const { hidePalette } = usePalette();
   const { t } = useTranslation('home-electrical-designer');
   const label = t('navigation.deviceType');
-  if (!id || (searchedValue && !label.toLocaleLowerCase().includes(searchedValue.toLocaleLowerCase()))) return null;
+  if (!id) return null;
   const invoke = () => {
     onInvoked();
     hidePalette();
     navigate(id);
     onClose();
   };
-  if (asLastToolUsed)
-    return (
-      <Tooltip title={label}>
-        <IconButton aria-label={label} onClick={invoke}>
-          <ArrowForwardIcon />
-        </IconButton>
-      </Tooltip>
-    );
   return (
-    <ListItemButton component="button" onClick={invoke} aria-label={label}>
-      <ListItemIcon>
-        <ArrowForwardIcon fontSize="small" />
-      </ListItemIcon>
-      <ListItemText primary={label} />
-    </ListItemButton>
+    <NavigationPaletteTool
+      toolId="hed-navigate-device-type"
+      label={label}
+      searchedValue={searchedValue}
+      asLastToolUsed={asLastToolUsed}
+      onInvoke={invoke}
+    />
   );
 }

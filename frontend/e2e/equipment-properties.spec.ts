@@ -62,6 +62,10 @@ test('separate general and advanced properties for installed terminal, modular a
     expect(projectId).toBeTruthy();
     await item(projectName).waitFor();
     await expand();
+    await item(sampleName('livingRoom')).click();
+    await expect(name).toHaveValue(sampleName('livingRoom'));
+    await expect(page.getByRole('textbox', { name: messages['feature.description'], exact: true })).toBeVisible();
+    await expect(page.getByTestId(messages['feature.usage'])).toHaveCount(0);
     await item(sampleName('sofaOutlet')).click();
     await general().click();
     await expect(name).toHaveValue(sampleName('sofaOutlet'));
@@ -75,6 +79,9 @@ test('separate general and advanced properties for installed terminal, modular a
     await expect(name).toHaveCount(0);
     await expect(field('room')).toHaveCount(0);
     await general().click();
+
+    await item(sampleName('livingRoomOutlets')).click();
+    await expect(field('usage')).toBeVisible();
 
     await item('ID1').click();
     await general().click();

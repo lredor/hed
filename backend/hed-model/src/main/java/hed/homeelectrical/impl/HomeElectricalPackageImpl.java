@@ -599,16 +599,6 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
      * @generated
      */
     @Override
-    public EAttribute getRoom_Usage() {
-        return (EAttribute) roomEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
     public EClass getCatalog() {
         return catalogEClass;
     }
@@ -1285,7 +1275,6 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         createEAttribute(storeyEClass, STOREY__PLAN_ASPECT_RATIO);
 
         roomEClass = createEClass(ROOM);
-        createEAttribute(roomEClass, ROOM__USAGE);
 
         catalogEClass = createEClass(CATALOG);
         createEReference(catalogEClass, CATALOG__DEVICE_TYPES);
@@ -1482,8 +1471,6 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
                 IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(roomEClass, Room.class, "Room", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getRoom_Usage(), ecorePackage.getEString(), "usage", null, 0, 1, Room.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED,
-                IS_ORDERED);
 
         initEClass(catalogEClass, Catalog.class, "Catalog", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getCatalog_DeviceTypes(), this.getDeviceType(), null, "deviceTypes", null, 0, -1, Catalog.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,

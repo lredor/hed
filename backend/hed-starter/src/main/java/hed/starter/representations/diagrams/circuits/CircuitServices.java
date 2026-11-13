@@ -134,12 +134,22 @@ public class CircuitServices {
 
     private List<FieldEquipment> members(EObject owner) {
         if (owner instanceof FinalCircuit circuit && circuit.getBranches().isEmpty()) {
-            return CircuitEquipment.getAssociatedEquipment(circuit);
+            return CircuitEquipment.getAssociatedEquipment(circuit).stream().filter(equipment -> !controlledOnSameCircuit(equipment)).toList();
         }
         if (owner instanceof CircuitBranch branch && branch.getCircuit() != null) {
-            return branch.getEquipment().stream().filter(equipment -> equipment.getCircuit() == branch.getCircuit() && equipment.getBranch() == branch).toList();
+            return branch.getEquipment().stream().filter(equipment -> equipment.getCircuit() == branch.getCircuit() && equipment.getBranch() == branch)
+                    .filter(equipment -> !controlledOnSameCircuit(equipment)).toList();
         }
         return List.of();
+    }
+
+    /** A command edge already connects these receivers; retain their assignment but omit the redundant solid path. */
+    private boolean controlledOnSameCircuit(FieldEquipment equipment) {
+        var circuit = equipment.getCircuit();
+        var home = HedDomain.dwelling(equipment);
+        return circuit != null && home != null && home.getControlFunctions().stream().filter(function -> function.getTargets().contains(equipment))
+                .flatMap(function -> function.getChannels().stream()).map(EObject::eContainer).filter(ControlDevice.class::isInstance).map(ControlDevice.class::cast)
+                .anyMatch(control -> control != equipment && control.getCircuit() == circuit);
     }
 
     /**

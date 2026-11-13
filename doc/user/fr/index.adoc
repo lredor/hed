@@ -400,6 +400,7 @@ Les chaînes suivent l’ordre des associations, pas les positions graphiques ni
 Une branche vide n’a pas de lien sortant tant qu’aucun équipement ne lui est affecté. Un circuit sans branche ni équipement reste accessible dans Model Explorer et la Liste des circuits.
 Les flèches pleines représentent l’alimentation et la protection ; les liens violets en pointillés représentent les commandes et leurs canaux.
 Pour une commande à un seul canal, le lien part directement de l’équipement parent. Les canaux en bordure sont affichés uniquement lorsqu’il y en a plusieurs.
+Si un récepteur et sa commande sont sur le même circuit, le récepteur est omis de la chaîne de liens pleins : il reste visible et relié par la fonction de commande en pointillés. C’est aussi le cas d’une motorisation de volet roulant et de sa commande. Les associations au circuit et à la branche restent conservées dans le modèle. Si la commande appartient à un autre circuit, le récepteur conserve son lien d’alimentation plein.
 Déplacez les pièces, niveaux, équipements terminaux, dérivations et tableaux pour organiser la vue ; les conteneurs des pièces et niveaux sont redimensionnables. La taille des tableaux et rails suit leur contenu.
 Déplacer un nœud change sa position graphique, pas sa pièce ni ses relations électriques.
 Cliquez sur le premier lien d’un circuit ou sur son carré de dérivation pour éditer le circuit ; sur le premier lien d’une branche pour éditer la branche. Les liens entre équipements sélectionnent leur équipement cible.

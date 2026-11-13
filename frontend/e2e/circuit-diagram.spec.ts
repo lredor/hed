@@ -86,7 +86,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await dialog.getByRole('textbox').fill('Logical circuits');
     await dialog.getByRole('button', { name: /^(Create|Créer)$/ }).click();
     await expect.poll(() => flat().length).toBe(27);
-    await expect.poll(() => diagram?.edges.length).toBe(18);
+    await expect.poll(() => diagram?.edges.length).toBe(16);
     await expand();
     await expect(item('Logical circuits')).toBeVisible();
     // This logical schematic does not count as placement on a storey's Floor Plan.
@@ -117,12 +117,14 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     expect(rail.targetObjectKind).toContain('entity=DINRail');
     expect(rail.parent).toBe(semantic(sampleName('mainBoard')).id);
     expect(semantic(sampleName('groundFloorLighting'))).toBeUndefined();
-    expect(link(semantic('Q1'), semantic(sampleName('ceilingLight'))).centerLabel.text).toBe(
+    expect(link(semantic('Q1'), semantic(sampleName('doubleSwitch'))).centerLabel.text).toBe(
       sampleName('groundFloorLighting')
     );
-    expect(link(semantic(sampleName('ceilingLight')), semantic(sampleName('doubleSwitch'))).centerLabel.text).toBe(
-      sampleName('groundFloorLighting')
+    expect(link(semantic('Q1'), semantic(sampleName('ceilingLight')))).toBeUndefined();
+    expect(link(semantic('Q3'), semantic(sampleName('shutterControl'))).centerLabel.text).toBe(
+      sampleName('rollerShutters')
     );
+    expect(link(semantic('Q3'), semantic(sampleName('livingRoomShutter')))).toBeUndefined();
     expect(link(semantic(sampleName('doubleSwitch')), semantic(sampleName('secondControl'))).centerLabel.text).toBe(
       sampleName('groundFloorLighting')
     );
@@ -234,7 +236,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.reload();
     await expect(node(sampleName('sofaOutlet'))).toBeVisible();
     await expect.poll(() => position(sampleName('sofaOutlet'))).toEqual(moved);
-    await expect.poll(() => diagram.edges.length).toBe(18);
+    await expect.poll(() => diagram.edges.length).toBe(16);
     await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(232);
     // Reordering in Model Explorer refreshes the horizontal row, including after a saved-layout reload.
     await expand();
@@ -247,6 +249,18 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await expect.poll(async () => (await position('Q2')).y === (await position('Q1')).y).toBe(true);
     await page.reload();
     await expect(node('Q1')).toBeVisible();
+    await expect(page.locator('[data-testid^="circuit-device-"]')).toHaveCount(6);
+    await expect(page.locator('[data-testid^="circuit-rail-"]')).toHaveCount(2);
+    for (const device of ['ID1', 'Q1', 'Q2', 'Q3', 'Q4', 'Q5']) {
+      await expect(node(device)).toBeVisible();
+      await expect
+        .poll(() =>
+          node(device)
+            .locator('img')
+            .evaluate((image: HTMLImageElement) => image.naturalWidth)
+        )
+        .toBeGreaterThan(0);
+    }
     await expect.poll(async () => (await position('Q2')).x < (await position('Q1')).x).toBe(true);
     await expect
       .poll(() => node(sampleName('mainBoard')).evaluate((element) => parseFloat(getComputedStyle(element).width)))
@@ -266,12 +280,14 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
       .filter({ hasText: samplePattern('groundFloorLighting') })
       .click();
     await expect
-      .poll(() => !!link(semantic(sampleName('ceilingLight')), semantic(sampleName('sofaOutlet'))))
-      .toBe(true);
+      .poll(() =>
+        diagram.edges.some(
+          (edge: any) => edge.targetId === semantic(sampleName('sofaOutlet')).id && edge.style.lineStyle === 'Solid'
+        )
+      )
+      .toBe(false);
     expect(link(semantic('Q2'), semantic(sampleName('sofaOutlet')))).toBeUndefined();
-    expect(link(semantic(sampleName('sofaOutlet')), semantic(sampleName('doubleSwitch'))).centerLabel.text).toBe(
-      sampleName('groundFloorLighting')
-    );
+    expect(link(channels[1], semantic(sampleName('sofaOutlet'))).style.lineStyle).toBe('Dash');
     await page
       .getByTestId(/^(Room|Pièce)$/)
       .getByRole('combobox')

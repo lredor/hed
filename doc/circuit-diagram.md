@@ -31,6 +31,8 @@ Conductor sections and applicable phases remain editable in Details, without bei
 
 Dashed purple arrows show functional controls and carry the control function's name. A direct control connects each participating channel to each controlled load or outlet. If the function declares an actuator, the diagram instead shows **channels → actuator → controlled equipment**. Several commands for the same light, double switches, switched outlets and shutters use the existing model relationships without inferring an additional electrical connection.
 
+When a receiver and at least one of its command devices belong to the same nonempty circuit, the receiver is skipped in that circuit's solid chain (including branch chains). The surviving members connect directly to each other. The receiver stays visible and is reached through its dashed control edge. This applies to lighting, switched outlets and shutter motors. Its circuit and branch assignments remain unchanged, and remain listed in Details and tables. Receivers controlled from a different circuit, or without a command assigned to their circuit, keep their solid supply path.
+
 Click a node or edge to edit its underlying object through Details. The first supply edge represents its circuit or branch; a continuation edge represents its target equipment. The junction represents its final circuit. A command edge exposes the control function's channels, targets and actuator. Changes refresh the diagram. Creation/deletion and room assignment remain available through Model Explorer and Details. Graphical positions inside a room do not change the equipment's room or circuit.
 
 ## Model coverage

@@ -398,6 +398,7 @@ Chains follow association order, not graphical positions or physical cable routi
 An empty branch has no outgoing edge until equipment is assigned. A circuit without branches or equipment remains accessible in Model Explorer and the Circuit Table.
 Solid arrows show supply and protection; dashed purple links show functional controls and their channels.
 For a single-channel command, the control edge starts from the parent device. Border-channel nodes appear only for devices with several channels.
+When a receiver and its command share the same circuit, the receiver is skipped in the solid supply chain. It stays visible and connected by the dashed control function, including shutter motors and their commands. Circuit and branch assignments remain stored in the model. A receiver controlled from another circuit keeps its solid supply path.
 Move rooms, storeys, terminal devices, junctions and boards to organize the view; room and storey containers can be resized. Board and rail sizes follow their content.
 Moving a node changes its layout, not its room or electrical relationships.
 Click a circuit's first edge or its junction to edit that circuit; click a branch's first edge to edit the branch. Continuation edges select their target equipment.

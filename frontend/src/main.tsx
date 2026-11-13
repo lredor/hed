@@ -24,6 +24,10 @@ import '@fontsource/roboto/400.css';
 import '@xyflow/react/dist/style.css';
 import './style.css';
 import { panelDocumentTransform, panelNodeRegistry } from './representations/diagrams/panel/PanelDiagram';
+import {
+  circuitBoardDocumentTransform,
+  circuitBoardNodeRegistry,
+} from './representations/diagrams/circuits/CircuitBoard';
 import { diagramRendererReactFlowPropsCustomizerExtensionPoint } from '@eclipse-sirius/sirius-components-diagrams';
 import { usePanelRailDropProps } from './representations/diagrams/panel/PanelRailDrop';
 import { ExplorerDragSourcesProvider } from './representations/modelexplorer/ExplorerDragSources';
@@ -103,8 +107,11 @@ registry.putData(apolloClientOptionsConfigurersExtensionPoint, {
     (options) => ({
       ...options,
       documentTransform: options.documentTransform
-        ? options.documentTransform.concat(panelDocumentTransform).concat(floorPlanDocumentTransform)
-        : panelDocumentTransform.concat(floorPlanDocumentTransform),
+        ? options.documentTransform
+            .concat(panelDocumentTransform)
+            .concat(floorPlanDocumentTransform)
+            .concat(circuitBoardDocumentTransform)
+        : panelDocumentTransform.concat(floorPlanDocumentTransform).concat(circuitBoardDocumentTransform),
     }),
   ],
 });
@@ -125,11 +132,20 @@ createRoot(document.getElementById('root')!).render(
       extensionRegistryMergeStrategy={registryMergeStrategy}>
       <DiagramRepresentationConfiguration
         nodeTypeRegistry={{
-          nodeConverters: [...panelNodeRegistry.nodeConverters, ...floorPlanNodeRegistry.nodeConverters],
-          nodeLayoutHandlers: [...panelNodeRegistry.nodeLayoutHandlers, ...floorPlanNodeRegistry.nodeLayoutHandlers],
+          nodeConverters: [
+            ...panelNodeRegistry.nodeConverters,
+            ...floorPlanNodeRegistry.nodeConverters,
+            ...circuitBoardNodeRegistry.nodeConverters,
+          ],
+          nodeLayoutHandlers: [
+            ...panelNodeRegistry.nodeLayoutHandlers,
+            ...floorPlanNodeRegistry.nodeLayoutHandlers,
+            ...circuitBoardNodeRegistry.nodeLayoutHandlers,
+          ],
           nodeTypeContributions: [
             ...panelNodeRegistry.nodeTypeContributions,
             ...floorPlanNodeRegistry.nodeTypeContributions,
+            ...circuitBoardNodeRegistry.nodeTypeContributions,
           ],
         }}
       />

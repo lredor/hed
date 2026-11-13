@@ -389,10 +389,20 @@ image::device-catalog-table.png[Catalogue des équipements,width=1000]
 WARNING: Le *Schéma des circuits* est expérimental. Il va évoluer et ces évolutions pourront entraîner la perte des diagrammes existants et de leurs positions. Limitez son utilisation et évitez de consacrer du temps à des mises en page que vous souhaitez conserver.
 
 Créez-le sur *Logement* avec *Nouvelle représentation*.
-Il affiche les niveaux et les pièces comme des boîtes englobantes, les pictogrammes des équipements, les tableaux, les circuits et les branches.
+Il affiche les niveaux et les pièces comme des boîtes englobantes, les pictogrammes des équipements terminaux et les tableaux contenant leurs rails DIN.
+Les rails alignent horizontalement les appareils modulaires, dans des rectangles plus hauts que larges et dans l’ordre du Model Explorer. Réordonnez-les dans Model Explorer ; déplacer un tableau conserve cet agencement.
+Les circuits et les branches sont portés par les liens, avec leur nom comme libellé :
+
+* Sans branche : protection → premier équipement associé → deuxième → suivant, avec le nom du circuit sur chaque segment.
+* Avec branches : protection → carré noir de dérivation de 3 × 3 (nom du circuit), puis une chaîne par branche non vide (nom de la branche sur chaque segment).
+
+Les chaînes suivent l’ordre des associations, pas les positions graphiques ni un cheminement physique de câbles.
+Une branche vide n’a pas de lien sortant tant qu’aucun équipement ne lui est affecté. Un circuit sans branche ni équipement reste accessible dans Model Explorer et la Liste des circuits.
 Les flèches pleines représentent l’alimentation et la protection ; les liens violets en pointillés représentent les commandes et leurs canaux.
-Déplacez et redimensionnez librement les conteneurs pour organiser la vue.
+Pour une commande à un seul canal, le lien part directement de l’équipement parent. Les canaux en bordure sont affichés uniquement lorsqu’il y en a plusieurs.
+Déplacez les pièces, niveaux, équipements terminaux, dérivations et tableaux pour organiser la vue ; les conteneurs des pièces et niveaux sont redimensionnables. La taille des tableaux et rails suit leur contenu.
 Déplacer un nœud change sa position graphique, pas sa pièce ni ses relations électriques.
+Cliquez sur le premier lien d’un circuit ou sur son carré de dérivation pour éditer le circuit ; sur le premier lien d’une branche pour éditer la branche. Les liens entre équipements sélectionnent leur équipement cible.
 Modifiez les relations dans Model Explorer et les propriétés : le diagramme se met à jour automatiquement.
 
 image::circuit-diagram.png[Schéma des circuits,width=1000]

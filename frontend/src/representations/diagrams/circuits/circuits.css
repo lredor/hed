@@ -1,0 +1,65 @@
+/*******************************************************************************
+ * Copyright (c) 2026 Laurent Redor.
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+.hed-circuit-board-node {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid #94a3b8;
+  border-radius: 4px;
+  background: #fff7ed;
+  color: #0f172a;
+}
+.hed-circuit-rail {
+  background: #e2e8f0;
+}
+.hed-circuit-device {
+  background: #ffffff;
+  border-radius: 2px;
+}
+.hed-circuit-caption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.hed-circuit-caption img {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.hed-circuit-caption span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hed-circuit-device .hed-circuit-caption {
+  height: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4px 2px;
+  font-size: 11px;
+}
+.hed-circuit-device .hed-circuit-caption img {
+  width: 24px;
+  height: 24px;
+}
+.hed-circuit-device .hed-circuit-caption span {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+.hed-circuit-selected {
+  outline: 2px solid #1976d2;
+}

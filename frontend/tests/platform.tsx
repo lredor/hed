@@ -64,6 +64,9 @@ vi.mock('@eclipse-sirius/sirius-components-diagrams', async () => {
     NodeTypeContribution: () => null,
     convertOutsideLabels: vi.fn((labels) => labels ?? []),
     convertInsideLabel: vi.fn((label) => label ?? null),
+    convertHandles: vi.fn(() => []),
+    useRefreshConnectionHandles: vi.fn(),
+    ConnectionHandles: () => null,
     useDrop: () => ({ onDrop: platform.onDrop, onDragOver: platform.onDragOver }),
     useDropNodeStyle: () => ({ style: {} }),
   };

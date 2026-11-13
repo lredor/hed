@@ -387,10 +387,20 @@ image::device-catalog-table.png[Device Catalog Table,width=1000]
 WARNING: The *Circuit Diagram* is experimental. It will evolve, and future changes may cause existing circuit diagrams and their saved layouts to be lost. Limit its use and avoid investing time in layouts you need to retain.
 
 Create it on *Dwelling* using *New representation*.
-It displays storeys and rooms as containers, equipment pictograms, boards, circuits and branches.
+It displays storeys and rooms as containers, terminal pictograms and boards containing their DIN rails.
+Rails align tall modular devices horizontally in Model Explorer order. Reorder them in Model Explorer; moving a board preserves this arrangement.
+Circuits and branches are named edges rather than equipment nodes:
+
+* Without branches: protective device → first associated device → second → next, with the circuit name on each segment.
+* With branches: protective device → black 3 × 3 junction (circuit name), then one chain per nonempty branch (branch name on each segment).
+
+Chains follow association order, not graphical positions or physical cable routing.
+An empty branch has no outgoing edge until equipment is assigned. A circuit without branches or equipment remains accessible in Model Explorer and the Circuit Table.
 Solid arrows show supply and protection; dashed purple links show functional controls and their channels.
-Move and resize containers freely to organize the view.
+For a single-channel command, the control edge starts from the parent device. Border-channel nodes appear only for devices with several channels.
+Move rooms, storeys, terminal devices, junctions and boards to organize the view; room and storey containers can be resized. Board and rail sizes follow their content.
 Moving a node changes its layout, not its room or electrical relationships.
+Click a circuit's first edge or its junction to edit that circuit; click a branch's first edge to edit the branch. Continuation edges select their target equipment.
 Edit connections through Model Explorer and Properties; the diagram updates automatically.
 
 image::circuit-diagram.png[Circuit Diagram,width=1000]

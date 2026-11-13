@@ -24,6 +24,7 @@ import org.eclipse.sirius.components.view.diagram.InsideLabelPosition;
 import org.eclipse.sirius.components.view.diagram.LineStyle;
 import org.eclipse.sirius.components.view.diagram.NodeDescription;
 import org.eclipse.sirius.components.view.diagram.NodePalette;
+import org.eclipse.sirius.components.view.diagram.RectangularNodeStyleDescription;
 import org.eclipse.sirius.components.view.diagram.OutsideLabelPosition;
 import org.eclipse.sirius.components.view.diagram.SynchronizationPolicy;
 import org.eclipse.sirius.components.view.diagram.UserResizableDirection;
@@ -31,7 +32,7 @@ import hed.domain.Messages;
 import hed.starter.HedDomainIcons;
 import hed.starter.representations.HedRepresentationIcons;
 
-/** A native, freely arranged logical view of the dwelling's circuits and controls. */
+/** Logical supply and control paths between room equipment and ordered rail-mounted devices. */
 public final class CircuitDiagram {
     private final Locale locale;
 
@@ -48,8 +49,8 @@ public final class CircuitDiagram {
     }
 
     /**
-     * Builds a synchronized logical diagram on a dwelling, using free-form containers and shared pictograms.
-     * Positions belong to the representation; moving a node does not edit its room or circuit assignment.
+     * Builds a synchronized logical diagram with freely arranged rooms and equipment, ordered rails and named supply paths.
+     * Free positions belong to the representation; moving a node does not edit its room or circuit assignment.
      * @return a new description, to append after existing representations so their identifiers remain stable
      */
     public DiagramDescription create() {
@@ -60,17 +61,28 @@ public final class CircuitDiagram {
         unlocated.getReusedBorderNodeDescriptions().add(channel);
         var room = container("room", "Room", "aql:self.rooms", "#ffffff", equipment);
         var storey = container("storey", "Storey", "aql:self.storeys", "#eff6ff", room);
-        var modular = pictogram("modular", "ModularDevice", "aql:self.devices", 24);
-        var circuit = pictogram("circuit", "Circuit", "aql:self.getHedCircuitBoardCircuits()", 24);
-        var unattached = pictogram("unattached-circuit", "Circuit", "aql:self.circuits->select(c | c.sourceBoard = null)", 24);
-        var branch = pictogram("branch", "CircuitBranch", "aql:self.getHedCircuitBranches()", 24);
-        var unattachedBranch = pictogram("unattached-branch", "CircuitBranch", "aql:self.getHedCircuitBranches()", 24);
-        // Append branch descriptions to preserve the paths and IDs of existing saved nodes and edges.
-        var board = container("board", "DistributionBoard", "aql:self.boards", "#fff7ed", modular, circuit, branch);
+        var modular = boardNode("modular", "ModularDevice", "aql:self.devices", "device");
+        modular.setDefaultWidthExpression("aql:self.getHedCircuitDeviceWidth()");
+        modular.setDefaultHeightExpression("112");
+        var rail = boardNode("rail", "DINRail", "aql:self.rails", "rail", modular);
+        rail.setDefaultWidthExpression("aql:self.getHedCircuitRailWidth()");
+        rail.setDefaultHeightExpression("160");
+        var board = container("board", "DistributionBoard", "aql:self.boards", "#fff7ed", rail);
+        board.setUserResizable(UserResizableDirection.NONE);
+        board.setDefaultWidthExpression("aql:self.getHedCircuitBoardWidth()");
+        // A native vertical list is also kept fixed by Sirius's automatic arranger.
+        ((RectangularNodeStyleDescription) board.getStyle()).setChildrenLayoutStrategy(
+                b.newListLayoutStrategyDescription().areChildNodesDraggableExpression("aql:false").topGapExpression("12").bottomGapExpression("12").build());
+        // A junction is only a graphical view of the circuit; no additional semantic object is needed.
+        var junction = b.newNodeDescription().name("hed-circuits-junction").domainType("homeelectrical::FinalCircuit")
+                .semanticCandidatesExpression("aql:self.getHedCircuitJunctions()").preconditionExpression("aql:true")
+                .synchronizationPolicy(SynchronizationPolicy.SYNCHRONIZED).defaultWidthExpression("3").defaultHeightExpression("3").userResizable(UserResizableDirection.NONE)
+                .style(b.newRectangularNodeStyleDescription().background(color("#000000")).borderSize(0).borderRadius(0).build()).palette(palette()).build();
         var meter = pictogram("meter", "EnergyMeter", "aql:self.meter", 24);
         var serviceBreaker = pictogram("service-breaker", "ServiceCircuitBreaker", "aql:self.mainBreaker", 24);
         var supply = container("supply", "ServiceConnection", "aql:self.serviceConnection", "#f8fafc", meter, serviceBreaker);
-        NodeDescription[] terminals = { equipment, unlocated }, circuits = { circuit, unattached };
+        NodeDescription[] terminals = { equipment, unlocated }, junctions = { junction };
+        NodeDescription[] commands = { channel, equipment, unlocated };
         var edges = new ArrayList<EdgeDescription>();
         // Domain-based edges project recorded links only; a multi-channel control keeps distinct endpoints.
         edges.add(edge("meter-supply", "ServiceConnection", "aql:self.serviceConnection", "aql:self.meter", "aql:self.mainBreaker", new NodeDescription[] { meter },
@@ -79,24 +91,27 @@ public final class CircuitDiagram {
                 new NodeDescription[] { modular }, false, ""));
         edges.add(edge("residual-protection", "ModularDevice", "aql:self.boards.devices", "aql:self.upstreamRccb", "aql:self", new NodeDescription[] { modular }, new NodeDescription[] { modular },
                 false, ""));
-        edges.add(edge("circuit-protection", "Circuit", "aql:self.circuits", "aql:self.protectiveDevice", "aql:self", new NodeDescription[] { modular }, circuits, false, ""));
-        edges.add(edge("circuit-equipment", "FieldEquipment", "aql:self.equipment->select(e | e.branch = null)", "aql:self.circuit", "aql:self", circuits, terminals, false, ""));
-        edges.add(edge("board-feeder", "DistributionCircuit", "aql:self.circuits->filter(homeelectrical::DistributionCircuit)", "aql:self", "aql:self.targetBoard", circuits,
-                new NodeDescription[] { board }, false, ""));
-        edges.add(edge("direct-control", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator = null)", "aql:self.channels", "aql:self.targets", new NodeDescription[] { channel },
+        edges.add(edge("circuit-start", "FinalCircuit", "aql:self.circuits->filter(homeelectrical::FinalCircuit)", "aql:self.protectiveDevice", "aql:self.getHedCircuitFirstEquipment()",
+                new NodeDescription[] { modular }, terminals, false, "aql:self.name"));
+        edges.add(edge("circuit-junction", "FinalCircuit", "aql:self.getHedCircuitJunctions()", "aql:self.protectiveDevice", "aql:self", new NodeDescription[] { modular }, junctions, false,
+                "aql:self.name"));
+        edges.add(edge("branch-start", "CircuitBranch", "aql:self.circuits->filter(homeelectrical::FinalCircuit).branches", "aql:self.circuit", "aql:self.getHedCircuitFirstEquipment()",
+                junctions, terminals, false, "aql:self.name"));
+        edges.add(edge("equipment-chain", "FieldEquipment", "aql:self.equipment", "aql:self.getHedCircuitPreviousEquipment()", "aql:self", terminals, terminals, false,
+                "aql:self.getHedCircuitChainLabel()"));
+        edges.add(edge("board-feeder", "DistributionCircuit", "aql:self.circuits->filter(homeelectrical::DistributionCircuit)", "aql:self.protectiveDevice", "aql:self.targetBoard",
+                new NodeDescription[] { modular }, new NodeDescription[] { board }, false, "aql:self.name"));
+        edges.add(edge("direct-control", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator = null)", "aql:self.getHedCircuitControlSources()", "aql:self.targets", commands,
                 terminals, true, "aql:self.name"));
-        edges.add(edge("actuator-control", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator <> null)", "aql:self.channels", "aql:self.actuator", new NodeDescription[] { channel },
+        edges.add(edge("actuator-control", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator <> null)", "aql:self.getHedCircuitControlSources()", "aql:self.actuator", commands,
                 new NodeDescription[] { modular }, true, "aql:self.name"));
         edges.add(edge("actuator-target", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator <> null)", "aql:self.actuator", "aql:self.targets", new NodeDescription[] { modular },
                 terminals, true, "aql:self.name"));
-        NodeDescription[] branches = { branch, unattachedBranch };
-        edges.add(edge("circuit-branch", "CircuitBranch", "aql:self.circuits->filter(homeelectrical::FinalCircuit).branches", "aql:self.circuit", "aql:self", circuits, branches, false, ""));
-        edges.add(edge("branch-equipment", "FieldEquipment", "aql:self.equipment->select(e | e.branch <> null)", "aql:self.branch", "aql:self", branches, terminals, false, ""));
         return b.newDiagramDescription().name(Messages.text(locale, "diagram.circuits")).domainType("homeelectrical::Dwelling").preconditionExpression("aql:true")
                 .titleExpression(Messages.text(locale, "diagram.circuits")).iconExpression(HedRepresentationIcons.CIRCUITS).description(Messages.text(locale, "diagram.circuits.description"))
                 .endUserDocumentation(Messages.text(locale, "diagram.circuits.description")).style(b.newDiagramStyleDescription().background(color("#ffffff")).build())
                 .layoutOption(DiagramLayoutOption.AUTO_UNTIL_MANUAL).arrangeLayoutDirection(ArrangeLayoutDirection.RIGHT)
-                .nodeDescriptions(storey, board, supply, unlocated, unattached, unattachedBranch).edgeDescriptions(edges.toArray(EdgeDescription[]::new)).build();
+                .nodeDescriptions(storey, board, supply, unlocated, junction).edgeDescriptions(edges.toArray(EdgeDescription[]::new)).build();
     }
 
     private UserColor color(String value) {
@@ -129,12 +144,18 @@ public final class CircuitDiagram {
                 .build();
     }
 
+    private NodeDescription boardNode(String name, String type, String candidates, String role, NodeDescription... children) {
+        return b.newNodeDescription().name("hed-circuits-" + name).domainType("homeelectrical::" + type).semanticCandidatesExpression(candidates).preconditionExpression("aql:true")
+                .synchronizationPolicy(SynchronizationPolicy.SYNCHRONIZED).userResizable(UserResizableDirection.NONE)
+                .style(b.newImageNodeStyleDescription().shape("hed-circuits:board-" + role).borderSize(0).build()).palette(palette()).childrenDescriptions(children).build();
+    }
+
     private EdgeDescription edge(String name, String type, String candidates, String source, String target, NodeDescription[] sources, NodeDescription[] targets, boolean control, String label) {
         return b.newEdgeDescription().name("hed-circuits-" + name).domainType("homeelectrical::" + type).semanticCandidatesExpression(candidates).preconditionExpression("aql:true")
                 .synchronizationPolicy(SynchronizationPolicy.SYNCHRONIZED).isDomainBasedEdge(true).sourceExpression(source).targetExpression(target).sourceDescriptions(sources)
                 .targetDescriptions(targets).centerLabelExpression(label)
                 .style(b.newEdgeStyle().edgeType(EdgeType.MANHATTAN).lineStyle(control ? LineStyle.DASH : LineStyle.SOLID).color(color(control ? "#7c3aed" : "#334155")).background(color("#ffffff"))
-                        .borderSize(0).edgeWidth(1).targetArrowStyle(ArrowStyle.INPUT_ARROW).showIcon(false).fontSize(11).build())
+                        .borderSize(0).edgeWidth(1).targetArrowStyle(name.equals("circuit-junction") ? ArrowStyle.NONE : ArrowStyle.INPUT_ARROW).showIcon(false).fontSize(11).build())
                 .palette(b.newEdgePalette().deleteTool(b.newDeleteTool().name("Delete").preconditionExpression("aql:false").build()).build()).build();
     }
 }

@@ -43,7 +43,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
   const node = (label: string) => page.locator(`.react-flow__node[data-id="${semantic(label)?.id}"]`);
   const item = (label: string | RegExp) =>
     page
-      .locator('p')
+      .locator('[data-treeitemid] p')
       .filter({ hasText: typeof label === 'string' ? new RegExp('^' + label + '$') : label })
       .first();
   const expand = async () => {
@@ -85,8 +85,8 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
       .click();
     await dialog.getByRole('textbox').fill('Logical circuits');
     await dialog.getByRole('button', { name: /^(Create|Créer)$/ }).click();
-    await expect.poll(() => flat().length).toBe(32);
-    await expect.poll(() => diagram?.edges.length).toBe(23);
+    await expect.poll(() => flat().length).toBe(27);
+    await expect.poll(() => diagram?.edges.length).toBe(18);
     await expand();
     await expect(item('Logical circuits')).toBeVisible();
     // This logical schematic does not count as placement on a storey's Floor Plan.
@@ -113,11 +113,48 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await expect(node(sampleName('livingRoom'))).toBeVisible();
     expect(semantic(sampleName('livingRoom')).parent).toBe(semantic(sampleName('groundFloor')).id);
     expect(semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('livingRoom')).id);
-    expect(semantic('Q1').parent).toBe(semantic(sampleName('mainBoard')).id);
-    expect(semantic(sampleName('groundFloorLighting')).parent).toBe(semantic(sampleName('mainBoard')).id);
-    expect(link(semantic('Q1'), semantic(sampleName('groundFloorLighting')))).toBeTruthy();
-    expect(link(semantic(sampleName('livingRoomOutlets')), semantic(sampleName('sofaOutlet')))).toBeTruthy();
-    expect(link(semantic(sampleName('garageBoardSupply')), semantic(sampleName('garageBoard')))).toBeTruthy();
+    const rail = flat().find((candidate) => candidate.id === semantic('Q1').parent);
+    expect(rail.targetObjectKind).toContain('entity=DINRail');
+    expect(rail.parent).toBe(semantic(sampleName('mainBoard')).id);
+    expect(semantic(sampleName('groundFloorLighting'))).toBeUndefined();
+    expect(link(semantic('Q1'), semantic(sampleName('ceilingLight'))).centerLabel.text).toBe(
+      sampleName('groundFloorLighting')
+    );
+    expect(link(semantic(sampleName('ceilingLight')), semantic(sampleName('doubleSwitch'))).centerLabel.text).toBe(
+      sampleName('groundFloorLighting')
+    );
+    expect(link(semantic(sampleName('doubleSwitch')), semantic(sampleName('secondControl'))).centerLabel.text).toBe(
+      sampleName('groundFloorLighting')
+    );
+    expect(link(semantic('Q2'), semantic(sampleName('sofaOutlet'))).centerLabel.text).toBe(
+      sampleName('livingRoomOutlets')
+    );
+    expect(link(semantic('Q5'), semantic(sampleName('garageBoard'))).centerLabel.text).toBe(
+      sampleName('garageBoardSupply')
+    );
+    // A single channel uses its parent as the control endpoint; a double switch retains two border nodes.
+    expect(flat().filter((candidate) => candidate.parent === semantic(sampleName('secondControl')).id)).toHaveLength(0);
+    expect(link(semantic(sampleName('secondControl')), semantic(sampleName('ceilingLight'))).style.lineStyle).toBe(
+      'Dash'
+    );
+    const rowDevices = flat().filter((candidate) => candidate.parent === rail.id);
+    const positions = () => Promise.all(rowDevices.map((candidate) => position(candidate.targetObjectLabel)));
+    await expect.poll(async () => new Set((await positions()).map((p) => p.y)).size).toBe(1);
+    const placed = await positions();
+    expect(placed.map((p) => p.x)).toEqual([...placed.map((p) => p.x)].sort((a, b) => a - b));
+    expect(semantic('Q1').defaultWidth).toBe(32);
+    expect(semantic('Q1').defaultHeight).toBe(112);
+    await expect.poll(() => node('Q1').evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(32);
+    await expect.poll(() => node('Q1').evaluate((element) => parseFloat(getComputedStyle(element).height))).toBe(112);
+    const railNode = page.locator(`.react-flow__node[data-id="${rail.id}"]`);
+    await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(232);
+    await expect
+      .poll(() => node(sampleName('mainBoard')).evaluate((element) => parseFloat(getComputedStyle(element).width)))
+      .toBe(234);
+    await expect(page.getByTestId(`circuit-device-${semantic('Q1').targetObjectId}`).locator('img')).toHaveAttribute(
+      'src',
+      /electric-switch.svg$/
+    );
     const channels = flat().filter((candidate) => candidate.parent === semantic(sampleName('doubleSwitch')).id);
     expect(channels).toHaveLength(2);
     expect(
@@ -136,7 +173,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     expect(semantic(sampleName('livingRoom')).style.__typename).toBe('RectangularNodeStyle');
     expect(semantic(sampleName('sofaOutlet')).type).toBe('node:image');
     expect(semantic(sampleName('sofaOutlet')).defaultWidth).toBe(24);
-    await expect.poll(() => diagram.layoutData?.nodeLayoutData.length ?? 0).toBe(32);
+    await expect.poll(() => diagram.layoutData?.nodeLayoutData.length ?? 0).toBe(27);
     expect((await request.get(semantic(sampleName('sofaOutlet')).style.imageURL)).ok()).toBe(true);
     const roots = await Promise.all(
       diagram.nodes.map((root: any) => page.locator(`.react-flow__node[data-id="${root.id}"]`).boundingBox())
@@ -197,8 +234,25 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.reload();
     await expect(node(sampleName('sofaOutlet'))).toBeVisible();
     await expect.poll(() => position(sampleName('sofaOutlet'))).toEqual(moved);
-    await expect.poll(() => diagram.edges.length).toBe(23);
-    await node(sampleName('sofaOutlet')).click();
+    await expect.poll(() => diagram.edges.length).toBe(18);
+    await expect.poll(() => railNode.evaluate((element) => parseFloat(getComputedStyle(element).width))).toBe(232);
+    // Reordering in Model Explorer refreshes the horizontal row, including after a saved-layout reload.
+    await expand();
+    await item(/^Q1 - /)
+      .locator('../..')
+      .getByRole('button')
+      .click();
+    await page.getByRole('button', { name: /^(Move right|Déplacer à droite)$/ }).click();
+    await expect.poll(async () => (await position('Q2')).x < (await position('Q1')).x).toBe(true);
+    await expect.poll(async () => (await position('Q2')).y === (await position('Q1')).y).toBe(true);
+    await page.reload();
+    await expect(node('Q1')).toBeVisible();
+    await expect.poll(async () => (await position('Q2')).x < (await position('Q1')).x).toBe(true);
+    await expect
+      .poll(() => node(sampleName('mainBoard')).evaluate((element) => parseFloat(getComputedStyle(element).width)))
+      .toBe(234);
+    // Select the equipment by its outside label: freely placed edge labels may cover the pictogram's centre.
+    await node(sampleName('sofaOutlet')).getByText(sampleName('sofaOutlet'), { exact: true }).click();
     await expect(page.getByRole('textbox', { name: /^(Name|Nom)$/, exact: true })).toHaveValue(
       sampleName('sofaOutlet')
     );
@@ -212,9 +266,12 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
       .filter({ hasText: samplePattern('groundFloorLighting') })
       .click();
     await expect
-      .poll(() => !!link(semantic(sampleName('groundFloorLighting')), semantic(sampleName('sofaOutlet'))))
+      .poll(() => !!link(semantic(sampleName('ceilingLight')), semantic(sampleName('sofaOutlet'))))
       .toBe(true);
-    expect(link(semantic(sampleName('livingRoomOutlets')), semantic(sampleName('sofaOutlet')))).toBeUndefined();
+    expect(link(semantic('Q2'), semantic(sampleName('sofaOutlet')))).toBeUndefined();
+    expect(link(semantic(sampleName('sofaOutlet')), semantic(sampleName('doubleSwitch'))).centerLabel.text).toBe(
+      sampleName('groundFloorLighting')
+    );
     await page
       .getByTestId(/^(Room|Pièce)$/)
       .getByRole('combobox')
@@ -224,7 +281,7 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
       .filter({ hasText: samplePattern('bedroom') })
       .click();
     await expect.poll(() => semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('bedroom')).id);
-    await expect.poll(() => flat().length).toBe(32);
+    await expect.poll(() => flat().length).toBe(27);
     await page.reload();
     await expect(node(sampleName('sofaOutlet'))).toBeVisible();
     await expect.poll(() => semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('bedroom')).id);

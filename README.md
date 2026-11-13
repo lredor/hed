@@ -150,7 +150,7 @@ Create this diagram on a **Storey**. Import a PNG, JPEG or SVG background, then 
 
 **Experimental representation.** This diagram is expected to evolve, and future changes may cause existing circuit diagrams and their saved layouts to be lost. Limit its use for now and avoid investing time in diagrams you need to retain.
 
-Create this diagram on the **Dwelling** using **New Representation → Circuit Diagram** (French: **Logement → Nouvelle représentation → Schéma des circuits**). It shows storeys and rooms as freely arranged containers, the existing device pictograms, distribution boards and circuits. Solid links show supply and protection relationships; dashed purple links show functional controls and their independent channels. Positions are saved per representation. See the [circuit-diagram workflow](doc/circuit-diagram.md).
+Create this diagram on the **Dwelling** using **New Representation → Circuit Diagram** (French: **Logement → Nouvelle représentation → Schéma des circuits**). It shows storeys and rooms as freely arranged containers, existing terminal pictograms and distribution boards with tall devices aligned horizontally on their rails in model order. Named edges carry circuits and branches: direct circuits chain their equipment, while branched circuits fan out from a black 3 × 3 junction. Dashed purple links show functional controls; single-channel devices connect directly, while multiple channels keep distinct border endpoints. Positions are saved per representation. See the [circuit-diagram workflow](doc/circuit-diagram.md).
 
 ![Circuit Diagram with storey and room containers](doc/images/representations/circuit-diagram.png)
 

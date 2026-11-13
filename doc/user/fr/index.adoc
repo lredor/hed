@@ -190,6 +190,11 @@ Pour accéder au type d’un équipement, utilisez le petit bouton *Naviguer ver
 Le type est sélectionné, ses propriétés s’affichent et son emplacement est révélé dans le catalogue.
 La navigation ne modifie pas l’équipement ni son type.
 
+Les types du catalogue, les niveaux, les pièces, les équipements d’une pièce et les commandes fonctionnelles peuvent être réordonnés avec *Déplacer vers le haut* / *Déplacer vers le bas* dans leur menu.
+Vous pouvez aussi les glisser avant un autre élément du même groupe, ou les déposer sur leur parent actuel pour les placer à la fin.
+Le catalogue conserve ses deux catégories ; réordonner des équipements dans une pièce ne change ni leurs affectations ni leur position sur les plans.
+Glisser un équipement sur une autre pièce conserve le comportement de déplacement vers cette pièce.
+
 Pour les équipements terminaux, le compteur et les appareils de protection ou de commande du tableau, le panneau *Details* propose deux onglets :
 
 * *Général* : nom, description ou libellé d’étiquette selon l’appareil, type d’équipement, relations applicables et validation.

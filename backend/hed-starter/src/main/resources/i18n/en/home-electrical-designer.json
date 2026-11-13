@@ -1,5 +1,8 @@
 {
   "scope": "Residential electrical design",
+  "circuits": {
+    "routeProtectionsAbove": "Route protection links above devices"
+  },
   "tables": {
     "upstreamRccbShort": "RCCB"
   },

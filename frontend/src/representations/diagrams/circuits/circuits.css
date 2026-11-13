@@ -42,6 +42,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.hed-circuit-caption .hed-circuit-route {
+  margin-left: auto;
+}
 .hed-circuit-device .hed-circuit-caption {
   height: 100%;
   box-sizing: border-box;

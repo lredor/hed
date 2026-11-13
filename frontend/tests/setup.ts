@@ -59,6 +59,8 @@ beforeEach(async () => {
   platform.sendFile.mockReset();
   platform.getNodes.mockReset().mockReturnValue([]);
   platform.getNode.mockReset();
+  platform.getEdges.mockReset().mockReturnValue([]);
+  platform.synchronizeLayoutData.mockReset();
   platform.renderDiagram.mockReset().mockReturnValue(null);
 });
 afterEach(cleanup);

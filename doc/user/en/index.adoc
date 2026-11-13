@@ -397,7 +397,10 @@ WARNING: The *Circuit Diagram* is experimental. It will evolve, and future chang
 
 Create it on *Dwelling* using *New representation*.
 It displays storeys and rooms as containers, terminal pictograms and boards containing their DIN rails.
-Rails align tall modular devices horizontally in Model Explorer order. Reorder them in Model Explorer; moving a board preserves this arrangement.
+Room equipment pictograms are *48 × 48 units* to make edge endpoints easier to move. Floor Plan pictograms remain 24 × 24.
+Rails fill the board width and align modular devices horizontally in Model Explorer order. Device bodies are 112 units high and 64 units wide per catalog module. Reorder them in Model Explorer; moving a board preserves this arrangement.
+Use *Route protection links above devices* beside a rail's caption to apply an inverted-U route to its protection links. Routes for other circuits and functional controls are preserved. Select a link to adjust its endpoints and segments further with Sirius Web's handles. Existing routes remain unchanged until an editing action is used.
+Each rail initially reserves 260 units of height for routing. To add space, select the rail by its caption and drag its bottom border downward: subsequent rails move down and the board grows. This height is retained on reopening and can be reduced back to the minimum. Catalog specifications and semantic rail capacity remain unchanged.
 Circuits and branches are named edges rather than equipment nodes:
 
 * Without branches: protective device → first associated device → second → next, with the circuit name on each segment.
@@ -408,7 +411,7 @@ An empty branch has no outgoing edge until equipment is assigned. A circuit with
 Solid arrows show supply and protection; dashed purple links show functional controls and their channels.
 For a single-channel command, the control edge starts from the parent device. Border-channel nodes appear only for devices with several channels.
 When a receiver and its command share the same circuit, the receiver is skipped in the solid supply chain. It stays visible and connected by the dashed control function, including shutter motors and their commands. Circuit and branch assignments remain stored in the model. A receiver controlled from another circuit keeps its solid supply path.
-Move rooms, storeys, terminal devices, junctions and boards to organize the view; room and storey containers can be resized. Board and rail sizes follow their content.
+Move rooms, storeys, terminal devices, junctions and boards to organize the view; room and storey containers can be resized. Board width follows its content; rail heights can be increased as explained above.
 Moving a node changes its layout, not its room or electrical relationships.
 Click a circuit's first edge or its junction to edit that circuit; click a branch's first edge to edit the branch. Continuation edges select their target equipment.
 Edit connections through Model Explorer and Properties; the diagram updates automatically.

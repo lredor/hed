@@ -10,6 +10,10 @@
 import { memo, useContext } from 'react';
 import { DocumentTransform, gql } from '@apollo/client';
 import { Kind, visit } from 'graphql';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import RouteIcon from '@mui/icons-material/Route';
+import { useTranslation } from 'react-i18next';
 import { ServerContext } from '@eclipse-sirius/sirius-components-core';
 import {
   GQLNodeStyle,
@@ -18,12 +22,16 @@ import {
   INodeConverter,
   INodeLayoutHandler,
   NodeData,
+  EdgeData,
+  DiagramContext,
   NodeTypeContribution,
   ConnectionHandles,
+  Resizer,
   convertHandles,
   useRefreshConnectionHandles,
+  useSynchronizeLayoutData,
 } from '@eclipse-sirius/sirius-components-diagrams';
-import { Node, NodeProps } from '@xyflow/react';
+import { Edge, Node, NodeProps, Position, useReactFlow } from '@xyflow/react';
 import './circuits.css';
 
 interface CircuitBoardStyle extends GQLNodeStyle {
@@ -34,8 +42,56 @@ interface CircuitBoardStyle extends GQLNodeStyle {
 }
 interface CircuitBoardData extends NodeData {
   circuitBoard: CircuitBoardStyle;
+  boardWidth?: number;
+  hasProtectionLinks: boolean;
 }
 const isBoardNode = (node: Node<NodeData>): node is Node<CircuitBoardData> => !!node.data.circuitBoard;
+
+/** Applies an explicit north-to-north protection route to one rail, preserving all other diagram elements. */
+export function routeCircuitProtectionsAbove(nodes: Node<NodeData>[], edges: Edge<EdgeData>[], railId: string) {
+  const devices = new Set(
+    nodes
+      .filter((node) => node.parentId === railId && isBoardNode(node) && node.data.circuitBoard.role === 'device')
+      .map((node) => node.id)
+  );
+  const connections = new Set(
+    edges
+      .filter(
+        (edge) =>
+          devices.has(edge.source) &&
+          devices.has(edge.target) &&
+          edge.data?.edgeAppearanceData.gqlStyle.lineStyle === 'Solid'
+      )
+      .map((edge) => edge.id)
+  );
+  return {
+    nodes: nodes.map((node) => {
+      if (!devices.has(node.id)) return node;
+      const affected = node.data.connectionHandles.filter((handle) => connections.has(handle.edgeId));
+      if (!affected.length) return node;
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          connectionHandles: node.data.connectionHandles.map((handle) => {
+            if (!connections.has(handle.edgeId)) return handle;
+            const sameSide = affected.filter((candidate) => candidate.type === handle.type);
+            return {
+              ...handle,
+              position: Position.Top,
+              XYPosition: { x: ((node.width ?? 64) * (sameSide.indexOf(handle) + 1)) / (sameSide.length + 1), y: 0 },
+            };
+          }),
+        },
+      };
+    }),
+    edges: edges.map((edge) =>
+      connections.has(edge.id)
+        ? { ...edge, data: { ...edge.data!, bendingPoints: [], relativePositionBendingPoints: [] } }
+        : edge
+    ),
+  };
+}
 
 interface BoardChild {
   id: string;
@@ -51,21 +107,21 @@ function arrangeRail(children: BoardChild[]) {
   [...children]
     .sort((a, b) => a.order - b.order)
     .forEach((child) => {
-      positions.set(child.id, { x: offset, y: 36 });
+      positions.set(child.id, { x: offset, y: 80 });
       offset += child.width + 4;
     });
   return {
     positions,
     width: Math.max(160, offset + 8),
-    height: 160,
+    height: 260,
   };
 }
 
 function semanticBounds(node: GQLNode<GQLNodeStyle>): { width: number; height: number } {
   const role = (node.style as CircuitBoardStyle).role;
-  if (role === 'device') return { width: node.defaultWidth ?? 32, height: node.defaultHeight ?? 112 };
+  if (role === 'device') return { width: node.defaultWidth ?? 64, height: node.defaultHeight ?? 112 };
   const { width, height } = arrangeRail(semanticChildren(node));
-  return { width, height };
+  return { width: Math.max(width, node.defaultWidth ?? 0), height: Math.max(height, node.defaultHeight ?? 0) };
 }
 
 function semanticChildren(node: GQLNode<GQLNodeStyle>): BoardChild[] {
@@ -135,11 +191,20 @@ class CircuitBoardConverter implements INodeConverter {
     if (!nodeDescription) return;
     const saved = diagram.layoutData.nodeLayoutData.find((entry) => entry.id === node.id);
     const board = node.style as CircuitBoardStyle;
-    const bounds = semanticBounds(node);
+    const minimum = semanticBounds(node);
+    const resized = board.role === 'rail' && !!saved?.resizedByUser;
+    const bounds = { ...minimum, height: resized ? Math.max(minimum.height, saved?.size.height ?? 0) : minimum.height };
     const parentArrangement =
       parent?.style.__typename === 'CircuitBoardNodeStyle' ? arrangeRail(semanticChildren(parent)) : null;
+    const handles = convertHandles(node.id, edges, saved?.handleLayoutData ?? []);
+    const deviceIds = new Set((node.childNodes ?? []).map((child) => child.id));
     const data: CircuitBoardData = {
       circuitBoard: board,
+      hasProtectionLinks:
+        board.role === 'rail' &&
+        edges.some(
+          (edge) => deviceIds.has(edge.sourceId) && deviceIds.has(edge.targetId) && edge.style.lineStyle === 'Solid'
+        ),
       targetObjectId: node.targetObjectId,
       targetObjectLabel: node.targetObjectLabel,
       targetObjectKind: node.targetObjectKind,
@@ -156,9 +221,9 @@ class CircuitBoardConverter implements INodeConverter {
       borderNodePosition: null,
       labelEditable: false,
       deletable: node.deletable,
-      connectionHandles: convertHandles(node.id, edges, saved?.handleLayoutData ?? []),
+      connectionHandles: handles,
       isNew: !saved,
-      resizedByUser: false,
+      resizedByUser: resized,
       movedByUser: saved?.movedByUser ?? false,
       isListChild: false,
       isDraggedNode: false,
@@ -169,8 +234,8 @@ class CircuitBoardConverter implements INodeConverter {
       isLastNodeSelected: false,
       connectionLinePositionOnNode: 'none',
       nodeAppearanceData: { gqlStyle: node.style, customizedStyleProperties: [] },
-      minComputedWidth: bounds.width,
-      minComputedHeight: bounds.height,
+      minComputedWidth: minimum.width,
+      minComputedHeight: minimum.height,
       moving: false,
       decorators: node.decorators,
     };
@@ -197,12 +262,12 @@ class CircuitBoardConverter implements INodeConverter {
 class CircuitBoardLayout implements INodeLayoutHandler<NodeData> {
   canHandle: INodeLayoutHandler<NodeData>['canHandle'] = (node) => node.type === 'hedCircuitBoardNode';
 
-  handle: INodeLayoutHandler<NodeData>['handle'] = (engine, previous, node, visible, children, added) => {
+  handle: INodeLayoutHandler<NodeData>['handle'] = (engine, previous, node, visible, children, added, forced) => {
     engine.layoutNodes(previous, visible, children, added);
     if (!isBoardNode(node)) return;
     const role = node.data.circuitBoard.role;
     if (role === 'device') {
-      node.width = node.data.defaultWidth ?? 32;
+      node.width = node.data.defaultWidth ?? 64;
       node.height = node.data.defaultHeight ?? 112;
     } else {
       const ordered = children.filter(isBoardNode);
@@ -210,16 +275,29 @@ class CircuitBoardLayout implements INodeLayoutHandler<NodeData> {
         ordered.map((child) => ({
           id: child.id,
           order: child.data.circuitBoard.order,
-          width: child.width ?? 32,
-          height: child.height ?? 160,
+          width: child.width ?? 64,
+          height: child.height ?? 112,
         }))
       );
       ordered.forEach((child) => {
         child.position = arrangement.positions.get(child.id)!;
         child.draggable = false;
       });
-      node.width = arrangement.width;
-      node.height = arrangement.height;
+      const minimumWidth = Math.max(arrangement.width, node.data.defaultWidth ?? 0);
+      const minimumHeight = Math.max(arrangement.height, node.data.defaultHeight ?? 0);
+      // The native board list forces a common width; vertical resizing adds routing room only.
+      // Layout may visit the rail again outside its parent pass; keep the width imposed by the list.
+      if (forced?.width != null) node.data.boardWidth = forced.width;
+      node.width = Math.max(minimumWidth, node.data.boardWidth ?? 0);
+      node.height = Math.max(
+        minimumHeight,
+        node.data.resizedByUser || node.resizing ? node.height ?? 0 : 0,
+        forced?.height ?? 0
+      );
+      node.data.minComputedWidth = minimumWidth;
+      node.data.minComputedHeight = minimumHeight;
+      node.style = { ...node.style, width: node.width, height: node.height };
+      return;
     }
     node.data.minComputedWidth = node.width;
     node.data.minComputedHeight = node.height;
@@ -231,6 +309,10 @@ const CircuitBoardNode = memo(({ id, data: raw, selected }: NodeProps) => {
   const data = raw as CircuitBoardData;
   const board = data.circuitBoard;
   const { httpOrigin } = useContext(ServerContext);
+  const { readOnly } = useContext(DiagramContext);
+  const { getNodes, getEdges } = useReactFlow<Node<NodeData>, Edge<EdgeData>>();
+  const { synchronizeLayoutData } = useSynchronizeLayoutData();
+  const { t } = useTranslation('home-electrical-designer');
   useRefreshConnectionHandles(id, data.connectionHandles);
   return (
     <div
@@ -242,8 +324,28 @@ const CircuitBoardNode = memo(({ id, data: raw, selected }: NodeProps) => {
       <div className="hed-circuit-caption">
         <img src={httpOrigin + '/api/images' + board.iconURL} alt="" draggable={false} />
         {board.caption ? <span>{board.caption}</span> : null}
+        {data.hasProtectionLinks && !readOnly ? (
+          <Tooltip title={t('circuits.routeProtectionsAbove')}>
+            <IconButton
+              className="hed-circuit-route"
+              size="small"
+              aria-label={t('circuits.routeProtectionsAbove')}
+              onClick={(event) => {
+                event.stopPropagation();
+                synchronizeLayoutData(
+                  crypto.randomUUID(),
+                  'layout',
+                  routeCircuitProtectionsAbove(getNodes(), getEdges(), id),
+                  'DEACTIVATE'
+                );
+              }}>
+              <RouteIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        ) : null}
       </div>
       <ConnectionHandles connectionHandles={data.connectionHandles} />
+      {board.role === 'rail' ? <Resizer data={data} selected={selected} /> : null}
     </div>
   );
 });

@@ -22,6 +22,8 @@ const platform = vi.hoisted(() => ({
   onDragOver: vi.fn(),
   getNodes: vi.fn<() => Node<NodeData>[]>(() => []),
   getNode: vi.fn<(id: string) => Node<NodeData> | undefined>(),
+  getEdges: vi.fn(() => []),
+  synchronizeLayoutData: vi.fn(),
   screenToFlowPosition: vi.fn((position: { x: number; y: number }) => position),
   renderDiagram: vi.fn(),
   setSelection: vi.fn(),
@@ -35,9 +37,11 @@ vi.mock('@apollo/client', async (original) => ({
 }));
 
 vi.mock('@xyflow/react', () => ({
+  Position: { Top: 'top', Bottom: 'bottom', Left: 'left', Right: 'right' },
   useReactFlow: () => ({
     getNodes: platform.getNodes,
     getNode: platform.getNode,
+    getEdges: platform.getEdges,
     screenToFlowPosition: platform.screenToFlowPosition,
   }),
 }));
@@ -67,6 +71,8 @@ vi.mock('@eclipse-sirius/sirius-components-diagrams', async () => {
     convertHandles: vi.fn(() => []),
     useRefreshConnectionHandles: vi.fn(),
     ConnectionHandles: () => null,
+    Resizer: () => null,
+    useSynchronizeLayoutData: () => ({ synchronizeLayoutData: platform.synchronizeLayoutData }),
     useDrop: () => ({ onDrop: platform.onDrop, onDragOver: platform.onDragOver }),
     useDropNodeStyle: () => ({ style: {} }),
   };

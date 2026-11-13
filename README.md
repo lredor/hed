@@ -22,7 +22,7 @@ Read the [English user guide](doc/user/en/index.adoc) or the [guide utilisateur 
 
 New sample projects use that same creation language for their names. Existing and user-edited names remain unchanged.
 
-For a first installation, follow the step-by-step [Windows/Docker installation guide in English](doc/user/en/index.adoc#installation) or [l’installation pas à pas en français](doc/user/fr/index.adoc#installation). Users download only [compose.run.yaml](compose.run.yaml) and the public `ghcr.io/lredor/hed` image, without compilation, a GitHub account or a package token. The maintainer must complete the first publication and make the package public before this distribution is available.
+For a first installation, follow the step-by-step [Windows/Docker installation guide in English](doc/user/en/index.adoc#installation) or [l’installation pas à pas en français](doc/user/fr/index.adoc#installation). Users download only [compose.run.yaml](compose.run.yaml) and the public `ghcr.io/lredor/hed` image, without compilation, a GitHub account or a package token.
 
 ## Domain build
 
@@ -53,7 +53,7 @@ Build the frontend before packaging the application, then run it against Postgre
 
 ## Docker launch
 
-Once the public image is available, start it with PostgreSQL using:
+Start the public image with PostgreSQL using:
 
 ```sh
 docker compose -p hed -f compose.run.yaml pull

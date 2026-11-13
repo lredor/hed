@@ -111,7 +111,9 @@ test('create terminal devices from catalog types on a room and retain assignment
     await expect(current).toHaveValue('16.0');
     await drop('OUTLET', sampleName('livingRoom'));
     const outletId = await renameCreated('OUTLET', 'ROOM-OUTLET-1');
+    await page.getByRole('tab', { name: messages['properties.advanced'], exact: true }).click();
     await expect(current).toHaveValue('16.0');
+    await page.getByRole('tab', { name: messages['properties.general'], exact: true }).click();
     await expect(room().locator('img[alt*="entity=Outlet"]')).toHaveCount(originalOutlets + 1);
     await drop('OUTLET', sampleName('livingRoom'));
     const secondId = await renameCreated('OUTLET', 'ROOM-OUTLET-2');
@@ -171,6 +173,7 @@ test('create terminal devices from catalog types on a room and retain assignment
     await roomItem('ROOM-OUTLET-1').click();
     await expect(name).toHaveValue('ROOM-OUTLET-1');
     await checkReferences('OUTLET');
+    await page.getByRole('tab', { name: messages['properties.advanced'], exact: true }).click();
     await expect(current).toHaveValue('16.0');
     expect(new URL(page.url()).searchParams.get('selection')).toBe(outletId);
     await expect(room().locator('img[alt*="entity=Outlet"]')).toHaveCount(originalOutlets + 2);

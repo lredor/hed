@@ -127,7 +127,7 @@ class CircuitDiagramTest {
         assertFalse(projection.connects(light, home.getEquipment().get(4)));
         assertTrue(projection.connects(home.getEquipment().get(4), home.getEquipment().get(5)));
         assertFalse(projection.connects(circuit.getProtectiveDevice(), home.getEquipment().get(5)));
-        assertTrue(projection.links.stream().filter(link -> link.kind().equals("hed-circuits-circuit-start") || link.kind().equals("hed-circuits-equipment-chain"))
+        assertTrue(projection.links.stream().filter(link -> link.kind().equals("hed-circuits-circuit-start"))
                 .filter(link -> link.target() == light || link.target() == home.getEquipment().get(4) || link.target() == home.getEquipment().get(5))
                 .allMatch(link -> circuit.getName().equals(link.label())));
         var lighting = home.getControlFunctions().get(0);
@@ -199,12 +199,48 @@ class CircuitDiagramTest {
         assertTrue(projection.connects(third, equipment));
         assertTrue(projection.connects(equipment, second));
         assertFalse(projection.connects(second, third));
+        second.setRoom(home.getStoreys().get(1).getRooms().getFirst());
         circuit.setName("Éclairage séjour");
         assertEquals("Éclairage séjour", service.getHedCircuitChainLabel(second));
         equipment.setName(null);
         assertEquals("", service.getHedCircuitNodeLabel(equipment));
         circuit.setName(null);
         assertEquals("", service.getHedCircuitChainLabel(second));
+    }
+
+    @Test
+    void continuationLabelsAreHiddenOnlyWithinTheSameAssignedRoomForCircuitsAndBranches() {
+        var home = HedSamples.example();
+        home.getControlFunctions().clear();
+        var circuit = (FinalCircuit) home.getCircuits().getFirst();
+        var first = home.getEquipment().getFirst();
+        var second = home.getEquipment().get(4);
+        var third = home.getEquipment().get(5);
+        var room = first.getRoom();
+        var otherRoom = home.getStoreys().get(1).getRooms().getFirst();
+        otherRoom.setName(room.getName()); // Room identity matters even when their display names are equal.
+        var services = new CircuitServices(Locale.ENGLISH);
+        assertEquals("", services.getHedCircuitChainLabel(second));
+        assertEquals("", services.getHedCircuitChainLabel(third));
+        second.setRoom(otherRoom);
+        assertEquals(circuit.getName(), services.getHedCircuitChainLabel(second));
+        assertEquals(circuit.getName(), services.getHedCircuitChainLabel(third));
+        // Missing rooms are unknown locations, not a shared room.
+        first.setRoom(null);
+        second.setRoom(null);
+        assertEquals(circuit.getName(), services.getHedCircuitChainLabel(second));
+        var branch = HedDomain.named(HedDomain.F.createCircuitBranch(), "Window side");
+        circuit.getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
+        assertEquals(branch.getName(), services.getHedCircuitChainLabel(second));
+        first.setRoom(room);
+        second.setRoom(room);
+        assertEquals("", services.getHedCircuitChainLabel(second));
+        third.setRoom(otherRoom);
+        assertEquals(branch.getName(), services.getHedCircuitChainLabel(third));
+        var projection = new Projection(home);
+        assertTrue(projection.links.stream().anyMatch(link -> link.kind().equals("hed-circuits-circuit-junction") && link.label().equals(circuit.getName())));
+        assertTrue(projection.links.stream().anyMatch(link -> link.kind().equals("hed-circuits-branch-start") && link.label().equals(branch.getName())));
     }
 
     @Test
@@ -233,7 +269,7 @@ class CircuitDiagramTest {
         assertTrue(projection.connects(circuit, third));
         assertFalse(projection.connects(equipment, third));
         assertTrue(projection.links.stream().anyMatch(link -> link.owner() == branch && link.label().equals("Window side")));
-        assertTrue(projection.links.stream().anyMatch(link -> link.source() == second && link.target() == equipment && link.label().equals("Window side")));
+        assertTrue(projection.links.stream().anyMatch(link -> link.source() == second && link.target() == equipment && link.label().isEmpty()));
         assertTrue(projection.connects(home.getControlFunctions().get(1).getChannels().getFirst(), home.getEquipment().get(1)));
         var junction = projection.nodes.get(circuit);
         assertEquals("hed-circuits-junction", junction.getName());
@@ -325,8 +361,7 @@ class CircuitDiagramTest {
         var shutter = home.getEquipment().get(2);
         for (var receiver : List.of(light, shutter)) {
             assertTrue(projection.nodes.containsKey(receiver));
-            assertTrue(projection.links.stream().noneMatch(
-                    link -> (link.source() == receiver || link.target() == receiver) && (link.kind().equals("hed-circuits-circuit-start") || link.kind().equals("hed-circuits-equipment-chain"))));
+            assertTrue(projection.links.stream().noneMatch(link -> (link.source() == receiver || link.target() == receiver) && (link.kind().equals("hed-circuits-circuit-start"))));
             assertTrue(projection.links.stream().anyMatch(link -> link.target() == receiver && link.kind().equals("hed-circuits-direct-control")));
             assertTrue(hed.starter.representations.CircuitEquipment.getAssociatedEquipment(receiver.getCircuit()).contains(receiver));
         }

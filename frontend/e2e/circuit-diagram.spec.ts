@@ -141,9 +141,9 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
       sampleName('rollerShutters')
     );
     expect(link(semantic('Q3'), semantic(sampleName('livingRoomShutter')))).toBeUndefined();
-    expect(link(semantic(sampleName('doubleSwitch')), semantic(sampleName('secondControl'))).centerLabel.text).toBe(
-      sampleName('groundFloorLighting')
-    );
+    expect(
+      link(semantic(sampleName('doubleSwitch')), semantic(sampleName('secondControl'))).centerLabel?.text ?? ''
+    ).toBe('');
     expect(link(semantic('Q2'), semantic(sampleName('sofaOutlet'))).centerLabel.text).toBe(
       sampleName('livingRoomOutlets')
     );
@@ -219,7 +219,8 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     const roots = await Promise.all(
       diagram.nodes.map((root: any) => page.locator(`.react-flow__node[data-id="${root.id}"]`).boundingBox())
     );
-    await page.screenshot({ path: '../.cache/circuit-diagram-initial.png' });
+    if (!process.env.HED_TEST_LOCALE?.startsWith('fr'))
+      await page.screenshot({ path: '../.cache/circuit-diagram-initial.png' });
     // Native content-box containers may share their one-pixel borders after layout.
     const borderTolerance = await page
       .locator('.react-flow__viewport')
@@ -365,7 +366,8 @@ test('show logical circuits inside storeys and rooms and retain freely arranged 
     await page.reload();
     await expect(node(sampleName('sofaOutlet'))).toBeVisible();
     await expect.poll(() => semantic(sampleName('sofaOutlet')).parent).toBe(semantic(sampleName('bedroom')).id);
-    await page.screenshot({ path: '../.cache/circuit-diagram-checked.png' });
+    if (!process.env.HED_TEST_LOCALE?.startsWith('fr'))
+      await page.screenshot({ path: '../.cache/circuit-diagram-checked.png' });
     expect(errors).toEqual([]);
   } finally {
     if (projectId) {

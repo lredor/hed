@@ -83,11 +83,14 @@ public class CircuitServices {
     }
 
     /**
-     * Names a continuation edge after its circuit or branch, without a translated fallback.
+     * Names a continuation edge at room boundaries; nearby members of the same room need no repeated label.
      * @param equipment the device at the end of the segment
-     * @return the stored chain name, or an empty label for an unassigned device
+     * @return the stored chain name, or an empty label within one assigned room or for an unassigned device
      */
     public String getHedCircuitChainLabel(FieldEquipment equipment) {
+        if (equipment.getRoom() != null && getHedCircuitPreviousEquipment(equipment).stream().anyMatch(previous -> previous.getRoom() == equipment.getRoom())) {
+            return "";
+        }
         var owner = chainOwner(equipment);
         return owner instanceof CircuitBranch branch ? Objects.toString(branch.getName(), "") : owner instanceof Circuit circuit ? Objects.toString(circuit.getName(), "") : "";
     }

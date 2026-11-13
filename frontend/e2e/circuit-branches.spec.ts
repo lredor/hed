@@ -198,8 +198,26 @@ test('create named branches, associate equipment through Explorer and retain cir
     expect(
       diagram.edges.find(
         (edge: any) => edge.sourceId === semantic('Door outlet').id && edge.targetId === semantic('Window outlet').id
-      ).centerLabel.text
+      ).centerLabel?.text ?? ''
     ).toBe('Door side');
+    const chainLabel = () =>
+      diagram.edges.find(
+        (edge: any) => edge.sourceId === semantic('Door outlet').id && edge.targetId === semantic('Window outlet').id
+      )?.centerLabel?.text ?? '';
+    const roomProperty = page.getByTestId(/^(Room|Pièce)$/).getByRole('combobox');
+    // Room assignment changes the label live without removing the chain or changing its branch.
+    await roomProperty.click();
+    await page
+      .getByRole('option')
+      .filter({ hasText: samplePattern('garage') })
+      .click();
+    await expect.poll(chainLabel).toBe('');
+    await roomProperty.click();
+    await page
+      .getByRole('option')
+      .filter({ hasText: samplePattern('livingRoom') })
+      .click();
+    await expect.poll(chainLabel).toBe('Door side');
     expect(linked(sampleName('livingRoomOutlets'), 'Window outlet')).toBe(false);
     await branchProperty().click();
     await page

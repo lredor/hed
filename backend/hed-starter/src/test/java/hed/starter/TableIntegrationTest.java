@@ -42,6 +42,7 @@ import hed.homeelectrical.HomeElectricalPackage;
 import hed.starter.representations.modelexplorer.HedJavaServices;
 import hed.starter.representations.tables.HedTableDescriptions;
 import hed.starter.representations.tables.HedTableCreationService;
+import hed.starter.representations.tables.HedEquipmentTableScope;
 
 /** Checks table filtering, semantic edits and the boundary between editable and calculated cells. */
 class TableIntegrationTest {
@@ -106,7 +107,7 @@ class TableIntegrationTest {
     void filtersAndSortingAreAppliedToAllRowsBeforePagination() {
         var home = HedSamples.example();
         var service = services(new BootstrapIntegrationTest.Feedback());
-        var filtered = service.getHedRows(home, "equipment", "", List.of(new ColumnFilter("category", "outlet")), null);
+        var filtered = service.getHedRows(home, "equipment", "", List.of(new ColumnFilter("deviceType", "outlet")), null);
         assertEquals(1, filtered.size());
         assertInstanceOf(Outlet.class, filtered.get(0));
         var all = service.getHedRows(home, "equipment", "", List.of(), List.of(new ColumnSort("name", true)));
@@ -272,7 +273,84 @@ class TableIntegrationTest {
         var view = new ViewBuilders().newView().build();
         new HedTableDescriptions(Locale.ENGLISH).addTo(view);
         var equipmentTable = (TableDescription) view.getDescriptions().getFirst();
-        var branchCell = equipmentTable.getCellDescriptions().stream().filter(cell -> cell.getName().equals("hed-cell-branch")).findFirst().orElseThrow();
-        assertInstanceOf(CellLabelWidgetDescription.class, branchCell.getCellWidgetDescription());
+        var circuitCell = equipmentTable.getCellDescriptions().stream().filter(cell -> cell.getName().equals("hed-cell-circuit")).findFirst().orElseThrow();
+        assertInstanceOf(CellLabelWidgetDescription.class, circuitCell.getCellWidgetDescription());
+        assertEquals(equipment.getCircuit().getName() + " / Window side", service.getHedCell(equipment, "circuit"));
+    }
+
+    @Test
+    void inventoriesFollowLiveLocationScopesAndKeepUnlocatedEquipmentOnlyAtDwellingLevel() {
+        var home = HedSamples.example();
+        var ground = home.getStoreys().getFirst();
+        var first = home.getStoreys().getLast();
+        var living = ground.getRooms().getFirst();
+        var bedroom = first.getRooms().getFirst();
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        assertEquals(7, service.getHedRows(home, "equipment", "", null, null).size());
+        assertEquals(6, service.getHedRows(ground, "equipment", "", null, null).size());
+        assertEquals(6, service.getHedRows(living, "equipment", "", null, null).size());
+        assertEquals(1, service.getHedRows(first, "equipment", "", null, null).size());
+        var light = home.getEquipment().getFirst();
+        light.setRoom(bedroom);
+        assertEquals(5, service.getHedRows(living, "equipment", "", null, null).size());
+        assertEquals(2, service.getHedRows(first, "equipment", "", null, null).size());
+        assertEquals("First floor - Bedroom", service.getHedCell(light, "room"));
+        light.setRoom(null);
+        assertEquals("", service.getHedCell(light, "room"));
+        assertEquals(7, service.getHedRows(home, "equipment", "", null, null).size());
+        assertEquals(1, service.getHedRows(first, "equipment", "", null, null).size());
+        assertTrue(HedEquipmentTableScope.equipment(HedDomain.F.createRoom()).isEmpty());
+        assertTrue(HedEquipmentTableScope.equipment(home.getCatalog()).isEmpty());
+    }
+
+    @Test
+    void equipmentDescriptionAcceptsOnlyLocationOwnersAndUsesReadOnlyCompositeRelationships() {
+        var home = HedSamples.example();
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        var view = new ViewBuilders().newView().build();
+        new HedTableDescriptions(Locale.FRENCH).addTo(view);
+        var table = (TableDescription) view.getDescriptions().getFirst();
+        assertEquals("homeelectrical::NamedElement", table.getDomainType());
+        assertEquals(List.of("name", "deviceType", "circuit", "room", "controls", "issues"), HedTableDescriptions.fieldsFor("equipment"));
+        assertEquals(List.of("Nom", "Type", "Circuit / Branche", "Étage / Pièce", "Fonctions de commande", "Anomalies"),
+                table.getColumnDescriptions().stream().map(column -> column.getHeaderLabelExpression()).toList());
+        var interpreter = new AQLInterpreter(List.of(), List.of(service), List.of(HomeElectricalPackage.eINSTANCE));
+        for (EObject owner : List.of(home, home.getStoreys().getFirst(), home.getStoreys().getFirst().getRooms().getFirst())) {
+            assertTrue(service.canRepresentHedObject(owner));
+            assertEquals(true, interpreter.evaluateExpression(Map.of("self", owner), table.getPreconditionExpression()).asBoolean().orElseThrow());
+        }
+        for (EObject owner : List.of(home.getCatalog(), home.getEquipment().getFirst(), home.getCircuits().getFirst(), home.getBoards().getFirst())) {
+            assertEquals(false, interpreter.evaluateExpression(Map.of("self", owner), table.getPreconditionExpression()).asBoolean().orElseThrow());
+        }
+        assertFalse(service.canCreateHedEquipmentTable(null));
+        for (var cell : table.getCellDescriptions()) {
+            if (cell.getName().equals("hed-cell-name")) {
+                assertInstanceOf(CellTextfieldWidgetDescription.class, cell.getCellWidgetDescription());
+            } else {
+                assertInstanceOf(CellLabelWidgetDescription.class, cell.getCellWidgetDescription());
+            }
+        }
+    }
+
+    @Test
+    void compositeAssignmentsParticipateInFilteringAndRetiredColumnsDoNotHideExistingRows() {
+        var home = HedSamples.example();
+        var service = services(new BootstrapIntegrationTest.Feedback());
+        var circuit = (FinalCircuit) home.getCircuits().getFirst();
+        var branch = HedDomain.named(HedDomain.F.createCircuitBranch(), "Window side");
+        circuit.getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
+        var light = home.getEquipment().getFirst();
+        String assignment = circuit.getName() + " / Window side";
+        assertEquals(assignment, service.getHedCell(light, "circuit"));
+        assertEquals("Ground floor - Living room", service.getHedCell(light, "room"));
+        assertEquals(branch.getEquipment(), service.getHedRows(home, "equipment", assignment, null, null));
+        assertEquals(6, service.getHedRows(home, "equipment", "Ground floor - Living room", null, null).size());
+        assertEquals(6, service.getHedRows(home, "equipment", "", List.of(new ColumnFilter("room", "Ground floor - Living room")), null).size());
+        assertEquals(home.getEquipment(), service.getHedRows(home, "equipment", "", List.of(new ColumnFilter("category", "removed value")), List.of(new ColumnSort("branch", true))));
+        branch.setName("");
+        assertEquals(circuit.getName(), service.getHedCell(light, "circuit"));
+        light.setCircuit(null);
+        assertEquals("", service.getHedCell(light, "circuit"));
     }
 }

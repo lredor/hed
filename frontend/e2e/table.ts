@@ -7,11 +7,14 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 /** Uses native persisted column visibility rather than editing the table's semantic description. */
 export async function showTableColumn(page: Page, label: string) {
   await page.getByRole('button', { name: /show.*hide.*columns|afficher.*(masquer|cacher).*colonnes/i }).click();
-  await page.getByRole('menu').getByLabel(label, { exact: true }).check();
+  const toggle = page.getByRole('menu').getByLabel(label, { exact: true });
+  if (!(await toggle.isChecked())) await toggle.click();
+  // The native controlled switch updates only after the server refresh has arrived.
+  await expect(toggle).toBeChecked();
   await page.keyboard.press('Escape');
 }

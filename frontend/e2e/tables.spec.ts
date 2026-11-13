@@ -82,6 +82,7 @@ test('create all four tables, filter and edit values, and reopen persisted table
     await expand();
     await openTable(messages['class.Dwelling'], 'equipment');
     const equipmentUrl = page.url();
+    await showTableColumn(page, messages['feature.name']);
     await expect(editable(sampleName('ceilingLight'))).toBeVisible();
     const equipmentRowCount = await page.getByRole('row').count();
     await search().fill(sampleName('sofaOutlet'));

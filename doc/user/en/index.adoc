@@ -366,7 +366,7 @@ Deleting a representation retains its semantic owner and equipment.
 [cols="2,1,3",options="header"]
 |===
 |Table |Create on |Purpose and editing
-|Equipment Table |Dwelling |Rooms, equipment types, circuits, branches and controls. Edit equipment names and power ratings.
+|Equipment Table |Dwelling, Storey or Room |Type, Circuit / Branch, Storey / Room, Control functions and Issues. Show Name to rename equipment inline.
 |Circuit Table |Dwelling |Description, source board when several exist, upstream RCCB, protection, section, equipment, issues and usage last. Edit descriptions, sections and names when shown.
 |Distribution Board Table |Distribution board |Rails, device order, protection and specifications. Edit names and label text; catalog specifications are read-only.
 |Device Catalog Table |Device catalog |Type names, ratings, module widths and product information. Edit catalog data shared by its instances.
@@ -378,6 +378,11 @@ Columns can be resized and rows are paginated.
 Refused edits preserve the previous value and show feedback.
 
 image::equipment-table.png[Equipment Table,width=1000]
+
+Create an inventory on the dwelling for all terminal equipment, including equipment without a room; create it on a storey or room to see only that location's equipment. Moving equipment between rooms updates these lists automatically.
+*Circuit / Branch* joins the circuit and optional branch names with ` / `. *Storey / Room* joins the storey and room names with ` - `. These values can be searched, filtered and sorted. Other than names, cells are read-only; change assignments in Details.
+The duplicate *Name* column is hidden initially. Show it with *Show/Hide columns* for renaming or filtering; the visibility choice is saved, and global search includes hidden names. Technical ratings remain available in the Advanced tab of Details.
+
 image::circuit-table.png[Circuit Table,width=1000]
 
 The Circuit Table initially hides the duplicate *Name* column. Use *Show/Hide columns* to display it for editing or filtering; this choice is saved. Global search finds circuit names even while the column is hidden. *Phase / supply* appears after Protection only for a three-phase supply.
@@ -435,7 +440,7 @@ These operations do not provide an undo command.
 [cols="2,3",options="header"]
 |===
 |Symptom |Check
-|A representation is not offered |Select its owner: Dwelling for equipment/circuit tables and Circuit Diagram, Storey for Floor Plan, board for board views, catalog for its table.
+|A representation is not offered |Select its owner: Dwelling, Storey or Room for Equipment Table; Dwelling for Circuit Table and Circuit Diagram; Storey for Floor Plan; board for board views; catalog for its table.
 |A rail creation tool is missing |Check remaining capacity and the catalog type's module width. New Object lists compatible variants that fit.
 |A circuit is missing from an equipment's supply choices |If it has branches, choose a Branch instead.
 |A circuit phase field is missing |Set the general supply to Three-phase if that matches your installation.

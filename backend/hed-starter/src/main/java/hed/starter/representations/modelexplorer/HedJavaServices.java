@@ -59,6 +59,7 @@ import hed.starter.HedDomainIcons;
 import hed.starter.representations.CircuitEquipment;
 import hed.starter.project.ProjectNameProvider;
 import hed.starter.representations.tables.HedTableDescriptions;
+import hed.starter.representations.tables.HedEquipmentTableScope;
 import org.eclipse.sirius.components.tables.ColumnFilter;
 import org.eclipse.sirius.components.tables.ColumnSort;
 import static hed.domain.HedDomain.TECHNICAL_FEATURES;
@@ -309,7 +310,16 @@ public class HedJavaServices {
      * @return whether the native New Representation dialog can be offered
      */
     public boolean canRepresentHedObject(Object self) {
-        return self instanceof Dwelling || self instanceof DistributionBoard || self instanceof Catalog || self instanceof Storey;
+        return self instanceof Dwelling || self instanceof DistributionBoard || self instanceof Catalog || self instanceof Storey || self instanceof Room;
+    }
+
+    /**
+     * Restricts equipment inventories to meaningful location scopes.
+     * @param self the selected semantic owner
+     * @return whether a dwelling, storey or room inventory can be created
+     */
+    public boolean canCreateHedEquipmentTable(Object self) {
+        return HedEquipmentTableScope.supports(self);
     }
 
     public Object getHedParent(Object self, IEditingContext context) {
@@ -528,7 +538,21 @@ public class HedJavaServices {
         return Messages.text(locale, self instanceof ModularDevice ? delta < 0 ? "action.moveLeft" : "action.moveRight" : delta < 0 ? "action.moveUp" : "action.moveDown");
     }
 
+    /**
+     * Reads a table value, including composite locations and circuit/branch assignments.
+     * @param self the row's semantic element
+     * @param feature the column's semantic key
+     * @return a localized display value; stored user names retain their original language
+     */
     public String getHedCell(EObject self, String feature) {
+        if (self instanceof FieldEquipment device) {
+            if (feature.equals("circuit")) {
+                return HedEquipmentTableScope.circuitLabel(device);
+            }
+            if (feature.equals("room")) {
+                return HedEquipmentTableScope.locationLabel(device);
+            }
+        }
         if (feature.equals("upstreamProtection") && self instanceof ModularDevice device) {
             var upstream = device.getUpstreamRccb() != null ? device.getUpstreamRccb() : device.getUpstreamServiceBreaker();
             return upstream == null ? "" : label(upstream, locale);
@@ -581,9 +605,18 @@ public class HedJavaServices {
         return values.stream().map(e -> label(e, locale)).reduce((a, b) -> a + ", " + b).orElse("");
     }
 
+    /**
+     * Selects the owner's rows and applies current columns' filters and sorting before native pagination.
+     * @param self the table owner
+     * @param table the representation's equipment, circuits, board or catalog key
+     * @param globalFilter optional case-insensitive text searched across all declared columns
+     * @param filters optional per-column text filters; retired column keys are ignored
+     * @param sorting optional ordered sort criteria; retired column keys are ignored
+     * @return the matching rows in semantic or requested sort order
+     */
     public List<EObject> getHedRows(EObject self, String table, String globalFilter, List<ColumnFilter> filters, List<ColumnSort> sorting) {
         List<? extends EObject> raw = switch (table) {
-            case "equipment" -> ((Dwelling) self).getEquipment();
+            case "equipment" -> HedEquipmentTableScope.equipment(self);
             case "circuits" -> ((Dwelling) self).getCircuits();
             case "board" -> {
                 var ordered = new ArrayList<ModularDevice>();
@@ -599,7 +632,8 @@ public class HedJavaServices {
             if (globalFilter != null && !globalFilter.isBlank() && columns.stream().noneMatch(field -> contains(getHedCell(row, field), globalFilter))) {
                 continue;
             }
-            if (filters != null && filters.stream().anyMatch(filter -> !contains(getHedCell(row, filter.id()), filter.value().replace("\"", "")))) {
+            if (filters != null && filters.stream().filter(filter -> columns.contains(filter.id()))
+                    .anyMatch(filter -> !contains(getHedCell(row, filter.id()), Objects.toString(filter.value(), "").replace("\"", "")))) {
                 continue;
             }
             rows.add(row);
@@ -607,6 +641,9 @@ public class HedJavaServices {
         Comparator<EObject> comparator = null;
         if (sorting != null) {
             for (var sort : sorting) {
+                if (!columns.contains(sort.id())) {
+                    continue;
+                }
                 Comparator<String> values = NUMERIC_TABLE_FIELDS.contains(sort.id()) ? Comparator.comparing(this::tableNumber, Comparator.nullsFirst(Double::compare)) : String.CASE_INSENSITIVE_ORDER;
                 Comparator<EObject> next = Comparator.comparing(row -> getHedCell(row, sort.id()), values);
                 if (sort.desc()) {

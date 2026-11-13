@@ -91,6 +91,22 @@ class RoomEquipmentDropTest {
     }
 
     @Test
+    void aMixedRoomSelectionCanMoveToARoomThatAlreadyContainsItsFirstDevice() {
+        var home = HedSamples.example();
+        var alreadyThere = home.getEquipment().getFirst();
+        var incoming = home.getEquipment().get(3);
+        var room = alreadyThere.getRoom();
+        var original = List.copyOf(home.getEquipment());
+        var search = search(Map.of("room", room, "first", alreadyThere, "incoming", incoming));
+        var handler = new CatalogTreeDropHandler(search, null, null,
+                new HedJavaServices(new BootstrapIntegrationTest.Identity(), search, new BootstrapIntegrationTest.Feedback(), Locale.ENGLISH, dwelling -> dwelling.getName()), Locale.ENGLISH);
+        assertInstanceOf(Success.class, handler.handle(null, null, input(List.of("first", "incoming"), "room", -1)));
+        assertSame(room, incoming.getRoom());
+        assertSame(room, alreadyThere.getRoom());
+        assertEquals(original, home.getEquipment());
+    }
+
+    @Test
     void rejectsMixedForeignStaleAndIndexedSelectionsInBothLanguages() {
         for (var locale : List.of(Locale.ENGLISH, Locale.FRENCH)) {
             var home = HedSamples.example(locale);

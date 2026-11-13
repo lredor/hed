@@ -90,7 +90,7 @@ Creation menus respect the remaining rail capacity, including compact custom cat
 
 The root expands automatically when the project opens. Use **Navigate to device type** from an installed device's menu or the button beside its type selector in Details to select and reveal that type in the catalog.
 
-See [reordering circuits, rails and mounted devices](doc/explorer-reordering.md) for Model Explorer movement commands. Circuits also support drag-and-drop before a peer or onto the Circuits group to append them.
+See [reordering model elements](doc/explorer-reordering.md) for movement commands and drag-and-drop ordering of circuits, catalog types, storeys, rooms, room equipment and functional controls, alongside rail and modular-device ordering. Drop before a peer or onto the current parent to append to that group.
 
 Create branches below final circuits and associate existing devices by dragging them onto a branch or editing Properties. Devices retain their room and also appear under their branch. The Circuit Diagram shows their supply through that branch, and the Equipment Table includes a Branch column. See [circuit branches and associated devices](doc/model-explorer.md#circuit-branches-and-associated-devices).
 

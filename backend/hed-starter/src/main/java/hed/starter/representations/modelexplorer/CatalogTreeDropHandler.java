@@ -11,6 +11,9 @@ package hed.starter.representations.modelexplorer;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.List;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.sirius.components.collaborative.api.ChangeKind;
 import org.eclipse.sirius.components.collaborative.trees.api.IDropTreeItemHandler;
 import org.eclipse.sirius.components.collaborative.trees.dto.DropTreeItemInput;
@@ -32,9 +35,12 @@ import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.FieldEquipment;
 import hed.homeelectrical.DINRail;
 import hed.homeelectrical.Room;
+import hed.homeelectrical.Storey;
+import hed.homeelectrical.DeviceType;
+import hed.homeelectrical.ControlFunction;
 import hed.starter.representations.CatalogDropService;
 
-/** Creates catalog devices, moves terminal devices between rooms, assigns branches and reorders existing circuits. */
+/** Creates catalog devices, moves terminal devices between rooms, assigns branches and reorders visible sibling groups. */
 @Service
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CatalogTreeDropHandler implements IDropTreeItemHandler {
@@ -84,6 +90,19 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
                 }
                 // Native gap drops identify the following peer. Its stable ID avoids offsets from expanded children.
                 HedDomain.placeCircuits(home, sources.stream().map(Circuit.class::cast).toList(), target instanceof Circuit circuit ? circuit : null);
+            } else if (isOrderingDrop(target, sources, input.index())) {
+                if (sources.stream().anyMatch(source -> !(source instanceof EObject)) || sources.isEmpty()) {
+                    throw new IllegalArgumentException("drop.explorerOrder");
+                }
+                var first = (EObject) sources.getFirst();
+                var parent = explorer.getHedParent(first);
+                if (Objects.equals(parent, target) && input.index() < 0) {
+                    HedDomain.placeElements(sources.stream().map(EObject.class::cast).toList(), null);
+                } else if (target instanceof EObject peer && HedDomain.orderingPeers(first).contains(peer)) {
+                    HedDomain.placeElements(sources.stream().map(EObject.class::cast).toList(), peer);
+                } else {
+                    throw new IllegalArgumentException("drop.explorerOrder");
+                }
             } else if (input.index() >= 0) {
                 // Creation, room moves and branch assignment still require a semantic destination, not a gap.
                 throw new IllegalArgumentException("drop.catalogTarget");
@@ -110,5 +129,18 @@ public class CatalogTreeDropHandler implements IDropTreeItemHandler {
         } catch (IllegalArgumentException ex) {
             return new Failure(Messages.text(locale, ex.getMessage()));
         }
+    }
+
+    /** Separates sibling ordering from catalog creation and room reassignment, which require body drops onto their destination. */
+    private boolean isOrderingDrop(Object target, List<?> sources, int index) {
+        if (sources.isEmpty()) {
+            return false;
+        }
+        var first = sources.getFirst();
+        boolean supported = first instanceof DeviceType || first instanceof Storey || first instanceof Room || first instanceof FieldEquipment || first instanceof ControlFunction;
+        boolean peer = first instanceof DeviceType && target instanceof DeviceType || first instanceof Storey && target instanceof Storey || first instanceof Room && target instanceof Room
+                || first instanceof FieldEquipment && target instanceof FieldEquipment || first instanceof ControlFunction && target instanceof ControlFunction;
+        // A mixed-room selection is still a room move, even if one device already belongs to the destination.
+        return supported && (index >= 0 || peer || sources.stream().allMatch(source -> Objects.equals(explorer.getHedParent(source), target)));
     }
 }

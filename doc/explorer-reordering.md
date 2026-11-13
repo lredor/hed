@@ -8,7 +8,17 @@ https://www.eclipse.org/legal/epl-2.0/
 SPDX-License-Identifier: EPL-2.0
 -->
 
-# Reordering circuits, rails and devices
+# Reordering model elements
+
+## Catalog, dwelling and functional controls
+
+**Move up / Move down** and drag-and-drop ordering are available for catalog types within each category, storeys within the dwelling, rooms within a storey, terminal equipment within a room and functional controls. Unavailable directions are hidden at the ends of each visible list.
+
+Drop before a peer to insert the selection there, or onto its current parent to append it. Selections retain their original model order and are validated before any mutation. A drop onto a different room still moves terminal equipment to that room; peer ordering does not reparent objects.
+
+Catalog categories and room-equipment groups are projections of shared semantic lists. Reordering one group preserves the slots and relative order of the other groups. Equipment identity, circuit/branch/control associations and floor-plan positions are retained. Storey order is independent of its level number. Reopening restores the saved list order; existing diagram coordinates are not recalculated.
+
+`ExplorerElementOrderTest` covers boundaries, subgroup isolation, unchanged connections and atomic rejection. `ExplorerListsDropTest` checks native gap destinations and append-to-parent drops, including virtual catalog/control groups. The bilingual `explorer-lists-ordering.spec.ts` exercises all six visible groups through commands and actual drag-and-drop, then reloads the project.
 
 ## Circuits
 

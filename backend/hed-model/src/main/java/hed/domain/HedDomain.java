@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -28,6 +29,7 @@ import hed.homeelectrical.Circuit;
 import hed.homeelectrical.CircuitBranch;
 import hed.homeelectrical.ControlChannel;
 import hed.homeelectrical.ControlDevice;
+import hed.homeelectrical.ControlFunction;
 import hed.homeelectrical.DINRail;
 import hed.homeelectrical.DeviceKind;
 import hed.homeelectrical.DeviceType;
@@ -485,20 +487,58 @@ public final class HedDomain {
 
     /**
      * Returns the position in the object's ordered explorer siblings.
-     * @param object a circuit, DIN rail or mounted modular device
+     * @param object an element displayed in an ordered explorer group
      * @return its zero-based position, or -1 for an unsupported or detached object
      */
     public static int orderIndex(EObject object) {
-        if (object instanceof ModularDevice d && d.getRail() != null) {
-            return d.getRail().getDevices().indexOf(d);
+        return orderingPeers(object).indexOf(object);
+    }
+
+    /** Returns the backing semantic list; explorer subgroups are filtered separately to preserve other groups' positions. */
+    private static EList<? extends EObject> orderingList(EObject object) {
+        if (object instanceof ModularDevice device && device.getRail() != null) {
+            return device.getRail().getDevices();
         }
         if (object instanceof DINRail rail && rail.eContainer() instanceof DistributionBoard board) {
-            return board.getRails().indexOf(rail);
+            return board.getRails();
         }
-        if (object instanceof Circuit circuit && circuit.eContainer() instanceof Dwelling home) {
-            return home.getCircuits().indexOf(circuit);
+        if (object instanceof Circuit && object.eContainer() instanceof Dwelling home) {
+            return home.getCircuits();
         }
-        return -1;
+        if (object instanceof Storey && object.eContainer() instanceof Dwelling home) {
+            return home.getStoreys();
+        }
+        if (object instanceof Room && object.eContainer() instanceof Storey storey) {
+            return storey.getRooms();
+        }
+        if (object instanceof DeviceType && object.eContainer() instanceof Catalog catalog) {
+            return catalog.getDeviceTypes();
+        }
+        if (object instanceof FieldEquipment && object.eContainer() instanceof Dwelling home) {
+            return home.getEquipment();
+        }
+        if (object instanceof ControlFunction && object.eContainer() instanceof Dwelling home) {
+            return home.getControlFunctions();
+        }
+        return null;
+    }
+
+    private static boolean panelCatalogType(DeviceType type) {
+        return modular(type.getKind()) || type.getKind() == DeviceKind.ENERGY_METER || type.getKind() == DeviceKind.SERVICE_BREAKER;
+    }
+
+    /**
+     * Returns the object's visible siblings, accounting for catalog categories and per-room projections.
+     * @param object the element whose current explorer group determines ordering
+     * @return an immutable ordered list, empty for unsupported or detached elements
+     */
+    public static List<EObject> orderingPeers(EObject object) {
+        var list = orderingList(object);
+        if (list == null || !list.contains(object)) {
+            return List.of();
+        }
+        return list.stream().filter(peer -> !(object instanceof FieldEquipment equipment) || ((FieldEquipment) peer).getRoom() == equipment.getRoom())
+                .filter(peer -> !(object instanceof DeviceType type) || panelCatalogType((DeviceType) peer) == panelCatalogType(type)).map(EObject.class::cast).toList();
     }
 
     /**
@@ -509,9 +549,7 @@ public final class HedDomain {
      */
     public static boolean canReorder(EObject object, int delta) {
         int index = orderIndex(object);
-        int size = object instanceof ModularDevice d && d.getRail() != null ? d.getRail().getDevices().size()
-                : object instanceof DINRail rail && rail.eContainer() instanceof DistributionBoard board ? board.getRails().size()
-                        : object instanceof Circuit circuit && circuit.eContainer() instanceof Dwelling home ? home.getCircuits().size() : 0;
+        int size = orderingPeers(object).size();
         return index >= 0 && index + delta >= 0 && index + delta < size;
     }
 
@@ -524,16 +562,57 @@ public final class HedDomain {
         if (!canReorder(object, delta)) {
             return;
         }
-        int index = orderIndex(object) + delta;
-        if (object instanceof ModularDevice device) {
-            device.getRail().getDevices().move(index, device);
-        } else if (object instanceof DINRail rail) {
-            ((DistributionBoard) rail.eContainer()).getRails().move(index, rail);
-        } else if (object instanceof Circuit circuit) {
-            ((Dwelling) circuit.eContainer()).getCircuits().move(index, circuit);
+        var peers = new ArrayList<>(orderingPeers(object));
+        int index = peers.indexOf(object);
+        peers.remove(index);
+        peers.add(index + delta, object);
+        applyPeerOrder(object, peers);
+    }
+
+    /** Applies a subgroup permutation with EMF move notifications and without removing semantic objects or their opposites. */
+    private static void applyPeerOrder(EObject object, List<EObject> peers) {
+        var backing = orderingList(object);
+        var previous = orderingPeers(object);
+        var complete = new ArrayList<EObject>(backing);
+        int position = 0;
+        for (int index = 0; index < complete.size(); index++) {
+            if (previous.contains(complete.get(index))) {
+                complete.set(index, peers.get(position++));
+            }
+        }
+        for (int index = 0; index < complete.size(); index++) {
+            if (backing.get(index) != complete.get(index)) {
+                backing.move(index, backing.indexOf(complete.get(index)));
+            }
+        }
+        if ((object instanceof ModularDevice || object instanceof DINRail) && object.eContainer() instanceof DistributionBoard board) {
+            synchronizeDeviceOrder(board);
+        }
+    }
+
+    /**
+     * Reorders an existing selection before a visible peer or at the end of its current group.
+     * Catalog categories, rooms, semantic containment and electrical associations remain unchanged.
+     * @param selection elements of one visible sibling group; their original model order is retained
+     * @param before the following peer, or null to append to the group
+     * @throws IllegalArgumentException if any element or destination belongs to another group or is unsupported
+     */
+    public static void placeElements(List<? extends EObject> selection, EObject before) {
+        if (selection.isEmpty() || selection.getFirst() == null) {
+            throw new IllegalArgumentException("drop.explorerOrder");
+        }
+        var first = selection.getFirst();
+        var peers = new ArrayList<>(orderingPeers(first));
+        if (!peers.containsAll(selection) || before != null && !peers.contains(before)) {
+            throw new IllegalArgumentException("drop.explorerOrder");
+        }
+        if (before != null && selection.contains(before)) {
             return;
         }
-        synchronizeDeviceOrder((DistributionBoard) object.eContainer());
+        var moving = peers.stream().filter(selection::contains).toList();
+        peers.removeAll(moving);
+        peers.addAll(before == null ? peers.size() : peers.indexOf(before), moving);
+        applyPeerOrder(first, peers);
     }
 
     /**

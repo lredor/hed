@@ -18,6 +18,10 @@ The project root expands once when the explorer opens, exposing Dwelling, GTL an
 
 Use **Navigate to device type** in an installed device's context menu, or the small button beside its **Device type** selector in Details. Both update the workbench selection and reveal the type through the native explorer selection target, expanding the catalog category as needed. The tool also supports device occurrences below circuit branches and remains available in read-only views. Objects without a type have no explorer action; an empty Details selector disables the button.
 
+## Reorder model elements
+
+Catalog types within each category, storeys, rooms within a storey, equipment within a room, functional controls and circuits support **Move up/down**, peer drops and appending by dropping onto their current parent. DIN rail and modular-device ordering retains its existing behavior. Multi-selection is validated before any change and keeps the original model order. Only the relevant semantic list is reordered; unrelated catalog-category/room positions and electrical associations are preserved. Moving equipment to another room remains a separate body drop onto that room.
+
 ## Hierarchy and creation contexts
 
 The root displays the native Sirius Web project name. The tree organizes the model as follows:

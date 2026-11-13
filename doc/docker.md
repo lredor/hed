@@ -14,7 +14,7 @@ For a first installation without development experience, use the [English instal
 
 ## Ready-to-run public image
 
-After the maintainer's first successful publication and change of package visibility to **Public**, users need only `compose.run.yaml`:
+The `ghcr.io/lredor/hed` image is public and can be downloaded anonymously. Users need only `compose.run.yaml`; no GitHub account, package token or `docker login` is required:
 
 ```sh
 docker compose -p hed -f compose.run.yaml pull

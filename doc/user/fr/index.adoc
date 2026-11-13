@@ -31,7 +31,7 @@ Pour une installation personnelle, *Docker Desktop* télécharge une image prêt
 Vous n’avez ni compilation à faire, ni compte ou jeton GitHub à fournir, ni Java, Maven, Node.js ou Git à installer séparément.
 Une connexion Internet est nécessaire pour télécharger les images et les mises à jour.
 
-IMPORTANT: Ce parcours nécessite que l’image `ghcr.io/lredor/hed` ait été publiée et rendue publique par le mainteneur. Si le téléchargement est refusé, signalez-le au mainteneur ; ne créez pas de jeton pour contourner ce problème.
+IMPORTANT: L’image `ghcr.io/lredor/hed` est publique. Son téléchargement ne nécessite ni connexion à GitHub ou Docker, ni création d’un jeton. Si le téléchargement est refusé, signalez-le au mainteneur ; ne créez pas de jeton pour contourner ce problème.
 
 === 1. Installer Docker Desktop
 

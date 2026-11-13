@@ -29,7 +29,7 @@ For a personal installation, *Docker Desktop* downloads a ready-to-run HED image
 You do not need to compile anything, supply a GitHub account or token, or install Java, Maven, Node.js or Git separately.
 Internet access is required to download images and updates.
 
-IMPORTANT: This procedure requires the maintainer to have published `ghcr.io/lredor/hed` and made it public. If the download is denied, contact the maintainer rather than creating a token to work around it.
+IMPORTANT: The `ghcr.io/lredor/hed` image is public. Downloading it does not require signing in to GitHub or Docker, or creating a token. If the download is denied, contact the maintainer rather than creating a token to work around it.
 
 === 1. Install Docker Desktop
 

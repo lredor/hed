@@ -419,10 +419,12 @@ Le bouton *Faire passer les protections par le haut*, à côté du libellé du r
 Chaque rail réserve initialement 260 unités de hauteur pour le passage des liens. Pour ajouter de l’espace, sélectionnez le rail par son libellé puis tirez sa bordure inférieure vers le bas : les rails suivants descendent et le tableau s’agrandit. La hauteur est conservée à la réouverture et peut être réduite jusqu’à la taille minimale. Cela ne modifie ni la capacité du rail ni les caractéristiques du catalogue.
 Les circuits et les branches sont portés par les liens, avec leur nom comme libellé :
 
-* Sans branche : protection → premier équipement associé → deuxième → suivant, avec le nom du circuit sur chaque segment.
-* Avec branches : protection → carré noir de dérivation de 3 × 3 (nom du circuit), puis une chaîne par branche non vide (nom de la branche sur chaque segment).
+* Sans branche : protection → premier équipement associé → deuxième → suivant, avec le nom du circuit sur le premier segment.
+* Avec branches : protection → carré noir de dérivation de 3 × 3 (nom du circuit), puis une chaîne par branche non vide (nom de la branche sur le premier segment).
 
 Les chaînes suivent l’ordre des associations, pas les positions graphiques ni un cheminement physique de câbles.
+Les liens entre deux équipements affectés à la même pièce n’affichent pas de libellé. Le nom reste affiché sur le départ du circuit ou de la branche, entre pièces différentes et lorsque la pièce d’une extrémité n’est pas renseignée.
+
 Une branche vide n’a pas de lien sortant tant qu’aucun équipement ne lui est affecté. Un circuit sans branche ni équipement reste accessible dans Model Explorer et la Liste des circuits.
 Les flèches pleines représentent l’alimentation et la protection ; les liens violets en pointillés représentent les commandes et leurs canaux.
 Pour une commande à un seul canal, le lien part directement de l’équipement parent. Les canaux en bordure sont affichés uniquement lorsqu’il y en a plusieurs.

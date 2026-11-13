@@ -417,10 +417,12 @@ Use *Route protection links above devices* beside a rail's caption to apply an i
 Each rail initially reserves 260 units of height for routing. To add space, select the rail by its caption and drag its bottom border downward: subsequent rails move down and the board grows. This height is retained on reopening and can be reduced back to the minimum. Catalog specifications and semantic rail capacity remain unchanged.
 Circuits and branches are named edges rather than equipment nodes:
 
-* Without branches: protective device → first associated device → second → next, with the circuit name on each segment.
-* With branches: protective device → black 3 × 3 junction (circuit name), then one chain per nonempty branch (branch name on each segment).
+* Without branches: protective device → first associated device → second → next, with the circuit name on the first segment.
+* With branches: protective device → black 3 × 3 junction (circuit name), then one chain per nonempty branch (branch name on the first segment).
 
 Chains follow association order, not graphical positions or physical cable routing.
+Links between two devices assigned to the same room have no label. Names remain on circuit and branch starts, between different rooms and when either endpoint has no assigned room.
+
 An empty branch has no outgoing edge until equipment is assigned. A circuit without branches or equipment remains accessible in Model Explorer and the Circuit Table.
 Solid arrows show supply and protection; dashed purple links show functional controls and their channels.
 For a single-channel command, the control edge starts from the parent device. Border-channel nodes appear only for devices with several channels.

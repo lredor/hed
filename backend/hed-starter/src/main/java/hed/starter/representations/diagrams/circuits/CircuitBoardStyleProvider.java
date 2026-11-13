@@ -44,8 +44,7 @@ public class CircuitBoardStyleProvider implements INodeStyleProvider {
 
     @Override
     public Optional<String> getNodeType(NodeStyleDescription style) {
-        return style instanceof ImageNodeStyleDescription image && image.getShape() != null && image.getShape().startsWith("hed-circuits:board-")
-                ? Optional.of(TYPE) : Optional.empty();
+        return style instanceof ImageNodeStyleDescription image && image.getShape() != null && image.getShape().startsWith("hed-circuits:board-") ? Optional.of(TYPE) : Optional.empty();
     }
 
     @Override

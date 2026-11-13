@@ -71,13 +71,12 @@ public final class CircuitDiagram {
         board.setUserResizable(UserResizableDirection.NONE);
         board.setDefaultWidthExpression("aql:self.getHedCircuitBoardWidth()");
         // A native vertical list is also kept fixed by Sirius's automatic arranger.
-        ((RectangularNodeStyleDescription) board.getStyle()).setChildrenLayoutStrategy(
-                b.newListLayoutStrategyDescription().areChildNodesDraggableExpression("aql:false").topGapExpression("12").bottomGapExpression("12").build());
+        ((RectangularNodeStyleDescription) board.getStyle())
+                .setChildrenLayoutStrategy(b.newListLayoutStrategyDescription().areChildNodesDraggableExpression("aql:false").topGapExpression("12").bottomGapExpression("12").build());
         // A junction is only a graphical view of the circuit; no additional semantic object is needed.
-        var junction = b.newNodeDescription().name("hed-circuits-junction").domainType("homeelectrical::FinalCircuit")
-                .semanticCandidatesExpression("aql:self.getHedCircuitJunctions()").preconditionExpression("aql:true")
-                .synchronizationPolicy(SynchronizationPolicy.SYNCHRONIZED).defaultWidthExpression("3").defaultHeightExpression("3").userResizable(UserResizableDirection.NONE)
-                .style(b.newRectangularNodeStyleDescription().background(color("#000000")).borderSize(0).borderRadius(0).build()).palette(palette()).build();
+        var junction = b.newNodeDescription().name("hed-circuits-junction").domainType("homeelectrical::FinalCircuit").semanticCandidatesExpression("aql:self.getHedCircuitJunctions()")
+                .preconditionExpression("aql:true").synchronizationPolicy(SynchronizationPolicy.SYNCHRONIZED).defaultWidthExpression("3").defaultHeightExpression("3")
+                .userResizable(UserResizableDirection.NONE).style(b.newRectangularNodeStyleDescription().background(color("#000000")).borderSize(0).borderRadius(0).build()).palette(palette()).build();
         var meter = pictogram("meter", "EnergyMeter", "aql:self.meter", 24);
         var serviceBreaker = pictogram("service-breaker", "ServiceCircuitBreaker", "aql:self.mainBreaker", 24);
         var supply = container("supply", "ServiceConnection", "aql:self.serviceConnection", "#f8fafc", meter, serviceBreaker);
@@ -95,8 +94,8 @@ public final class CircuitDiagram {
                 new NodeDescription[] { modular }, terminals, false, "aql:self.name"));
         edges.add(edge("circuit-junction", "FinalCircuit", "aql:self.getHedCircuitJunctions()", "aql:self.protectiveDevice", "aql:self", new NodeDescription[] { modular }, junctions, false,
                 "aql:self.name"));
-        edges.add(edge("branch-start", "CircuitBranch", "aql:self.circuits->filter(homeelectrical::FinalCircuit).branches", "aql:self.circuit", "aql:self.getHedCircuitFirstEquipment()",
-                junctions, terminals, false, "aql:self.name"));
+        edges.add(edge("branch-start", "CircuitBranch", "aql:self.circuits->filter(homeelectrical::FinalCircuit).branches", "aql:self.circuit", "aql:self.getHedCircuitFirstEquipment()", junctions,
+                terminals, false, "aql:self.name"));
         edges.add(edge("equipment-chain", "FieldEquipment", "aql:self.equipment", "aql:self.getHedCircuitPreviousEquipment()", "aql:self", terminals, terminals, false,
                 "aql:self.getHedCircuitChainLabel()"));
         edges.add(edge("board-feeder", "DistributionCircuit", "aql:self.circuits->filter(homeelectrical::DistributionCircuit)", "aql:self.protectiveDevice", "aql:self.targetBoard",
@@ -110,8 +109,8 @@ public final class CircuitDiagram {
         return b.newDiagramDescription().name(Messages.text(locale, "diagram.circuits")).domainType("homeelectrical::Dwelling").preconditionExpression("aql:true")
                 .titleExpression(Messages.text(locale, "diagram.circuits")).iconExpression(HedRepresentationIcons.CIRCUITS).description(Messages.text(locale, "diagram.circuits.description"))
                 .endUserDocumentation(Messages.text(locale, "diagram.circuits.description")).style(b.newDiagramStyleDescription().background(color("#ffffff")).build())
-                .layoutOption(DiagramLayoutOption.AUTO_UNTIL_MANUAL).arrangeLayoutDirection(ArrangeLayoutDirection.RIGHT)
-                .nodeDescriptions(storey, board, supply, unlocated, junction).edgeDescriptions(edges.toArray(EdgeDescription[]::new)).build();
+                .layoutOption(DiagramLayoutOption.AUTO_UNTIL_MANUAL).arrangeLayoutDirection(ArrangeLayoutDirection.RIGHT).nodeDescriptions(storey, board, supply, unlocated, junction)
+                .edgeDescriptions(edges.toArray(EdgeDescription[]::new)).build();
     }
 
     private UserColor color(String value) {

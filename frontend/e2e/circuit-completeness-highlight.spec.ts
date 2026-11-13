@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { sampleName } from './sample';
@@ -48,7 +48,26 @@ test('highlight incomplete circuits, unconnected equipment and unused modules wi
       return getComputedStyle(text!.parentElement!).color;
     });
   const red = 'rgb(198, 40, 40)';
-  const name = page.getByRole('textbox', { name: messages['feature.name'], exact: true });
+  const rename = async (node: Locator, value: string) => {
+    // Prepare explorer fixtures with its own Rename action, independently of Details subscriptions.
+    await node.locator('../..').getByRole('button').click();
+    await page
+      .getByRole('menuitem', { name: /^(Rename|Renommer)$/, exact: true })
+      .last()
+      .click();
+    const input = page.getByTestId('name-edit').getByRole('textbox');
+    // Native inline rename commits React state between keystrokes; a bulk fill followed immediately by Enter can submit its previous label.
+    await input.fill('');
+    await input.pressSequentially(value, { delay: 15 });
+    await expect(input).toHaveValue(value);
+    await input.press('Enter');
+    await expect(
+      page
+        .locator('p')
+        .filter({ hasText: new RegExp(`^${escape(value)}(?: - |$)`) })
+        .first()
+    ).toBeVisible();
+  };
   const expand = async () => {
     await item(projectName).locator('../..').getByRole('button').click();
     await page.getByRole('menuitem', { name: messages['action.expandAll'], exact: true }).last().click();
@@ -112,23 +131,15 @@ test('highlight incomplete circuits, unconnected equipment and unused modules wi
       .getByRole('button', { name: `${messages['action.create']} ${messages['class.FinalCircuit']}`, exact: true })
       .click();
     await expand();
-    await item(messages['new.FinalCircuit']).click();
-    await name.fill('C-UNPROTECTED');
-    await name.press('Tab');
+    await rename(item(messages['new.FinalCircuit']), 'C-UNPROTECTED');
     await expect.poll(() => color('C-UNPROTECTED')).toBe(red);
     await drop('OUTLET', sampleName('livingRoom'));
     const living = item(sampleName('livingRoom')).locator('xpath=ancestor::li[1]');
-    await living
-      .locator('p')
-      .filter({ hasText: new RegExp(`^${escape(messages['kind.OUTLET'])}$`) })
-      .click();
-    await name.fill('UNCONNECTED');
-    await name.press('Tab');
+    const outlet = living.locator('p').filter({ hasText: new RegExp(`^${escape(messages['kind.OUTLET'])}$`) });
+    await rename(outlet, 'UNCONNECTED');
     await expect.poll(() => color('UNCONNECTED')).toBe(red);
     await drop('MCB', sampleName('row'));
-    await rail.locator('img[alt*="entity=ModularDevice"]').last().locator('../..').locator('p').click();
-    await name.fill('SPARE');
-    await name.press('Tab');
+    await rename(rail.locator('img[alt*="entity=ModularDevice"]').last().locator('../..').locator('p'), 'SPARE');
     const spareLabel = `SPARE - ${messages['kind.MCB']}`;
     await expect.poll(() => color(spareLabel)).toBe(red);
     expect(await color(healthyRccbLabel)).not.toBe(red);

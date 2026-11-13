@@ -144,8 +144,11 @@ test('create modular devices from catalog types in the explorer and diagram, rej
     await drag(breakerType, rail, 'dropOnDiagram', { x: railBounds!.width * 0.8, y: railBounds!.height * 0.42 });
     await expect(devices).toHaveCount(3);
     await renameDevice(2, 'EMPTY1');
+    await expect(current).toHaveCount(0);
+    await page.getByRole('tab', { name: messages['properties.advanced'], exact: true }).click();
     await expect(current).toHaveValue('16.0');
     await expect(current).toBeDisabled();
+    await page.getByRole('tab', { name: messages['properties.general'], exact: true }).click();
     await expect(page.getByTestId(messages['feature.rail']).getByRole('combobox')).toHaveText('Drop rail');
     const ids = await devices.evaluateAll((elements) =>
       elements.map((element) => element.getAttribute('data-semantic-id')).sort()

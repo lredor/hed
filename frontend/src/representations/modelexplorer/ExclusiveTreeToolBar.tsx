@@ -10,8 +10,9 @@
 import { TreeToolBar as NativeTreeToolBar, type TreeFilter } from '@eclipse-sirius/sirius-components-trees';
 import type { ComponentProps } from 'react';
 
-// Forward the platform's public API; only the toolbar callback is adapted for HED's pair of highlight filters.
+// Forward the public API, adapting HED highlight filters and the explorer's initial expansion.
 export * from '@eclipse-sirius/sirius-components-trees';
+export { HedExplorerTreeView as TreeView } from './HedExplorerTreeView';
 
 export const PLACEMENT_FILTER = 'hed-highlight-unplaced-equipment';
 export const COMPLETENESS_FILTER = 'hed-highlight-incomplete-circuits';

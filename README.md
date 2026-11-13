@@ -88,7 +88,7 @@ Rail-mounted modular devices display **Name - Device type name**, for example `Q
 
 Creation menus respect the remaining rail capacity, including compact custom catalog types. See [creation choices and rail capacity](doc/model-explorer.md#creation-choices-and-rail-capacity).
 
-Use **Navigate to device type** from an installed device's menu or the button beside its type selector in Details to select and reveal that type in the catalog.
+The root expands automatically when the project opens. Use **Navigate to device type** from an installed device's menu or the button beside its type selector in Details to select and reveal that type in the catalog.
 
 See [reordering circuits, rails and mounted devices](doc/explorer-reordering.md) for Model Explorer movement commands. Circuits also support drag-and-drop before a peer or onto the Circuits group to append them.
 

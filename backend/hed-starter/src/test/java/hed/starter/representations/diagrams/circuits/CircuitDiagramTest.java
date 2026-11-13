@@ -115,12 +115,13 @@ class CircuitDiagramTest {
         var projection = new Projection(home);
         completeCoverage(home, projection);
         assertEquals(27, projection.nodes.size());
-        assertEquals(18, projection.links.size());
+        assertEquals(16, projection.links.size());
         var circuit = home.getCircuits().get(0);
         var light = home.getEquipment().get(0);
         assertFalse(projection.nodes.containsKey(circuit));
-        assertTrue(projection.connects(circuit.getProtectiveDevice(), light));
-        assertTrue(projection.connects(light, home.getEquipment().get(4)));
+        assertTrue(projection.connects(circuit.getProtectiveDevice(), home.getEquipment().get(4)));
+        assertFalse(projection.connects(circuit.getProtectiveDevice(), light));
+        assertFalse(projection.connects(light, home.getEquipment().get(4)));
         assertTrue(projection.connects(home.getEquipment().get(4), home.getEquipment().get(5)));
         assertFalse(projection.connects(circuit.getProtectiveDevice(), home.getEquipment().get(5)));
         assertTrue(projection.links.stream().filter(link -> link.kind().equals("hed-circuits-circuit-start") || link.kind().equals("hed-circuits-equipment-chain"))
@@ -147,7 +148,7 @@ class CircuitDiagramTest {
         function.setActuator(actuator);
         var projection = new Projection(home);
         completeCoverage(home, projection);
-        assertEquals(19, projection.links.size());
+        assertEquals(17, projection.links.size());
         for (var channel : function.getChannels()) {
             var source = ((ControlDevice) channel.eContainer()).getChannels().size() == 1 ? channel.eContainer() : channel;
             assertTrue(projection.connects(source, actuator));
@@ -178,6 +179,7 @@ class CircuitDiagramTest {
     @Test
     void chainOrderFollowsModelOrderAndNamesStayVerbatim() {
         var home = HedSamples.example();
+        home.getControlFunctions().clear();
         var circuit = (FinalCircuit) home.getCircuits().getFirst();
         var service = new CircuitServices(Locale.FRENCH);
         var equipment = home.getEquipment().getFirst();
@@ -203,6 +205,7 @@ class CircuitDiagramTest {
     @Test
     void branchesReplaceDirectSupplyEdgesWithoutDuplicatingEquipmentOrChangingControlLinks() {
         var home = HedSamples.example();
+        home.getControlFunctions().getFirst().getTargets().clear();
         var circuit = (FinalCircuit) home.getCircuits().getFirst();
         var branch = HedDomain.named(HedDomain.F.createCircuitBranch(), "Window side");
         circuit.getBranches().add(branch);
@@ -226,7 +229,7 @@ class CircuitDiagramTest {
         assertFalse(projection.connects(equipment, third));
         assertTrue(projection.links.stream().anyMatch(link -> link.owner() == branch && link.label().equals("Window side")));
         assertTrue(projection.links.stream().anyMatch(link -> link.source() == second && link.target() == equipment && link.label().equals("Window side")));
-        assertTrue(projection.connects(home.getControlFunctions().getFirst().getChannels().getFirst(), equipment));
+        assertTrue(projection.connects(home.getControlFunctions().get(1).getChannels().getFirst(), home.getEquipment().get(1)));
         var junction = projection.nodes.get(circuit);
         assertEquals("hed-circuits-junction", junction.getName());
         assertEquals("3", junction.getDefaultWidthExpression());
@@ -262,7 +265,7 @@ class CircuitDiagramTest {
         circuit.getBranches().clear();
         var direct = new Projection(home);
         assertFalse(direct.nodes.containsKey(circuit));
-        assertTrue(direct.connects(home.getEquipment().getFirst(), home.getEquipment().get(4)));
+        assertTrue(direct.connects(home.getEquipment().get(4), home.getEquipment().get(5)));
     }
 
     @Test
@@ -300,5 +303,63 @@ class CircuitDiagramTest {
         assertFalse(multi.links.stream().anyMatch(link -> link.owner() == function && link.source() == control));
         control.getChannels().removeLast();
         assertFalse(new Projection(home).nodes.containsKey(channel));
+    }
+
+    @Test
+    void receiversOnTheirCommandsCircuitKeepOnlyControlEdgesWithoutChangingAssociations() {
+        var home = HedSamples.example();
+        var projection = new Projection(home);
+        var light = home.getEquipment().getFirst();
+        var shutter = home.getEquipment().get(2);
+        for (var receiver : List.of(light, shutter)) {
+            assertTrue(projection.nodes.containsKey(receiver));
+            assertTrue(projection.links.stream().noneMatch(link -> (link.source() == receiver || link.target() == receiver)
+                    && (link.kind().equals("hed-circuits-circuit-start") || link.kind().equals("hed-circuits-equipment-chain"))));
+            assertTrue(projection.links.stream().anyMatch(link -> link.target() == receiver && link.kind().equals("hed-circuits-direct-control")));
+            assertTrue(hed.starter.representations.CircuitEquipment.getAssociatedEquipment(receiver.getCircuit()).contains(receiver));
+        }
+        // The switched outlet belongs to another circuit, so its solid supply path remains necessary.
+        var outlet = home.getEquipment().get(1);
+        assertTrue(projection.connects(outlet.getCircuit().getProtectiveDevice(), outlet));
+        var lighting = home.getControlFunctions().getFirst();
+        lighting.getChannels().forEach(channel -> ((ControlDevice) channel.eContainer()).setCircuit(null));
+        assertTrue(new Projection(home).connects(light.getCircuit().getProtectiveDevice(), light));
+    }
+
+    @Test
+    void branchPathsSkipControlledReceiversAtEveryPositionAndRestoreThemWhenTheFunctionIsRemoved() {
+        var home = HedSamples.empty("Controlled branch");
+        var circuit = HedDomain.named(HedDomain.F.createFinalCircuit(), "Lighting");
+        home.getCircuits().add(circuit);
+        var first = HedDomain.addEquipment(home, HedDomain.type(home, DeviceKind.LUMINAIRE));
+        var command = (ControlDevice) HedDomain.addEquipment(home, HedDomain.type(home, DeviceKind.SWITCH));
+        var middle = HedDomain.addEquipment(home, HedDomain.type(home, DeviceKind.LUMINAIRE));
+        var second = HedDomain.addEquipment(home, HedDomain.type(home, DeviceKind.SWITCH));
+        var last = HedDomain.addEquipment(home, HedDomain.type(home, DeviceKind.SHUTTER_MOTOR));
+        home.getEquipment().forEach(device -> device.setCircuit(circuit));
+        var branch = HedDomain.named(HedDomain.F.createCircuitBranch(), "Room supply");
+        circuit.getBranches().add(branch);
+        HedDomain.initializeFirstBranch(branch);
+        var function = HedDomain.named(HedDomain.F.createControlFunction(), "Command");
+        function.getChannels().add(command.getChannels().getFirst());
+        function.getTargets().addAll(List.of(first, middle, last));
+        home.getControlFunctions().add(function);
+        var projection = new Projection(home);
+        assertTrue(projection.connects(circuit, command));
+        assertTrue(projection.connects(command, second));
+        assertFalse(projection.connects(circuit, first));
+        assertFalse(projection.connects(middle, second));
+        assertEquals(List.copyOf(home.getEquipment()), List.copyOf(branch.getEquipment()));
+        var receiverBranch = HedDomain.named(HedDomain.F.createCircuitBranch(), "Receiver only");
+        circuit.getBranches().add(receiverBranch);
+        HedDomain.assignToBranch(receiverBranch, List.of(last));
+        assertTrue(new CircuitServices(Locale.ENGLISH).getHedCircuitFirstEquipment(receiverBranch).isEmpty());
+        assertFalse(new Projection(home).links.stream().anyMatch(link -> link.owner() == receiverBranch));
+        home.getControlFunctions().remove(function);
+        var restored = new Projection(home);
+        assertTrue(restored.connects(circuit, first));
+        assertTrue(restored.connects(first, command));
+        assertTrue(restored.connects(command, middle));
+        assertTrue(restored.connects(circuit, last));
     }
 }

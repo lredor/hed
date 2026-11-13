@@ -24,6 +24,7 @@
     "removeConfirmation": "Only the selected graphical elements will be removed from this floor plan. The corresponding devices and their connections will remain in the model. You can place them again from Model Explorer."
   },
   "navigation": {
-    "deviceType": "Navigate to device type"
+    "deviceType": "Navigate to device type",
+    "supplyCircuit": "Navigate to supply circuit"
   }
 }

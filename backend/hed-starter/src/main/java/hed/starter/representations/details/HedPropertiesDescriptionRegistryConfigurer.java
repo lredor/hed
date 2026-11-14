@@ -189,7 +189,7 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
     }
 
     private String group(EClass type, EStructuralFeature f) {
-        if (List.of("name", "description", "labelText", "manufacturer", "productReference").contains(f.getName())
+        if (List.of("name", "description", "labelText", "manufacturer", "productReference", "standardVersion").contains(f.getName())
                 || f.getName().equals("deviceType") && HomeElectricalPackage.Literals.EQUIPMENT.isSuperTypeOf(type)) {
             return "general";
         }
@@ -357,7 +357,7 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                     var home = HedDomain.dwelling(self);
                     return home == null ? ""
                             : new HedValidation().validate(home).stream().filter(i -> self instanceof Dwelling || i.target() == self)
-                                    .map(i -> HedDomain.label(i.target(), locale) + ": " + Messages.text(locale, i.code())).reduce((a, b) -> a + "\n" + b).orElse(Messages.text(locale, "consistent"));
+                                    .map(i -> HedDomain.label(i.target(), locale) + ": " + i.message(locale)).reduce((a, b) -> a + "\n" + b).orElse(Messages.text(locale, "consistent"));
                 }).newValueHandler((vm, value) -> new Failure("Read only")).diagnosticsProvider(vm -> List.of()).kindProvider(Object::toString).messageProvider(Object::toString).build();
     }
 

@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import hed.domain.standards.HedStandards;
 import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import hed.homeelectrical.Circuit;
@@ -36,13 +38,49 @@ import hed.homeelectrical.TechnicalElement;
 
 /** Structural errors block mutations; incomplete design remains saveable with warnings. */
 public final class HedValidation {
+    /** Structural errors block mutations; design and standard warnings remain saveable. */
     public enum Severity {
         ERROR, WARNING
     }
 
-    public record Issue(Severity severity, String code, EObject target) {
+    /**
+     * A targeted, localizable diagnostic with immutable message arguments.
+     * @param severity whether the issue blocks a mutation or warns about an incomplete design
+     * @param code stable message key identifying the violated rule
+     * @param target affected semantic element
+     * @param arguments values substituted into the localized explanation
+     */
+    public record Issue(Severity severity, String code, EObject target, List<Object> arguments) {
+        /** Copies message arguments so later model edits cannot mutate an existing diagnostic. */
+        public Issue {
+            arguments = List.copyOf(arguments);
+        }
+
+        /**
+         * Creates a structural diagnostic without parameters.
+         * @param severity diagnostic severity
+         * @param code stable message key
+         * @param target affected element
+         */
+        public Issue(Severity severity, String code, EObject target) {
+            this(severity, code, target, List.of());
+        }
+
+        /**
+         * Formats the explanation for the current application language.
+         * @param locale requested language
+         * @return a fully substituted diagnostic message
+         */
+        public String message(Locale locale) {
+            return Messages.text(locale, code, arguments.toArray());
+        }
     }
 
+    /**
+     * Validates structure and the explicitly selected subset of standard rules.
+     * @param home the complete dwelling to assess
+     * @return immutable targeted diagnostics, with structural checks before normative warnings
+     */
     public List<Issue> validate(Dwelling home) {
         var issues = new ArrayList<Issue>();
         var all = HedDomain.contents(home);
@@ -197,6 +235,7 @@ public final class HedValidation {
                 break;
             }
         }
+        issues.addAll(HedStandards.validate(home));
         return List.copyOf(issues);
     }
 

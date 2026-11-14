@@ -179,6 +179,18 @@ SPDX-License-Identifier: EPL-2.0
                 <ecoreEnumLiteral href="homeelectrical.ecore#//ControlMode/SHUTTER"/>
             </genEnumLiterals>
         </genEnums>
+        <genEnums typeSafeEnumCompatible="false">
+            <ecoreEnum href="homeelectrical.ecore#//StandardVersion"/>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//StandardVersion/UNSPECIFIED"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//StandardVersion/NF_C_15_100_BEFORE_A5"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//StandardVersion/NF_C_15_100_A5_2015"/>
+            </genEnumLiterals>
+        </genEnums>
         <genClasses image="false">
             <ecoreClass href="homeelectrical.ecore#//NamedElement"/>
             <genFeatures createChild="false">
@@ -238,6 +250,9 @@ SPDX-License-Identifier: EPL-2.0
             </genFeatures>
             <genFeatures children="true" createChild="true" property="None">
                 <ecoreFeature href="homeelectrical.ecore#//Dwelling/serviceConnection" xsi:type="ecore:EReference"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//Dwelling/standardVersion" xsi:type="ecore:EAttribute"/>
             </genFeatures>
         </genClasses>
         <genClasses>

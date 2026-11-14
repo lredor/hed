@@ -27,6 +27,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link hed.homeelectrical.Dwelling#getCircuits <em>Circuits</em>}</li>
  *   <li>{@link hed.homeelectrical.Dwelling#getControlFunctions <em>Control Functions</em>}</li>
  *   <li>{@link hed.homeelectrical.Dwelling#getServiceConnection <em>Service Connection</em>}</li>
+ *   <li>{@link hed.homeelectrical.Dwelling#getStandardVersion <em>Standard Version</em>}</li>
  * </ul>
  *
  * @see hed.homeelectrical.HomeElectricalPackage#getDwelling()
@@ -137,5 +138,34 @@ public interface Dwelling extends NamedElement {
      * @generated
      */
     void setServiceConnection(ServiceConnection value);
+
+    /**
+     * Returns the value of the '<em><b>Standard Version</b></em>' attribute.
+     * The default value is <code>"UNSPECIFIED"</code>.
+     * The literals are from the enumeration {@link hed.homeelectrical.StandardVersion}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Explicit standard profile used by partial NF C 15-100 design checks. Unspecified by default for both new and existing dwellings; never inferred from dates or application language.
+     * <!-- end-model-doc -->
+     * @return the value of the '<em>Standard Version</em>' attribute.
+     * @see hed.homeelectrical.StandardVersion
+     * @see #setStandardVersion(StandardVersion)
+     * @see hed.homeelectrical.HomeElectricalPackage#getDwelling_StandardVersion()
+     * @model default="UNSPECIFIED"
+     * @generated
+     */
+    StandardVersion getStandardVersion();
+
+    /**
+     * Sets the value of the '{@link hed.homeelectrical.Dwelling#getStandardVersion <em>Standard Version</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Standard Version</em>' attribute.
+     * @see hed.homeelectrical.StandardVersion
+     * @see #getStandardVersion()
+     * @generated
+     */
+    void setStandardVersion(StandardVersion value);
 
 } // Dwelling

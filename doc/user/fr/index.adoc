@@ -284,6 +284,22 @@ Un appareil dont le Nom est vide n’a pas de libellé de nom sur le diagramme.
 Un interrupteur différentiel affiche sa sensibilité et son type, par exemple *Type A*.
 La touche *Suppr* sur un appareil de ce diagramme supprime l’appareil du modèle et efface les références qui le désignaient.
 
+== Choisir une version de norme
+
+Sélectionnez *Logement* dans Model Explorer, puis *Norme électrique applicable* dans Details.
+Le choix est conservé dans le projet et actualise les messages de validation ainsi que les anomalies du tableau des circuits.
+Par défaut, pour les nouveaux projets comme pour les projets existants, la valeur est *Non spécifiée* : seuls les contrôles structurels sont actifs.
+
+Les profils proposés sont *avant A5 (profil 2010)* et *amendement A5 (2015)*.
+Pour un circuit d'usage *Prises de courant* en cuivre de 1,5 ou 2,5 mm², le décompte porte sur toutes ses prises, y compris celles de ses branches et de ses blocs.
+Avant A5, un bloc de deux prises sur le même circuit compte pour une prise ; après A5, chaque prise compte individuellement.
+Les plafonds sont respectivement 5 et 8 prises décomptées avant A5, contre 8 et 12 après A5 selon la section.
+Les sections absentes ou non prises en charge sont indiquées comme non évaluées.
+
+Ces contrôles couvrent une partie documentée des règles ; ils ne certifient pas la conformité de l'installation et ne déterminent pas quelle édition lui est applicable.
+La révision 2024, les règles spécifiques de cuisine et les minima d'équipement par pièce ne sont pas couverts ici.
+Les sources et le périmètre détaillé figurent dans https://github.com/lredor/hed/blob/master/doc/standards.md[la documentation des règles].
+
 == Associer les circuits et les équipements
 
 Dans Model Explorer, utilisez *Déplacer vers le haut / Déplacer vers le bas* sur un circuit pour modifier l’ordre de lecture de la liste *Circuits*.

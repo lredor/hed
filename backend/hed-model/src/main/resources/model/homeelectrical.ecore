@@ -98,6 +98,17 @@ SPDX-License-Identifier: EPL-2.0
             eType="#//ServiceConnection"
             name="serviceConnection"
             xsi:type="ecore:EReference"/>
+        <eStructuralFeatures
+            defaultValueLiteral="UNSPECIFIED"
+            eType="#//StandardVersion"
+            name="standardVersion"
+            xsi:type="ecore:EAttribute">
+            <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+                <details
+                    key="documentation"
+                    value="Explicit standard profile used by partial NF C 15-100 design checks. Unspecified by default for both new and existing dwellings; never inferred from dates or application language."/>
+            </eAnnotations>
+        </eStructuralFeatures>
     </eClassifiers>
     <eClassifiers eSuperTypes="#//NamedElement" name="Storey" xsi:type="ecore:EClass">
         <eStructuralFeatures
@@ -429,5 +440,15 @@ SPDX-License-Identifier: EPL-2.0
         <eLiterals name="SWITCHING" value="0"/>
         <eLiterals name="DIMMING" value="1"/>
         <eLiterals name="SHUTTER" value="2"/>
+    </eClassifiers>
+    <eClassifiers name="StandardVersion" xsi:type="ecore:EEnum">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+            <details
+                key="documentation"
+                value="Supported explicit profiles for version-aware installation checks; each profile implements a documented subset rather than a complete conformity assessment."/>
+        </eAnnotations>
+        <eLiterals name="UNSPECIFIED" value="0"/>
+        <eLiterals name="NF_C_15_100_BEFORE_A5" value="1"/>
+        <eLiterals name="NF_C_15_100_A5_2015" value="2"/>
     </eClassifiers>
 </ecore:EPackage>

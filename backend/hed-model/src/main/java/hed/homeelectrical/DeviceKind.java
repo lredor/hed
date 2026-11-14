@@ -45,211 +45,211 @@ public enum DeviceKind implements Enumerator {
      */
     OUTLET_BLOCK(1, "OUTLET_BLOCK", "OUTLET_BLOCK"),
     /**
-    * The '<em><b>SWITCH</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>SWITCH</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #SWITCH_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #SWITCH_VALUE
+     * @generated
+     * @ordered
+     */
     SWITCH(2, "SWITCH", "SWITCH"),
     /**
-    * The '<em><b>PUSH BUTTON</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>PUSH BUTTON</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #PUSH_BUTTON_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #PUSH_BUTTON_VALUE
+     * @generated
+     * @ordered
+     */
     PUSH_BUTTON(3, "PUSH_BUTTON", "PUSH_BUTTON"),
     /**
-    * The '<em><b>DIMMER</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>DIMMER</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #DIMMER_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #DIMMER_VALUE
+     * @generated
+     * @ordered
+     */
     DIMMER(4, "DIMMER", "DIMMER"),
     /**
-    * The '<em><b>SHUTTER CONTROL</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>SHUTTER CONTROL</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #SHUTTER_CONTROL_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #SHUTTER_CONTROL_VALUE
+     * @generated
+     * @ordered
+     */
     SHUTTER_CONTROL(5, "SHUTTER_CONTROL", "SHUTTER_CONTROL"),
     /**
-    * The '<em><b>LUMINAIRE</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>LUMINAIRE</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #LUMINAIRE_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #LUMINAIRE_VALUE
+     * @generated
+     * @ordered
+     */
     LUMINAIRE(6, "LUMINAIRE", "LUMINAIRE"),
     /**
-    * The '<em><b>SHUTTER MOTOR</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>SHUTTER MOTOR</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #SHUTTER_MOTOR_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #SHUTTER_MOTOR_VALUE
+     * @generated
+     * @ordered
+     */
     SHUTTER_MOTOR(7, "SHUTTER_MOTOR", "SHUTTER_MOTOR"),
     /**
-    * The '<em><b>HEATER</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>HEATER</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #HEATER_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #HEATER_VALUE
+     * @generated
+     * @ordered
+     */
     HEATER(8, "HEATER", "HEATER"),
     /**
-    * The '<em><b>WATER HEATER</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>WATER HEATER</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #WATER_HEATER_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #WATER_HEATER_VALUE
+     * @generated
+     * @ordered
+     */
     WATER_HEATER(9, "WATER_HEATER", "WATER_HEATER"),
     /**
-    * The '<em><b>VENTILATION</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>VENTILATION</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #VENTILATION_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #VENTILATION_VALUE
+     * @generated
+     * @ordered
+     */
     VENTILATION(10, "VENTILATION", "VENTILATION"),
     /**
-    * The '<em><b>COOKER</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>COOKER</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #COOKER_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #COOKER_VALUE
+     * @generated
+     * @ordered
+     */
     COOKER(11, "COOKER", "COOKER"),
     /**
-    * The '<em><b>FIXED APPLIANCE</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>FIXED APPLIANCE</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #FIXED_APPLIANCE_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #FIXED_APPLIANCE_VALUE
+     * @generated
+     * @ordered
+     */
     FIXED_APPLIANCE(12, "FIXED_APPLIANCE", "FIXED_APPLIANCE"),
     /**
-    * The '<em><b>MCB</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>MCB</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #MCB_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #MCB_VALUE
+     * @generated
+     * @ordered
+     */
     MCB(13, "MCB", "MCB"),
     /**
-    * The '<em><b>RCCB</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>RCCB</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #RCCB_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #RCCB_VALUE
+     * @generated
+     * @ordered
+     */
     RCCB(14, "RCCB", "RCCB"),
     /**
-    * The '<em><b>RCBO</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>RCBO</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #RCBO_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #RCBO_VALUE
+     * @generated
+     * @ordered
+     */
     RCBO(15, "RCBO", "RCBO"),
     /**
-    * The '<em><b>FUSE</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>FUSE</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #FUSE_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #FUSE_VALUE
+     * @generated
+     * @ordered
+     */
     FUSE(16, "FUSE", "FUSE"),
     /**
-    * The '<em><b>ISOLATOR</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>ISOLATOR</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #ISOLATOR_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #ISOLATOR_VALUE
+     * @generated
+     * @ordered
+     */
     ISOLATOR(17, "ISOLATOR", "ISOLATOR"),
     /**
-    * The '<em><b>SPD</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>SPD</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #SPD_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #SPD_VALUE
+     * @generated
+     * @ordered
+     */
     SPD(18, "SPD", "SPD"),
     /**
-    * The '<em><b>IMPULSE RELAY</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>IMPULSE RELAY</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #IMPULSE_RELAY_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #IMPULSE_RELAY_VALUE
+     * @generated
+     * @ordered
+     */
     IMPULSE_RELAY(19, "IMPULSE_RELAY", "IMPULSE_RELAY"),
     /**
-    * The '<em><b>CONTACTOR</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>CONTACTOR</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #CONTACTOR_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #CONTACTOR_VALUE
+     * @generated
+     * @ordered
+     */
     CONTACTOR(20, "CONTACTOR", "CONTACTOR"),
     /**
-    * The '<em><b>ENERGY METER</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>ENERGY METER</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #ENERGY_METER_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #ENERGY_METER_VALUE
+     * @generated
+     * @ordered
+     */
     ENERGY_METER(21, "ENERGY_METER", "ENERGY_METER"),
     /**
-    * The '<em><b>SERVICE BREAKER</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>SERVICE BREAKER</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #SERVICE_BREAKER_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #SERVICE_BREAKER_VALUE
+     * @generated
+     * @ordered
+     */
     SERVICE_BREAKER(22, "SERVICE_BREAKER", "SERVICE_BREAKER"),
     /**
-    * The '<em><b>OTHER FIELD</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>OTHER FIELD</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #OTHER_FIELD_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #OTHER_FIELD_VALUE
+     * @generated
+     * @ordered
+     */
     OTHER_FIELD(23, "OTHER_FIELD", "OTHER_FIELD"),
     /**
-    * The '<em><b>OTHER MODULAR</b></em>' literal object.
-    * <!-- begin-user-doc -->
+     * The '<em><b>OTHER MODULAR</b></em>' literal object.
+     * <!-- begin-user-doc -->
     * <!-- end-user-doc -->
-    * @see #OTHER_MODULAR_VALUE
-    * @generated
-    * @ordered
-    */
+     * @see #OTHER_MODULAR_VALUE
+     * @generated
+     * @ordered
+     */
     OTHER_MODULAR(24, "OTHER_MODULAR", "OTHER_MODULAR");
 
     /**

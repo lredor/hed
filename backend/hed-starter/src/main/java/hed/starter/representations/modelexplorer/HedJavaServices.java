@@ -576,7 +576,7 @@ public class HedJavaServices {
             return self instanceof Equipment e && e.getDeviceType() != null ? Messages.text(locale, "kind." + kind(e).getName()) : "";
         }
         if (feature.equals("issues")) {
-            return new HedValidation().validate(dwelling(self)).stream().filter(i -> i.target() == self).map(i -> Messages.text(locale, i.code())).reduce((a, b) -> a + "; " + b).orElse("");
+            return new HedValidation().validate(dwelling(self)).stream().filter(i -> i.target() == self).map(i -> i.message(locale)).reduce((a, b) -> a + "; " + b).orElse("");
         }
         if (feature.equals("served")) {
             return self instanceof FinalCircuit c ? joined(served(c)) : "";

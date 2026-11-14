@@ -44,7 +44,7 @@ jobs:
       - name: Build and test the model and edit modules
         id: domain_tests
         run: mvn -B -ntp verify
-      - name: Test the coverage summary reporters
+      - name: Test the CI helper scripts
         run: python3 -m unittest discover -s tools/ci -p 'test_*.py'
       - name: Show domain test results
         if: ${{ always() && !cancelled() }}
@@ -257,8 +257,10 @@ jobs:
         env:
           REVISION: ${{ github.sha }}
         run: |
+          version=$(python3 -c 'import xml.etree.ElementTree as E; print(E.parse("pom.xml").findtext("{http://maven.apache.org/POM/4.0.0}version"))')
           docker build --platform linux/amd64 --file Dockerfile.runtime \
             --label "org.opencontainers.image.revision=$REVISION" \
+            --label "org.opencontainers.image.version=$version" \
             --tag "ghcr.io/lredor/hed:sha-$REVISION" \
             --tag ghcr.io/lredor/hed:latest \
             "$RUNNER_TEMP/hed-application"
@@ -336,6 +338,27 @@ jobs:
             echo 'After the first publication, the owner must make the hed package Public in GitHub package settings to enable anonymous pulls.'
             echo 'Users can then start it with compose.run.yaml without building or supplying a GitHub token.'
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Record the published image for future releases
+        env:
+          REVISION: ${{ github.sha }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/release-image"
+          docker image inspect "ghcr.io/lredor/hed:sha-$REVISION" | \
+            jq --exit-status --arg commit "$REVISION" --arg image ghcr.io/lredor/hed '
+              .[0] | select(.Config.Labels["org.opencontainers.image.revision"] == $commit) |
+              {commit: $commit, version: .Config.Labels["org.opencontainers.image.version"],
+               image: (.RepoDigests | map(select(startswith($image + "@sha256:"))) | first)} |
+              select(.image != null and .version != null)
+            ' > "$RUNNER_TEMP/release-image/image.json"
+      - name: Retain release image provenance
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: hed-release-image-${{ github.sha }}
+          path: ${{ runner.temp }}/release-image/image.json
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 90
 
   playwright:
     name: Playwright (${{ matrix.language }})

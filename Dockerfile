@@ -35,7 +35,7 @@ RUN --mount=type=cache,target=/root/.m2 \
 FROM eclipse-temurin:21-jre-alpine
 RUN addgroup -g 10001 hed && adduser -D -u 10001 -G hed hed
 WORKDIR /app
-COPY --from=backend /workspace/backend/hed-application/target/hed-application-0.1.0-SNAPSHOT.jar app.jar
+COPY --from=backend /workspace/backend/hed-application/target/hed-application-*.jar app.jar
 USER 10001:10001
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/app/app.jar"]

@@ -24,7 +24,7 @@ services:
       retries: 15
 
   application:
-    image: home-electrical-designer:0.1.0
+    image: home-electrical-designer:dev
     build:
       context: .
       args:

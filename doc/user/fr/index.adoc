@@ -49,6 +49,9 @@ Cette première distribution de HED utilise une image *Linux amd64* ; un ordinat
 . Ouvrez le https://github.com/lredor/hed/blob/master/compose.run.yaml[fichier de lancement sur GitHub], puis utilisez *Download raw file* pour le télécharger.
 . Enregistrez-le dans ce dossier sous le nom exact `compose.run.yaml`, sans extension `.txt` supplémentaire.
 
+Pour installer une version numérotée, téléchargez plutôt le fichier `compose.run.yaml` joint à la https://github.com/lredor/hed/releases[release GitHub] souhaitée.
+Ce fichier sélectionne la version correspondante, par exemple `0.1.0`, tandis que celui de `master` suit `latest`.
+
 Ce seul fichier décrit les deux services à démarrer : HED et PostgreSQL, qui conserve vos projets.
 Vous n’avez pas besoin de télécharger les sources du modeleur.
 
@@ -118,6 +121,8 @@ Sauvegardez d’abord vos projets, puis utilisez les mêmes commandes `pull` et 
 Conservez votre fichier `.env` et le même nom d’installation. Rechargez ensuite le navigateur avec Ctrl+F5.
 Le téléchargement remplace l’image de l’application et conserve le volume des données.
 Le tag `latest` correspond au dernier état de `master` publié après validation des tests ; ce n’est pas une version stable numérotée.
+Pour rester sur une version numérotée, utilisez son fichier de lancement ou ajoutez par exemple `HED_IMAGE=ghcr.io/lredor/hed:0.1.0` dans `.env`, une fois cette version publiée.
+Un réglage `HED_IMAGE` déjà présent dans `.env` est prioritaire sur la version choisie par le fichier de lancement : vérifiez-le avant une mise à jour.
 Pour conserver une image précise, un utilisateur averti peut ajouter `HED_IMAGE=ghcr.io/lredor/hed:sha-<identifiant-complet-du-commit>` dans `.env`, avec un tag réellement publié.
 Cette option fixe l’application ; l’image PostgreSQL reste celle définie dans le fichier de lancement.
 

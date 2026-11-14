@@ -34,7 +34,7 @@ mvn -s settings.xml.example -Papplication verify
 
 The lockfile is committed. Direct dependencies and the Sirius Web version are pinned. TypeScript uses Node-style module resolution to consume the declaration files supplied by these Sirius Web packages.
 
-The frontend build writes static resources into the application module. Build it before packaging the backend. The Spring Boot executable JAR is `backend/hed-application/target/hed-application-0.1.0-SNAPSHOT.jar`.
+The frontend build writes static resources into the application module. Build it before packaging the backend. For version 0.1.0, the Spring Boot executable JAR is `backend/hed-application/target/hed-application-0.1.0.jar`; use the current project version after a development-version bump.
 
 The default `mvn verify` builds and tests the model and edit modules. The `application` profile also builds the Sirius Web starter and executable application. The application can run directly against an existing PostgreSQL server or use the [source-built Docker stack](docker.md). The Windows [build helper](../scripts/Build.ps1) installs the locked frontend dependencies, builds its assets, and runs the Maven application verification.
 
@@ -43,7 +43,7 @@ The default `mvn verify` builds and tests the model and edit modules. The `appli
 Configure the database connection, then launch the JAR:
 
 ```sh
-java -jar backend/hed-application/target/hed-application-0.1.0-SNAPSHOT.jar
+java -jar backend/hed-application/target/hed-application-0.1.0.jar
 ```
 
 | Variable | Default | Purpose |
@@ -122,7 +122,7 @@ English is the default. For example, in PowerShell, enable French before launchi
 
 ```powershell
 $env:HED_LOCALE = 'fr_FR'
-java -jar backend/hed-application/target/hed-application-0.1.0-SNAPSHOT.jar
+java -jar backend/hed-application/target/hed-application-0.1.0.jar
 ```
 
 Domain labels and messages are in the model's `i18n/hed-messages*.properties`. Frontend additions use `i18n/{en,fr}/home-electrical-designer.json` through Sirius Web's namespace discovery.

@@ -116,6 +116,8 @@ Back up your projects, then use the same `pull` and `up -d --wait` commands as f
 Keep `.env` and the same installation name. Refresh the browser with Ctrl+F5 afterward.
 The download replaces the application image while retaining the data volume.
 The `latest` tag follows the last tested and published `master` state; it is not a numbered stable release.
+For a numbered version, download `compose.run.yaml` from the desired https://github.com/lredor/hed/releases[GitHub release], or add for example `HED_IMAGE=ghcr.io/lredor/hed:0.1.0` to `.env` once that version is published.
+The release installer defaults to its numbered version instead of `latest`. An existing `HED_IMAGE` entry in `.env` overrides the installer: check it before updating.
 To keep a specific image, an advanced user can add `HED_IMAGE=ghcr.io/lredor/hed:sha-<full-commit-id>` to `.env`, using a tag that has actually been published.
 This fixes the application image; PostgreSQL still uses the image specified by the launcher.
 

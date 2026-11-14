@@ -9,6 +9,10 @@
  *******************************************************************************/
 package hed.starter.representations.diagrams.floorplan;
 
+import hed.starter.representations.diagrams.OutletBlockArtwork;
+
+import hed.homeelectrical.OutletBlock;
+
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,6 +64,8 @@ public class FloorPlanNodeStyleProvider implements INodeStyleProvider {
             return Optional.of(new FloorPlanNodeStyle(true, image.isBlank() ? "" : "/api/images/" + image, HedDomain.label(storey, locale), !image.isBlank(), layout));
         }
         var equipment = (FieldEquipment) self;
-        return Optional.of(new FloorPlanNodeStyle(false, "/api/images" + HedDomainIcons.of(equipment), HedDomain.label(equipment, locale), true, layout));
+        return Optional.of(
+                new FloorPlanNodeStyle(false, equipment instanceof OutletBlock block ? OutletBlockArtwork.url(block) : "/api/images" + HedDomainIcons.of(equipment), HedDomain.label(equipment, locale),
+                        true, layout, equipment instanceof OutletBlock block ? block.getRows().size() : 1, equipment instanceof OutletBlock block ? OutletBlockArtwork.columns(block) : 1));
     }
 }

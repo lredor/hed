@@ -178,6 +178,16 @@ SPDX-License-Identifier: EPL-2.0
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
             name="channelCount"
             xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            defaultValueLiteral="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+            name="nbRows"
+            xsi:type="ecore:EAttribute"/>
+        <eStructuralFeatures
+            defaultValueLiteral="2"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+            name="nbColumns"
+            xsi:type="ecore:EAttribute"/>
     </eClassifiers>
     <eClassifiers abstract="true" eSuperTypes="#//NamedElement" name="Equipment" xsi:type="ecore:EClass">
         <eStructuralFeatures eType="#//DeviceType" lowerBound="1" name="deviceType" xsi:type="ecore:EReference"/>
@@ -200,6 +210,32 @@ SPDX-License-Identifier: EPL-2.0
             xsi:type="ecore:EReference"/>
     </eClassifiers>
     <eClassifiers eSuperTypes="#//FieldEquipment" name="Outlet" xsi:type="ecore:EClass"/>
+    <eClassifiers eSuperTypes="#//FieldEquipment" name="OutletBlock" xsi:type="ecore:EClass">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+            <details
+                key="documentation"
+                value="A physically placed assembly of outlet rows. Individual outlets retain their electrical assignments; the block is moved as one graphical unit."/>
+        </eAnnotations>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//OutletRow"
+            lowerBound="1"
+            name="rows"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
+    <eClassifiers eSuperTypes="#//NamedElement" name="OutletRow" xsi:type="ecore:EClass">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+            <details key="documentation" value="An ordered row of individual outlets contained in an outlet block."/>
+        </eAnnotations>
+        <eStructuralFeatures
+            containment="true"
+            eType="#//Outlet"
+            lowerBound="1"
+            name="outlets"
+            upperBound="-1"
+            xsi:type="ecore:EReference"/>
+    </eClassifiers>
     <eClassifiers eSuperTypes="#//FieldEquipment" name="ElectricalLoad" xsi:type="ecore:EClass"/>
     <eClassifiers eSuperTypes="#//FieldEquipment" name="ControlDevice" xsi:type="ecore:EClass">
         <eStructuralFeatures
@@ -340,29 +376,30 @@ SPDX-License-Identifier: EPL-2.0
     </eClassifiers>
     <eClassifiers name="DeviceKind" xsi:type="ecore:EEnum">
         <eLiterals name="OUTLET" value="0"/>
-        <eLiterals name="SWITCH" value="1"/>
-        <eLiterals name="PUSH_BUTTON" value="2"/>
-        <eLiterals name="DIMMER" value="3"/>
-        <eLiterals name="SHUTTER_CONTROL" value="4"/>
-        <eLiterals name="LUMINAIRE" value="5"/>
-        <eLiterals name="SHUTTER_MOTOR" value="6"/>
-        <eLiterals name="HEATER" value="7"/>
-        <eLiterals name="WATER_HEATER" value="8"/>
-        <eLiterals name="VENTILATION" value="9"/>
-        <eLiterals name="COOKER" value="10"/>
-        <eLiterals name="FIXED_APPLIANCE" value="11"/>
-        <eLiterals name="MCB" value="12"/>
-        <eLiterals name="RCCB" value="13"/>
-        <eLiterals name="RCBO" value="14"/>
-        <eLiterals name="FUSE" value="15"/>
-        <eLiterals name="ISOLATOR" value="16"/>
-        <eLiterals name="SPD" value="17"/>
-        <eLiterals name="IMPULSE_RELAY" value="18"/>
-        <eLiterals name="CONTACTOR" value="19"/>
-        <eLiterals name="ENERGY_METER" value="20"/>
-        <eLiterals name="SERVICE_BREAKER" value="21"/>
-        <eLiterals name="OTHER_FIELD" value="22"/>
-        <eLiterals name="OTHER_MODULAR" value="23"/>
+        <eLiterals name="OUTLET_BLOCK" value="1"/>
+        <eLiterals name="SWITCH" value="2"/>
+        <eLiterals name="PUSH_BUTTON" value="3"/>
+        <eLiterals name="DIMMER" value="4"/>
+        <eLiterals name="SHUTTER_CONTROL" value="5"/>
+        <eLiterals name="LUMINAIRE" value="6"/>
+        <eLiterals name="SHUTTER_MOTOR" value="7"/>
+        <eLiterals name="HEATER" value="8"/>
+        <eLiterals name="WATER_HEATER" value="9"/>
+        <eLiterals name="VENTILATION" value="10"/>
+        <eLiterals name="COOKER" value="11"/>
+        <eLiterals name="FIXED_APPLIANCE" value="12"/>
+        <eLiterals name="MCB" value="13"/>
+        <eLiterals name="RCCB" value="14"/>
+        <eLiterals name="RCBO" value="15"/>
+        <eLiterals name="FUSE" value="16"/>
+        <eLiterals name="ISOLATOR" value="17"/>
+        <eLiterals name="SPD" value="18"/>
+        <eLiterals name="IMPULSE_RELAY" value="19"/>
+        <eLiterals name="CONTACTOR" value="20"/>
+        <eLiterals name="ENERGY_METER" value="21"/>
+        <eLiterals name="SERVICE_BREAKER" value="22"/>
+        <eLiterals name="OTHER_FIELD" value="23"/>
+        <eLiterals name="OTHER_MODULAR" value="24"/>
     </eClassifiers>
     <eClassifiers name="SupplyPhase" xsi:type="ecore:EEnum">
         <eLiterals name="UNKNOWN" value="0"/>

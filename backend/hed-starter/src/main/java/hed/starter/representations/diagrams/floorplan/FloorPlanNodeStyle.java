@@ -18,9 +18,23 @@ import org.eclipse.sirius.components.diagrams.ILayoutStrategy;
  * @param imageURL a local project-image or Material Design pictogram URL
  * @param caption the stored semantic name displayed in the header, tooltip or optional outside label
  * @param hasImage whether an imported background is available
+ * @param rows number of physical outlet rows; one for a standalone pictogram
+ * @param columns number of physical outlet columns; one for a standalone pictogram
  * @param childrenLayoutStrategy the native strategy for child views
  */
-public record FloorPlanNodeStyle(boolean backgroundNode, String imageURL, String caption, boolean hasImage, ILayoutStrategy childrenLayoutStrategy) implements INodeStyle {
+public record FloorPlanNodeStyle(boolean backgroundNode, String imageURL, String caption, boolean hasImage, ILayoutStrategy childrenLayoutStrategy, int rows, int columns) implements INodeStyle {
+    /**
+     * Creates an ordinary pictogram or background with no grouped grid.
+     * @param backgroundNode whether this is the background
+     * @param imageURL the image URL
+     * @param caption the displayed name
+     * @param hasImage whether an image is available
+     * @param childrenLayoutStrategy the layout of child views
+     */
+    public FloorPlanNodeStyle(boolean backgroundNode, String imageURL, String caption, boolean hasImage, ILayoutStrategy childrenLayoutStrategy) {
+        this(backgroundNode, imageURL, caption, hasImage, childrenLayoutStrategy, 1, 1);
+    }
+
     @Override
     public ILayoutStrategy getChildrenLayoutStrategy() {
         return childrenLayoutStrategy;

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.starter.representations.modelexplorer;
 
+import hed.domain.HedOutletBlocks;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -37,6 +39,8 @@ import hed.domain.HedDomain;
 import hed.domain.Messages;
 import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.FieldEquipment;
+import hed.homeelectrical.OutletBlock;
+import hed.homeelectrical.OutletRow;
 import hed.homeelectrical.Room;
 import hed.homeelectrical.Storey;
 import hed.starter.representations.diagrams.floorplan.FloorPlanNodeStyle;
@@ -109,6 +113,9 @@ public class ExplorerPlanPlacement implements IRepresentationRenderVariableCusto
         if (!enabled) {
             return false;
         }
+        if (source instanceof OutletRow row && row.eContainer() instanceof OutletBlock block) {
+            return missing(block, placements);
+        }
         if (source instanceof FieldEquipment equipment) {
             return missing(equipment, placements);
         }
@@ -123,6 +130,7 @@ public class ExplorerPlanPlacement implements IRepresentationRenderVariableCusto
     }
 
     private boolean missing(FieldEquipment equipment, Map<String, Set<String>> placements) {
+        equipment = HedOutletBlocks.endpoint(equipment);
         if (equipment.getRoom() == null || !(equipment.getRoom().eContainer() instanceof Storey storey)) {
             return false;
         }

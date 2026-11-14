@@ -56,8 +56,12 @@ public final class CircuitDiagram {
     public DiagramDescription create() {
         var channel = pictogram("channel", "ControlChannel", "aql:self.getHedCircuitChannels()", 16);
         var equipment = pictogram("equipment", "FieldEquipment", "aql:self.getHedCircuitRoomEquipment()", 48);
+        equipment.setDefaultWidthExpression("aql:self.getHedCircuitEquipmentWidth()");
+        equipment.setDefaultHeightExpression("aql:self.getHedCircuitEquipmentHeight()");
         equipment.getBorderNodesDescriptions().add(channel);
         var unlocated = pictogram("unlocated-equipment", "FieldEquipment", "aql:self.equipment->select(e | e.room = null)", 48);
+        unlocated.setDefaultWidthExpression("aql:self.getHedCircuitEquipmentWidth()");
+        unlocated.setDefaultHeightExpression("aql:self.getHedCircuitEquipmentHeight()");
         unlocated.getReusedBorderNodeDescriptions().add(channel);
         var room = container("room", "Room", "aql:self.rooms", "#ffffff", equipment);
         var storey = container("storey", "Storey", "aql:self.storeys", "#eff6ff", room);
@@ -97,16 +101,16 @@ public final class CircuitDiagram {
                 "aql:self.name"));
         edges.add(edge("branch-start", "CircuitBranch", "aql:self.circuits->filter(homeelectrical::FinalCircuit).branches", "aql:self.circuit", "aql:self.getHedCircuitFirstEquipment()", junctions,
                 terminals, false, "aql:self.name"));
-        edges.add(edge("equipment-chain", "FieldEquipment", "aql:self.equipment", "aql:self.getHedCircuitPreviousEquipment()", "aql:self", terminals, terminals, false,
-                "aql:self.getHedCircuitChainLabel()"));
+        edges.add(edge("equipment-chain", "FieldEquipment", "aql:self.getHedCircuitChainEquipment()", "aql:self.getHedCircuitPreviousEquipment()", "aql:self.getHedCircuitEndpoint()", terminals,
+                terminals, false, "aql:self.getHedCircuitChainLabel()"));
         edges.add(edge("board-feeder", "DistributionCircuit", "aql:self.circuits->filter(homeelectrical::DistributionCircuit)", "aql:self.protectiveDevice", "aql:self.targetBoard",
                 new NodeDescription[] { modular }, new NodeDescription[] { board }, false, "aql:self.name"));
-        edges.add(edge("direct-control", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator = null)", "aql:self.getHedCircuitControlSources()", "aql:self.targets", commands,
-                terminals, true, "aql:self.name"));
+        edges.add(edge("direct-control", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator = null)", "aql:self.getHedCircuitControlSources()",
+                "aql:self.getHedCircuitControlTargets()", commands, terminals, true, "aql:self.name"));
         edges.add(edge("actuator-control", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator <> null)", "aql:self.getHedCircuitControlSources()", "aql:self.actuator", commands,
                 new NodeDescription[] { modular }, true, "aql:self.name"));
-        edges.add(edge("actuator-target", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator <> null)", "aql:self.actuator", "aql:self.targets", new NodeDescription[] { modular },
-                terminals, true, "aql:self.name"));
+        edges.add(edge("actuator-target", "ControlFunction", "aql:self.controlFunctions->select(f | f.actuator <> null)", "aql:self.actuator", "aql:self.getHedCircuitControlTargets()",
+                new NodeDescription[] { modular }, terminals, true, "aql:self.name"));
         return b.newDiagramDescription().name(Messages.text(locale, "diagram.circuits")).domainType("homeelectrical::Dwelling").preconditionExpression("aql:true")
                 .titleExpression(Messages.text(locale, "diagram.circuits")).iconExpression(HedRepresentationIcons.CIRCUITS).description(Messages.text(locale, "diagram.circuits.description"))
                 .endUserDocumentation(Messages.text(locale, "diagram.circuits.description")).style(b.newDiagramStyleDescription().background(color("#ffffff")).build())

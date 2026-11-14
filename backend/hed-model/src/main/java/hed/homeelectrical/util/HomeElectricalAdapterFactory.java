@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.homeelectrical.util;
 
+import hed.homeelectrical.OutletBlock;
+import hed.homeelectrical.OutletRow;
 import hed.homeelectrical.Catalog;
 import hed.homeelectrical.Circuit;
 import hed.homeelectrical.CircuitBranch;
@@ -145,6 +147,16 @@ public class HomeElectricalAdapterFactory extends AdapterFactoryImpl {
         @Override
         public Adapter caseOutlet(Outlet object) {
             return createOutletAdapter();
+        }
+
+        @Override
+        public Adapter caseOutletBlock(OutletBlock object) {
+            return createOutletBlockAdapter();
+        }
+
+        @Override
+        public Adapter caseOutletRow(OutletRow object) {
+            return createOutletRowAdapter();
         }
 
         @Override
@@ -569,6 +581,34 @@ public class HomeElectricalAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createCircuitBranchAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link hed.homeelectrical.OutletBlock <em>Outlet Block</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see hed.homeelectrical.OutletBlock
+     * @generated
+     */
+    public Adapter createOutletBlockAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link hed.homeelectrical.OutletRow <em>Outlet Row</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see hed.homeelectrical.OutletRow
+     * @generated
+     */
+    public Adapter createOutletRowAdapter() {
         return null;
     }
 

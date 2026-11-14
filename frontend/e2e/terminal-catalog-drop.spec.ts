@@ -32,7 +32,7 @@ test('create terminal devices from catalog types on a room and retain assignment
   page,
   request,
 }) => {
-  test.setTimeout(120000);
+  test.setTimeout(180000);
   page.setDefaultTimeout(15000);
   const projectName = `E2E terminal catalog drop ${randomUUID()}`;
   const errors: string[] = [];
@@ -178,6 +178,66 @@ test('create terminal devices from catalog types on a room and retain assignment
     expect(new URL(page.url()).searchParams.get('selection')).toBe(outletId);
     await expect(room().locator('img[alt*="entity=Outlet"]')).toHaveCount(originalOutlets + 2);
     await expect(page.locator('img[alt*="entity=DeviceType"]')).toHaveCount(catalogCount);
+    // An outlet block owns its outlets but has one graphical view and one drag handle.
+    await page.getByRole('tab', { name: messages['properties.general'], exact: true }).click();
+    await drop('OUTLET_BLOCK', sampleName('livingRoom'));
+    const blockId = await renameCreated('OUTLET_BLOCK', 'ROOM-BLOCK-1');
+    await expand();
+    const block = roomItem('ROOM-BLOCK-1').locator('xpath=ancestor::li[1]');
+    await expect(block.locator('img[alt*="entity=OutletRow"]')).toHaveCount(1);
+    await expect(block.locator('img[alt*="entity=Outlet&"], img[alt$="entity=Outlet"]')).toHaveCount(2);
+    await roomItem('ROOM-BLOCK-1').dragTo(background, {
+      targetPosition: { x: bounds!.width * 0.5, y: bounds!.height * 0.5 },
+    });
+    await expect(nodes).toHaveCount(2);
+    const blockView = page.getByTestId(`floor-plan-equipment-${blockId}`);
+    await expect(blockView).toBeVisible();
+    await expect.poll(async () => await blockView.evaluate((element) => element.clientWidth)).toBe(48);
+    const child = block
+      .locator('p')
+      .filter({ hasText: messages['block.outletName'].replace('{0}', '1').replace('{1}', '1') })
+      .first();
+    await child.dragTo(background, {
+      targetPosition: { x: bounds!.width * 0.6, y: bounds!.height * 0.6 },
+    });
+    await expect(nodes).toHaveCount(2);
+    await page.reload();
+    await expect(nodes).toHaveCount(2);
+    await expect(blockView).toBeVisible();
+    await expect
+      .poll(() =>
+        blockView.locator('img').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)
+      )
+      .toBe(true);
+    // Exercise the native circuit-image pipeline, including its /api/images prefix.
+    await expand();
+    await item(messages['class.Dwelling']).locator('../..').getByRole('button').click();
+    await page.getByRole('menuitem', { name: messages['action.newRepresentation'], exact: true }).last().click();
+    const circuitDialog = page.getByRole('dialog');
+    await circuitDialog.getByRole('combobox').click();
+    await page.getByRole('option', { name: /^(Circuit Diagram|Schéma des circuits)$/ }).click();
+    await circuitDialog.getByRole('button', { name: french ? 'Créer' : 'Create', exact: true }).click();
+    const nativeBlock = page.getByTestId('FreeForm - ROOM-BLOCK-1');
+    await expect(nativeBlock).toBeVisible();
+    const backgroundImage = await nativeBlock
+      .locator('[data-svg="image"]')
+      .evaluate((element) => getComputedStyle(element).backgroundImage);
+    const imageUrl = backgroundImage.slice(5, -2);
+    expect(new URL(imageUrl).pathname).toBe('/api/images/hed/outlet-block.svg');
+    await expect
+      .poll(() =>
+        page.evaluate(
+          (url) =>
+            new Promise<boolean>((resolve) => {
+              const image = new Image();
+              image.onload = () => resolve(image.naturalWidth > 0);
+              image.onerror = () => resolve(false);
+              image.src = url;
+            }),
+          imageUrl
+        )
+      )
+      .toBe(true);
     expect(errors).toEqual([]);
   } finally {
     if (projectId) {

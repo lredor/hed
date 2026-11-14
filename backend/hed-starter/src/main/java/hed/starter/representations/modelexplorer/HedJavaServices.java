@@ -9,6 +9,10 @@
  *******************************************************************************/
 package hed.starter.representations.modelexplorer;
 
+import hed.domain.HedOutletBlocks;
+
+import hed.homeelectrical.OutletRow;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -343,6 +347,9 @@ public class HedJavaServices {
                 default -> group.owner();
             };
         }
+        if (self instanceof hed.homeelectrical.Outlet && ((EObject) self).eContainer() instanceof OutletRow row) {
+            return row;
+        }
         if (self instanceof FieldEquipment e) {
             return e.getRoom() != null ? e.getRoom() : new Group(dwelling(e), "unlocated");
         }
@@ -501,7 +508,7 @@ public class HedJavaServices {
             }
             var equipment = addEquipment(home, deviceType, locale);
             if (parent instanceof Room room) {
-                equipment.setRoom(room);
+                HedOutletBlocks.locate(equipment, room);
             }
             return equipment;
         } catch (IllegalArgumentException ex) {

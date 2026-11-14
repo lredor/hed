@@ -141,7 +141,7 @@ class CatalogDropTest {
 
     private EnumSet<DeviceKind> terminalKinds() {
         return EnumSet.of(DeviceKind.OUTLET, DeviceKind.SWITCH, DeviceKind.PUSH_BUTTON, DeviceKind.DIMMER, DeviceKind.SHUTTER_CONTROL, DeviceKind.LUMINAIRE, DeviceKind.SHUTTER_MOTOR,
-                DeviceKind.HEATER, DeviceKind.WATER_HEATER, DeviceKind.VENTILATION, DeviceKind.COOKER, DeviceKind.FIXED_APPLIANCE, DeviceKind.OTHER_FIELD);
+                DeviceKind.HEATER, DeviceKind.WATER_HEATER, DeviceKind.VENTILATION, DeviceKind.COOKER, DeviceKind.FIXED_APPLIANCE, DeviceKind.OTHER_FIELD, DeviceKind.OUTLET_BLOCK);
     }
 
     @Test

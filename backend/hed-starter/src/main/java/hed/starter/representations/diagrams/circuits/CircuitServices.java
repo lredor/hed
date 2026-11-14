@@ -9,6 +9,12 @@
  *******************************************************************************/
 package hed.starter.representations.diagrams.circuits;
 
+import hed.starter.representations.diagrams.OutletBlockArtwork;
+
+import hed.domain.HedOutletBlocks;
+
+import hed.homeelectrical.OutletBlock;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -68,7 +74,7 @@ public class CircuitServices {
      * @return its first associated device, or no endpoint when empty or when the circuit has branches
      */
     public List<FieldEquipment> getHedCircuitFirstEquipment(EObject owner) {
-        return members(owner).stream().limit(1).toList();
+        return members(owner).stream().map(HedOutletBlocks::endpoint).limit(1).toList();
     }
 
     /**
@@ -77,8 +83,8 @@ public class CircuitServices {
      * @return the previous member, or no endpoint for an unassigned or first device
      */
     public List<FieldEquipment> getHedCircuitPreviousEquipment(FieldEquipment equipment) {
-        var members = members(chainOwner(equipment));
-        int index = members.indexOf(equipment);
+        var members = members(chainOwner(equipment)).stream().map(HedOutletBlocks::endpoint).distinct().toList();
+        int index = members.indexOf(HedOutletBlocks.endpoint(equipment));
         return index > 0 ? List.of(members.get(index - 1)) : List.of();
     }
 
@@ -124,6 +130,65 @@ public class CircuitServices {
      */
     public int getHedCircuitBoardWidth(DistributionBoard board) {
         return Math.max(184, 2 + board.getRails().stream().mapToInt(this::railContentWidth).max().orElse(160));
+    }
+
+    /**
+     * Resolves an individually wired outlet to the assembly shown on the diagram.
+     * @param equipment an electrical terminal
+     * @return the whole-block endpoint or the standalone equipment
+     */
+    public FieldEquipment getHedCircuitEndpoint(FieldEquipment equipment) {
+        return HedOutletBlocks.endpoint(equipment);
+    }
+
+    /**
+     * Projects control receivers onto their whole-unit views.
+     * @param function the functional command
+     * @return distinct graphical targets
+     */
+    public List<FieldEquipment> getHedCircuitControlTargets(ControlFunction function) {
+        return function.getTargets().stream().map(HedOutletBlocks::endpoint).distinct().toList();
+    }
+
+    /**
+     * Keeps one continuation edge for each physical unit in each circuit or branch.
+     * @param home the diagram's dwelling
+     * @return representative terminals, including nested outlets
+     */
+    public List<FieldEquipment> getHedCircuitChainEquipment(Dwelling home) {
+        var result = new java.util.ArrayList<FieldEquipment>();
+        for (var circuit : home.getCircuits()) {
+            if (circuit instanceof FinalCircuit terminal) {
+                var owners = terminal.getBranches().isEmpty() ? List.<EObject> of(terminal) : new java.util.ArrayList<EObject>(terminal.getBranches());
+                for (var owner : owners) {
+                    var seen = new java.util.HashSet<FieldEquipment>();
+                    for (var equipment : members(owner)) {
+                        if (seen.add(HedOutletBlocks.endpoint(equipment))) {
+                            result.add(equipment);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Sizes room pictograms using 48 units per physical outlet.
+     * @param equipment the whole-unit view's semantic object
+     * @return its width in diagram units
+     */
+    public int getHedCircuitEquipmentWidth(FieldEquipment equipment) {
+        return equipment instanceof OutletBlock block ? 48 * OutletBlockArtwork.columns(block) : 48;
+    }
+
+    /**
+     * Sizes room pictograms using 48 units per outlet row.
+     * @param equipment the whole-unit view's semantic object
+     * @return its height in diagram units
+     */
+    public int getHedCircuitEquipmentHeight(FieldEquipment equipment) {
+        return equipment instanceof OutletBlock block ? 48 * Math.max(1, block.getRows().size()) : 48;
     }
 
     private EObject chainOwner(FieldEquipment equipment) {

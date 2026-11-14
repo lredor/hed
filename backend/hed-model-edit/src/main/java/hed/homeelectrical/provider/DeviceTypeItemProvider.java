@@ -55,6 +55,8 @@ public class DeviceTypeItemProvider extends TechnicalElementItemProvider {
             addManufacturerPropertyDescriptor(object);
             addProductReferencePropertyDescriptor(object);
             addChannelCountPropertyDescriptor(object);
+            addNbRowsPropertyDescriptor(object);
+            addNbColumnsPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -108,6 +110,30 @@ public class DeviceTypeItemProvider extends TechnicalElementItemProvider {
     }
 
     /**
+     * This adds a property descriptor for the Nb Rows feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addNbRowsPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(), getString("_UI_DeviceType_nbRows_feature"),
+                getString("_UI_PropertyDescriptor_description", "_UI_DeviceType_nbRows_feature", "_UI_DeviceType_type"), HomeElectricalPackage.Literals.DEVICE_TYPE__NB_ROWS, true, false, false,
+                ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Nb Columns feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addNbColumnsPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+                getString("_UI_DeviceType_nbColumns_feature"), getString("_UI_PropertyDescriptor_description", "_UI_DeviceType_nbColumns_feature", "_UI_DeviceType_type"),
+                HomeElectricalPackage.Literals.DEVICE_TYPE__NB_COLUMNS, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null));
+    }
+
+    /**
      * This returns DeviceType.gif.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -146,6 +172,8 @@ public class DeviceTypeItemProvider extends TechnicalElementItemProvider {
             case HomeElectricalPackage.DEVICE_TYPE__MANUFACTURER:
             case HomeElectricalPackage.DEVICE_TYPE__PRODUCT_REFERENCE:
             case HomeElectricalPackage.DEVICE_TYPE__CHANNEL_COUNT:
+            case HomeElectricalPackage.DEVICE_TYPE__NB_ROWS:
+            case HomeElectricalPackage.DEVICE_TYPE__NB_COLUMNS:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
         }

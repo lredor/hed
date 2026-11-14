@@ -36,234 +36,221 @@ public enum DeviceKind implements Enumerator {
     OUTLET(0, "OUTLET", "OUTLET"),
 
     /**
-     * The '<em><b>SWITCH</b></em>' literal object.
+     * The '<em><b>OUTLET BLOCK</b></em>' literal object.
      * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #SWITCH_VALUE
+    * <!-- end-user-doc -->
+     * @see #OUTLET_BLOCK_VALUE
      * @generated
      * @ordered
      */
-    SWITCH(1, "SWITCH", "SWITCH"),
-
+    OUTLET_BLOCK(1, "OUTLET_BLOCK", "OUTLET_BLOCK"),
     /**
-     * The '<em><b>PUSH BUTTON</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #PUSH_BUTTON_VALUE
-     * @generated
-     * @ordered
-     */
-    PUSH_BUTTON(2, "PUSH_BUTTON", "PUSH_BUTTON"),
-
+    * The '<em><b>SWITCH</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #SWITCH_VALUE
+    * @generated
+    * @ordered
+    */
+    SWITCH(2, "SWITCH", "SWITCH"),
     /**
-     * The '<em><b>DIMMER</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #DIMMER_VALUE
-     * @generated
-     * @ordered
-     */
-    DIMMER(3, "DIMMER", "DIMMER"),
-
+    * The '<em><b>PUSH BUTTON</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #PUSH_BUTTON_VALUE
+    * @generated
+    * @ordered
+    */
+    PUSH_BUTTON(3, "PUSH_BUTTON", "PUSH_BUTTON"),
     /**
-     * The '<em><b>SHUTTER CONTROL</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #SHUTTER_CONTROL_VALUE
-     * @generated
-     * @ordered
-     */
-    SHUTTER_CONTROL(4, "SHUTTER_CONTROL", "SHUTTER_CONTROL"),
-
+    * The '<em><b>DIMMER</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #DIMMER_VALUE
+    * @generated
+    * @ordered
+    */
+    DIMMER(4, "DIMMER", "DIMMER"),
     /**
-     * The '<em><b>LUMINAIRE</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #LUMINAIRE_VALUE
-     * @generated
-     * @ordered
-     */
-    LUMINAIRE(5, "LUMINAIRE", "LUMINAIRE"),
-
+    * The '<em><b>SHUTTER CONTROL</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #SHUTTER_CONTROL_VALUE
+    * @generated
+    * @ordered
+    */
+    SHUTTER_CONTROL(5, "SHUTTER_CONTROL", "SHUTTER_CONTROL"),
     /**
-     * The '<em><b>SHUTTER MOTOR</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #SHUTTER_MOTOR_VALUE
-     * @generated
-     * @ordered
-     */
-    SHUTTER_MOTOR(6, "SHUTTER_MOTOR", "SHUTTER_MOTOR"),
-
+    * The '<em><b>LUMINAIRE</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #LUMINAIRE_VALUE
+    * @generated
+    * @ordered
+    */
+    LUMINAIRE(6, "LUMINAIRE", "LUMINAIRE"),
     /**
-     * The '<em><b>HEATER</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #HEATER_VALUE
-     * @generated
-     * @ordered
-     */
-    HEATER(7, "HEATER", "HEATER"),
-
+    * The '<em><b>SHUTTER MOTOR</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #SHUTTER_MOTOR_VALUE
+    * @generated
+    * @ordered
+    */
+    SHUTTER_MOTOR(7, "SHUTTER_MOTOR", "SHUTTER_MOTOR"),
     /**
-     * The '<em><b>WATER HEATER</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #WATER_HEATER_VALUE
-     * @generated
-     * @ordered
-     */
-    WATER_HEATER(8, "WATER_HEATER", "WATER_HEATER"),
-
+    * The '<em><b>HEATER</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #HEATER_VALUE
+    * @generated
+    * @ordered
+    */
+    HEATER(8, "HEATER", "HEATER"),
     /**
-     * The '<em><b>VENTILATION</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #VENTILATION_VALUE
-     * @generated
-     * @ordered
-     */
-    VENTILATION(9, "VENTILATION", "VENTILATION"),
-
+    * The '<em><b>WATER HEATER</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #WATER_HEATER_VALUE
+    * @generated
+    * @ordered
+    */
+    WATER_HEATER(9, "WATER_HEATER", "WATER_HEATER"),
     /**
-     * The '<em><b>COOKER</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #COOKER_VALUE
-     * @generated
-     * @ordered
-     */
-    COOKER(10, "COOKER", "COOKER"),
-
+    * The '<em><b>VENTILATION</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #VENTILATION_VALUE
+    * @generated
+    * @ordered
+    */
+    VENTILATION(10, "VENTILATION", "VENTILATION"),
     /**
-     * The '<em><b>FIXED APPLIANCE</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #FIXED_APPLIANCE_VALUE
-     * @generated
-     * @ordered
-     */
-    FIXED_APPLIANCE(11, "FIXED_APPLIANCE", "FIXED_APPLIANCE"),
-
+    * The '<em><b>COOKER</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #COOKER_VALUE
+    * @generated
+    * @ordered
+    */
+    COOKER(11, "COOKER", "COOKER"),
     /**
-     * The '<em><b>MCB</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #MCB_VALUE
-     * @generated
-     * @ordered
-     */
-    MCB(12, "MCB", "MCB"),
-
+    * The '<em><b>FIXED APPLIANCE</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #FIXED_APPLIANCE_VALUE
+    * @generated
+    * @ordered
+    */
+    FIXED_APPLIANCE(12, "FIXED_APPLIANCE", "FIXED_APPLIANCE"),
     /**
-     * The '<em><b>RCCB</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #RCCB_VALUE
-     * @generated
-     * @ordered
-     */
-    RCCB(13, "RCCB", "RCCB"),
-
+    * The '<em><b>MCB</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #MCB_VALUE
+    * @generated
+    * @ordered
+    */
+    MCB(13, "MCB", "MCB"),
     /**
-     * The '<em><b>RCBO</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #RCBO_VALUE
-     * @generated
-     * @ordered
-     */
-    RCBO(14, "RCBO", "RCBO"),
-
+    * The '<em><b>RCCB</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #RCCB_VALUE
+    * @generated
+    * @ordered
+    */
+    RCCB(14, "RCCB", "RCCB"),
     /**
-     * The '<em><b>FUSE</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #FUSE_VALUE
-     * @generated
-     * @ordered
-     */
-    FUSE(15, "FUSE", "FUSE"),
-
+    * The '<em><b>RCBO</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #RCBO_VALUE
+    * @generated
+    * @ordered
+    */
+    RCBO(15, "RCBO", "RCBO"),
     /**
-     * The '<em><b>ISOLATOR</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #ISOLATOR_VALUE
-     * @generated
-     * @ordered
-     */
-    ISOLATOR(16, "ISOLATOR", "ISOLATOR"),
-
+    * The '<em><b>FUSE</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #FUSE_VALUE
+    * @generated
+    * @ordered
+    */
+    FUSE(16, "FUSE", "FUSE"),
     /**
-     * The '<em><b>SPD</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #SPD_VALUE
-     * @generated
-     * @ordered
-     */
-    SPD(17, "SPD", "SPD"),
-
+    * The '<em><b>ISOLATOR</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #ISOLATOR_VALUE
+    * @generated
+    * @ordered
+    */
+    ISOLATOR(17, "ISOLATOR", "ISOLATOR"),
     /**
-     * The '<em><b>IMPULSE RELAY</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #IMPULSE_RELAY_VALUE
-     * @generated
-     * @ordered
-     */
-    IMPULSE_RELAY(18, "IMPULSE_RELAY", "IMPULSE_RELAY"),
-
+    * The '<em><b>SPD</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #SPD_VALUE
+    * @generated
+    * @ordered
+    */
+    SPD(18, "SPD", "SPD"),
     /**
-     * The '<em><b>CONTACTOR</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #CONTACTOR_VALUE
-     * @generated
-     * @ordered
-     */
-    CONTACTOR(19, "CONTACTOR", "CONTACTOR"),
-
+    * The '<em><b>IMPULSE RELAY</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #IMPULSE_RELAY_VALUE
+    * @generated
+    * @ordered
+    */
+    IMPULSE_RELAY(19, "IMPULSE_RELAY", "IMPULSE_RELAY"),
     /**
-     * The '<em><b>ENERGY METER</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #ENERGY_METER_VALUE
-     * @generated
-     * @ordered
-     */
-    ENERGY_METER(20, "ENERGY_METER", "ENERGY_METER"),
-
+    * The '<em><b>CONTACTOR</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #CONTACTOR_VALUE
+    * @generated
+    * @ordered
+    */
+    CONTACTOR(20, "CONTACTOR", "CONTACTOR"),
     /**
-     * The '<em><b>SERVICE BREAKER</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #SERVICE_BREAKER_VALUE
-     * @generated
-     * @ordered
-     */
-    SERVICE_BREAKER(21, "SERVICE_BREAKER", "SERVICE_BREAKER"),
-
+    * The '<em><b>ENERGY METER</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #ENERGY_METER_VALUE
+    * @generated
+    * @ordered
+    */
+    ENERGY_METER(21, "ENERGY_METER", "ENERGY_METER"),
     /**
-     * The '<em><b>OTHER FIELD</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #OTHER_FIELD_VALUE
-     * @generated
-     * @ordered
-     */
-    OTHER_FIELD(22, "OTHER_FIELD", "OTHER_FIELD"),
-
+    * The '<em><b>SERVICE BREAKER</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #SERVICE_BREAKER_VALUE
+    * @generated
+    * @ordered
+    */
+    SERVICE_BREAKER(22, "SERVICE_BREAKER", "SERVICE_BREAKER"),
     /**
-     * The '<em><b>OTHER MODULAR</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #OTHER_MODULAR_VALUE
-     * @generated
-     * @ordered
-     */
-    OTHER_MODULAR(23, "OTHER_MODULAR", "OTHER_MODULAR");
+    * The '<em><b>OTHER FIELD</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #OTHER_FIELD_VALUE
+    * @generated
+    * @ordered
+    */
+    OTHER_FIELD(23, "OTHER_FIELD", "OTHER_FIELD"),
+    /**
+    * The '<em><b>OTHER MODULAR</b></em>' literal object.
+    * <!-- begin-user-doc -->
+    * <!-- end-user-doc -->
+    * @see #OTHER_MODULAR_VALUE
+    * @generated
+    * @ordered
+    */
+    OTHER_MODULAR(24, "OTHER_MODULAR", "OTHER_MODULAR");
 
     /**
      * The '<em><b>OUTLET</b></em>' literal value.
@@ -277,6 +264,17 @@ public enum DeviceKind implements Enumerator {
     public static final int OUTLET_VALUE = 0;
 
     /**
+     * The '<em><b>OUTLET BLOCK</b></em>' literal value.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #OUTLET_BLOCK
+     * @model
+     * @generated
+     * @ordered
+     */
+    public static final int OUTLET_BLOCK_VALUE = 1;
+
+    /**
      * The '<em><b>SWITCH</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -285,7 +283,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int SWITCH_VALUE = 1;
+    public static final int SWITCH_VALUE = 2;
 
     /**
      * The '<em><b>PUSH BUTTON</b></em>' literal value.
@@ -296,7 +294,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int PUSH_BUTTON_VALUE = 2;
+    public static final int PUSH_BUTTON_VALUE = 3;
 
     /**
      * The '<em><b>DIMMER</b></em>' literal value.
@@ -307,7 +305,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int DIMMER_VALUE = 3;
+    public static final int DIMMER_VALUE = 4;
 
     /**
      * The '<em><b>SHUTTER CONTROL</b></em>' literal value.
@@ -318,7 +316,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int SHUTTER_CONTROL_VALUE = 4;
+    public static final int SHUTTER_CONTROL_VALUE = 5;
 
     /**
      * The '<em><b>LUMINAIRE</b></em>' literal value.
@@ -329,7 +327,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int LUMINAIRE_VALUE = 5;
+    public static final int LUMINAIRE_VALUE = 6;
 
     /**
      * The '<em><b>SHUTTER MOTOR</b></em>' literal value.
@@ -340,7 +338,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int SHUTTER_MOTOR_VALUE = 6;
+    public static final int SHUTTER_MOTOR_VALUE = 7;
 
     /**
      * The '<em><b>HEATER</b></em>' literal value.
@@ -351,7 +349,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int HEATER_VALUE = 7;
+    public static final int HEATER_VALUE = 8;
 
     /**
      * The '<em><b>WATER HEATER</b></em>' literal value.
@@ -362,7 +360,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int WATER_HEATER_VALUE = 8;
+    public static final int WATER_HEATER_VALUE = 9;
 
     /**
      * The '<em><b>VENTILATION</b></em>' literal value.
@@ -373,7 +371,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int VENTILATION_VALUE = 9;
+    public static final int VENTILATION_VALUE = 10;
 
     /**
      * The '<em><b>COOKER</b></em>' literal value.
@@ -384,7 +382,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int COOKER_VALUE = 10;
+    public static final int COOKER_VALUE = 11;
 
     /**
      * The '<em><b>FIXED APPLIANCE</b></em>' literal value.
@@ -395,7 +393,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int FIXED_APPLIANCE_VALUE = 11;
+    public static final int FIXED_APPLIANCE_VALUE = 12;
 
     /**
      * The '<em><b>MCB</b></em>' literal value.
@@ -406,7 +404,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int MCB_VALUE = 12;
+    public static final int MCB_VALUE = 13;
 
     /**
      * The '<em><b>RCCB</b></em>' literal value.
@@ -417,7 +415,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int RCCB_VALUE = 13;
+    public static final int RCCB_VALUE = 14;
 
     /**
      * The '<em><b>RCBO</b></em>' literal value.
@@ -428,7 +426,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int RCBO_VALUE = 14;
+    public static final int RCBO_VALUE = 15;
 
     /**
      * The '<em><b>FUSE</b></em>' literal value.
@@ -439,7 +437,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int FUSE_VALUE = 15;
+    public static final int FUSE_VALUE = 16;
 
     /**
      * The '<em><b>ISOLATOR</b></em>' literal value.
@@ -450,7 +448,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int ISOLATOR_VALUE = 16;
+    public static final int ISOLATOR_VALUE = 17;
 
     /**
      * The '<em><b>SPD</b></em>' literal value.
@@ -461,7 +459,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int SPD_VALUE = 17;
+    public static final int SPD_VALUE = 18;
 
     /**
      * The '<em><b>IMPULSE RELAY</b></em>' literal value.
@@ -472,7 +470,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int IMPULSE_RELAY_VALUE = 18;
+    public static final int IMPULSE_RELAY_VALUE = 19;
 
     /**
      * The '<em><b>CONTACTOR</b></em>' literal value.
@@ -483,7 +481,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int CONTACTOR_VALUE = 19;
+    public static final int CONTACTOR_VALUE = 20;
 
     /**
      * The '<em><b>ENERGY METER</b></em>' literal value.
@@ -494,7 +492,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int ENERGY_METER_VALUE = 20;
+    public static final int ENERGY_METER_VALUE = 21;
 
     /**
      * The '<em><b>SERVICE BREAKER</b></em>' literal value.
@@ -505,7 +503,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int SERVICE_BREAKER_VALUE = 21;
+    public static final int SERVICE_BREAKER_VALUE = 22;
 
     /**
      * The '<em><b>OTHER FIELD</b></em>' literal value.
@@ -516,7 +514,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int OTHER_FIELD_VALUE = 22;
+    public static final int OTHER_FIELD_VALUE = 23;
 
     /**
      * The '<em><b>OTHER MODULAR</b></em>' literal value.
@@ -527,7 +525,7 @@ public enum DeviceKind implements Enumerator {
      * @generated
      * @ordered
      */
-    public static final int OTHER_MODULAR_VALUE = 23;
+    public static final int OTHER_MODULAR_VALUE = 24;
 
     /**
      * An array of all the '<em><b>Device Kind</b></em>' enumerators.
@@ -535,8 +533,8 @@ public enum DeviceKind implements Enumerator {
      * <!-- end-user-doc -->
      * @generated
      */
-    private static final DeviceKind[] VALUES_ARRAY = new DeviceKind[] { OUTLET, SWITCH, PUSH_BUTTON, DIMMER, SHUTTER_CONTROL, LUMINAIRE, SHUTTER_MOTOR, HEATER, WATER_HEATER, VENTILATION, COOKER,
-            FIXED_APPLIANCE, MCB, RCCB, RCBO, FUSE, ISOLATOR, SPD, IMPULSE_RELAY, CONTACTOR, ENERGY_METER, SERVICE_BREAKER, OTHER_FIELD, OTHER_MODULAR, };
+    private static final DeviceKind[] VALUES_ARRAY = new DeviceKind[] { OUTLET, OUTLET_BLOCK, SWITCH, PUSH_BUTTON, DIMMER, SHUTTER_CONTROL, LUMINAIRE, SHUTTER_MOTOR, HEATER, WATER_HEATER, VENTILATION,
+            COOKER, FIXED_APPLIANCE, MCB, RCCB, RCBO, FUSE, ISOLATOR, SPD, IMPULSE_RELAY, CONTACTOR, ENERGY_METER, SERVICE_BREAKER, OTHER_FIELD, OTHER_MODULAR, };
 
     /**
      * A public read-only list of all the '<em><b>Device Kind</b></em>' enumerators.
@@ -594,6 +592,8 @@ public enum DeviceKind implements Enumerator {
         switch (value) {
             case OUTLET_VALUE:
                 return OUTLET;
+            case OUTLET_BLOCK_VALUE:
+                return OUTLET_BLOCK;
             case SWITCH_VALUE:
                 return SWITCH;
             case PUSH_BUTTON_VALUE:

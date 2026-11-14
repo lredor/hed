@@ -516,6 +516,52 @@ public class HomeElectricalItemProviderAdapterFactory extends HomeElectricalAdap
     }
 
     /**
+     * This keeps track of the one adapter used for all {@link hed.homeelectrical.OutletBlock} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected OutletBlockItemProvider outletBlockItemProvider;
+
+    /**
+     * This creates an adapter for a {@link hed.homeelectrical.OutletBlock}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createOutletBlockAdapter() {
+        if (outletBlockItemProvider == null) {
+            outletBlockItemProvider = new OutletBlockItemProvider(this);
+        }
+
+        return outletBlockItemProvider;
+    }
+
+    /**
+     * This keeps track of the one adapter used for all {@link hed.homeelectrical.OutletRow} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected OutletRowItemProvider outletRowItemProvider;
+
+    /**
+     * This creates an adapter for a {@link hed.homeelectrical.OutletRow}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createOutletRowAdapter() {
+        if (outletRowItemProvider == null) {
+            outletRowItemProvider = new OutletRowItemProvider(this);
+        }
+
+        return outletRowItemProvider;
+    }
+
+    /**
      * This returns the root adapter factory that contains this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -637,6 +683,12 @@ public class HomeElectricalItemProviderAdapterFactory extends HomeElectricalAdap
         }
         if (outletItemProvider != null) {
             outletItemProvider.dispose();
+        }
+        if (outletBlockItemProvider != null) {
+            outletBlockItemProvider.dispose();
+        }
+        if (outletRowItemProvider != null) {
+            outletRowItemProvider.dispose();
         }
         if (electricalLoadItemProvider != null) {
             electricalLoadItemProvider.dispose();

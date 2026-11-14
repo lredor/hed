@@ -31,6 +31,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link hed.homeelectrical.impl.DeviceTypeImpl#getManufacturer <em>Manufacturer</em>}</li>
  *   <li>{@link hed.homeelectrical.impl.DeviceTypeImpl#getProductReference <em>Product Reference</em>}</li>
  *   <li>{@link hed.homeelectrical.impl.DeviceTypeImpl#getChannelCount <em>Channel Count</em>}</li>
+ *   <li>{@link hed.homeelectrical.impl.DeviceTypeImpl#getNbRows <em>Nb Rows</em>}</li>
+ *   <li>{@link hed.homeelectrical.impl.DeviceTypeImpl#getNbColumns <em>Nb Columns</em>}</li>
  * </ul>
  *
  * @generated
@@ -115,6 +117,46 @@ public class DeviceTypeImpl extends TechnicalElementImpl implements DeviceType {
      * @ordered
      */
     protected int channelCount = CHANNEL_COUNT_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getNbRows() <em>Nb Rows</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getNbRows()
+     * @generated
+     * @ordered
+     */
+    protected static final int NB_ROWS_EDEFAULT = 1;
+
+    /**
+     * The cached value of the '{@link #getNbRows() <em>Nb Rows</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getNbRows()
+     * @generated
+     * @ordered
+     */
+    protected int nbRows = NB_ROWS_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getNbColumns() <em>Nb Columns</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getNbColumns()
+     * @generated
+     * @ordered
+     */
+    protected static final int NB_COLUMNS_EDEFAULT = 2;
+
+    /**
+     * The cached value of the '{@link #getNbColumns() <em>Nb Columns</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getNbColumns()
+     * @generated
+     * @ordered
+     */
+    protected int nbColumns = NB_COLUMNS_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -237,6 +279,54 @@ public class DeviceTypeImpl extends TechnicalElementImpl implements DeviceType {
      * @generated
      */
     @Override
+    public int getNbRows() {
+        return nbRows;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void setNbRows(int newNbRows) {
+        int oldNbRows = nbRows;
+        nbRows = newNbRows;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.DEVICE_TYPE__NB_ROWS, oldNbRows, nbRows));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public int getNbColumns() {
+        return nbColumns;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void setNbColumns(int newNbColumns) {
+        int oldNbColumns = nbColumns;
+        nbColumns = newNbColumns;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.DEVICE_TYPE__NB_COLUMNS, oldNbColumns, nbColumns));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case HomeElectricalPackage.DEVICE_TYPE__KIND:
@@ -247,6 +337,10 @@ public class DeviceTypeImpl extends TechnicalElementImpl implements DeviceType {
                 return getProductReference();
             case HomeElectricalPackage.DEVICE_TYPE__CHANNEL_COUNT:
                 return getChannelCount();
+            case HomeElectricalPackage.DEVICE_TYPE__NB_ROWS:
+                return getNbRows();
+            case HomeElectricalPackage.DEVICE_TYPE__NB_COLUMNS:
+                return getNbColumns();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -270,6 +364,12 @@ public class DeviceTypeImpl extends TechnicalElementImpl implements DeviceType {
                 return;
             case HomeElectricalPackage.DEVICE_TYPE__CHANNEL_COUNT:
                 setChannelCount((Integer) newValue);
+                return;
+            case HomeElectricalPackage.DEVICE_TYPE__NB_ROWS:
+                setNbRows((Integer) newValue);
+                return;
+            case HomeElectricalPackage.DEVICE_TYPE__NB_COLUMNS:
+                setNbColumns((Integer) newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -295,6 +395,12 @@ public class DeviceTypeImpl extends TechnicalElementImpl implements DeviceType {
             case HomeElectricalPackage.DEVICE_TYPE__CHANNEL_COUNT:
                 setChannelCount(CHANNEL_COUNT_EDEFAULT);
                 return;
+            case HomeElectricalPackage.DEVICE_TYPE__NB_ROWS:
+                setNbRows(NB_ROWS_EDEFAULT);
+                return;
+            case HomeElectricalPackage.DEVICE_TYPE__NB_COLUMNS:
+                setNbColumns(NB_COLUMNS_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -315,6 +421,10 @@ public class DeviceTypeImpl extends TechnicalElementImpl implements DeviceType {
                 return PRODUCT_REFERENCE_EDEFAULT == null ? productReference != null : !PRODUCT_REFERENCE_EDEFAULT.equals(productReference);
             case HomeElectricalPackage.DEVICE_TYPE__CHANNEL_COUNT:
                 return channelCount != CHANNEL_COUNT_EDEFAULT;
+            case HomeElectricalPackage.DEVICE_TYPE__NB_ROWS:
+                return nbRows != NB_ROWS_EDEFAULT;
+            case HomeElectricalPackage.DEVICE_TYPE__NB_COLUMNS:
+                return nbColumns != NB_COLUMNS_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -339,6 +449,10 @@ public class DeviceTypeImpl extends TechnicalElementImpl implements DeviceType {
         result.append(productReference);
         result.append(", channelCount: ");
         result.append(channelCount);
+        result.append(", nbRows: ");
+        result.append(nbRows);
+        result.append(", nbColumns: ");
+        result.append(nbColumns);
         result.append(')');
         return result.toString();
     }

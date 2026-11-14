@@ -9,6 +9,10 @@
  *******************************************************************************/
 package hed.domain;
 
+import hed.homeelectrical.OutletRow;
+
+import hed.homeelectrical.OutletBlock;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -88,6 +92,9 @@ public final class HedDomain {
         if (equipment instanceof ModularDevice) {
             return modular(kind);
         }
+        if (equipment instanceof OutletBlock) {
+            return kind == DeviceKind.OUTLET_BLOCK;
+        }
         if (equipment instanceof Outlet) {
             return kind == DeviceKind.OUTLET;
         }
@@ -100,7 +107,8 @@ public final class HedDomain {
         if (equipment instanceof ServiceCircuitBreaker) {
             return kind == DeviceKind.SERVICE_BREAKER;
         }
-        return equipment instanceof ElectricalLoad && !modular(kind) && !CONTROLS.contains(kind) && kind != DeviceKind.OUTLET && kind != DeviceKind.ENERGY_METER && kind != DeviceKind.SERVICE_BREAKER;
+        return equipment instanceof ElectricalLoad && !modular(kind) && !CONTROLS.contains(kind) && kind != DeviceKind.OUTLET && kind != DeviceKind.ENERGY_METER && kind != DeviceKind.SERVICE_BREAKER
+                && kind != DeviceKind.OUTLET_BLOCK;
     }
 
     public static <T extends NamedElement> T named(T value, String name) {
@@ -137,6 +145,9 @@ public final class HedDomain {
     public static FieldEquipment addEquipment(Dwelling home, DeviceType type, Locale locale) {
         if (dwelling(type) != home) {
             throw new IllegalArgumentException("foreignReference");
+        }
+        if (type.getKind() == DeviceKind.OUTLET_BLOCK) {
+            return HedOutletBlocks.create(home, type, locale);
         }
         FieldEquipment result;
         if (type.getKind() == DeviceKind.OUTLET) {
@@ -232,6 +243,23 @@ public final class HedDomain {
         if (object instanceof ModularDevice && TECHNICAL_FEATURES.contains(feature)) {
             throw new IllegalArgumentException("catalogSpecifications");
         }
+        if (object instanceof DeviceType type && List.of("nbRows", "nbColumns").contains(feature) && inUse(type)) {
+            throw new IllegalArgumentException("typeInUse");
+        }
+        if (object instanceof Outlet && object.eContainer() instanceof OutletRow && List.of("circuit", "branch").contains(feature)) {
+            throw new IllegalArgumentException("block.assignOutlets");
+        }
+        if (object instanceof FieldEquipment equipment && feature.equals("room")) {
+            if (value != null && (!(value instanceof Room) || dwelling((EObject) value) != dwelling(object))) {
+                throw new IllegalArgumentException("foreignReference");
+            }
+            HedOutletBlocks.locate(equipment, (Room) value);
+            return;
+        }
+        if (object instanceof OutletBlock block && feature.equals("deviceType") && value instanceof DeviceType type
+                && (type.getNbRows() != block.getRows().size() || block.getRows().stream().anyMatch(row -> row.getOutlets().size() != type.getNbColumns()))) {
+            throw new IllegalArgumentException("block.invalidDimensions");
+        }
         var f = Objects.requireNonNull(object.eClass().getEStructuralFeature(feature), feature);
         if (object instanceof DeviceType type && feature.equals("kind") && !Objects.equals(type.getKind(), value) && inUse(type)) {
             throw new IllegalArgumentException("typeInUse");
@@ -243,6 +271,10 @@ public final class HedDomain {
         if (object instanceof FieldEquipment equipment && feature.equals("circuit") && value instanceof FinalCircuit circuit && !circuit.getBranches().isEmpty()
                 && (equipment.getBranch() == null || equipment.getBranch().getCircuit() != circuit)) {
             throw new IllegalArgumentException("requiredBranch");
+        }
+        if ((object instanceof FinalCircuit || object instanceof CircuitBranch) && feature.equals("equipment") && value instanceof Collection<?> members
+                && members.stream().anyMatch(member -> member instanceof Outlet && ((Outlet) member).eContainer() instanceof OutletRow)) {
+            throw new IllegalArgumentException("block.assignOutlets");
         }
         boolean circuitMembersChange = object instanceof FinalCircuit && feature.equals("equipment");
         if (circuitMembersChange) {
@@ -304,7 +336,7 @@ public final class HedDomain {
         object.eSet(f, value);
         if (circuitMembersChange && home != null) {
             // Inverse circuit references are updated by EMF; detach a moved device from its former branch as well.
-            for (var equipment : home.getEquipment()) {
+            for (var equipment : HedOutletBlocks.terminals(home)) {
                 if (equipment.getBranch() != null && equipment.getBranch().getCircuit() != equipment.getCircuit()) {
                     equipment.setBranch(null);
                 }
@@ -368,7 +400,7 @@ public final class HedDomain {
 
         BranchState(Dwelling home) {
             if (home != null) {
-                for (var equipment : home.getEquipment()) {
+                for (var equipment : HedOutletBlocks.terminals(home)) {
                     circuits.put(equipment, equipment.getCircuit());
                     branches.put(equipment, equipment.getBranch());
                 }
@@ -413,14 +445,15 @@ public final class HedDomain {
         // Rooms are references: moving devices must not recreate them or replace their circuit/control connections.
         for (var item : equipment) {
             if (item.getRoom() != room) {
-                item.setRoom(room);
+                HedOutletBlocks.locate(item, room);
             }
         }
     }
 
     public static void assignToBranch(CircuitBranch branch, List<FieldEquipment> equipment) {
         var members = new ArrayList<>(branch.getEquipment());
-        for (var item : equipment) {
+        var expanded = equipment.stream().map(device -> HedOutletBlocks.endpoint(device)).distinct().toList();
+        for (var item : expanded) {
             if (!members.contains(item)) {
                 members.add(item);
             }
@@ -446,7 +479,7 @@ public final class HedDomain {
     public static FieldEquipment addEquipmentOnBranch(CircuitBranch branch, DeviceType type, Locale locale) {
         var equipment = addEquipment(dwelling(branch), type, locale);
         try {
-            set(equipment, "branch", branch);
+            assignToBranch(branch, List.of(equipment));
             return equipment;
         } catch (IllegalArgumentException ex) {
             EcoreUtil.delete(equipment, true);
@@ -472,6 +505,9 @@ public final class HedDomain {
     }
 
     public static void delete(EObject object) {
+        if (object instanceof OutletRow || object instanceof Outlet && object.eContainer() instanceof OutletRow) {
+            throw new IllegalArgumentException("block.moveWhole");
+        }
         if (object instanceof DINRail rail && !rail.getDevices().isEmpty()) {
             throw new IllegalArgumentException("railNotEmpty");
         }
@@ -503,7 +539,7 @@ public final class HedDomain {
         var home = dwelling(circuit);
         if (home != null) {
             // Older resources only store FieldEquipment.circuit; recover the new inverse in their original order.
-            for (var equipment : home.getEquipment()) {
+            for (var equipment : HedOutletBlocks.terminals(home)) {
                 if (equipment.getCircuit() == circuit && !circuit.getEquipment().contains(equipment)) {
                     circuit.getEquipment().add(equipment);
                 }

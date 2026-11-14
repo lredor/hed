@@ -231,6 +231,23 @@ Editing the type updates every instance using it.
 Create a separate type when you need a different product variant.
 The category of a type already in use cannot be changed, and the type cannot be deleted.
 
+=== Socket outlet blocks
+
+The initial catalog includes a *Socket outlet block* with one row of two outlets.
+For a different arrangement, create a *Socket outlet block* catalog type and set *Number of rows* and *Outlets per row* before using it.
+Dimensions are read-only once the type is used; create another variant for a different format.
+A block can contain at most 256 outlets.
+
+Drag its type onto a room to create the complete block, its rows and all individual outlets.
+Assign the circuit and optional branch on the block. Every contained outlet inherits that assignment, displayed read-only in its Details.
+Expand the block in Model Explorer to name each outlet.
+The block's room applies to all its outlets; move the complete block to change their location.
+
+Only the complete block has a movable node on the Floor Plan and Circuit Diagram, showing its rows and columns.
+Individual block outlets cannot be dropped onto either diagram.
+On a floor plan, a 1 × 2 block measures 48 × 24 units and a 2 × 3 block measures 72 × 48 units.
+Equipment tables and electrical selectors list the block as one unit. Standard checks still count its actual outlets.
+
 == Build the distribution board
 
 . Under the GTL, create a distribution board.

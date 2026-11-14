@@ -66,6 +66,7 @@ public final class HedDomainIcons {
             case "ServiceConnection" -> "transmission-tower-import";
             case "EnergyMeter", "ENERGY_METER" -> "meter-electric-outline";
             case "ServiceCircuitBreaker", "SERVICE_BREAKER" -> "shield-home-outline";
+            case "OutletBlock", "OutletRow", "OUTLET_BLOCK" -> "power-socket-fr";
             case "Outlet", "OUTLET" -> "power-socket-fr";
             case "ControlDevice", "SWITCH" -> "light-switch";
             case "PUSH_BUTTON" -> "gesture-tap-button";

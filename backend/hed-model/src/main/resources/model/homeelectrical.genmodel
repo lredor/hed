@@ -32,6 +32,9 @@ SPDX-License-Identifier: EPL-2.0
                 <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/OUTLET"/>
             </genEnumLiterals>
             <genEnumLiterals>
+                <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/OUTLET_BLOCK"/>
+            </genEnumLiterals>
+            <genEnumLiterals>
                 <ecoreEnumLiteral href="homeelectrical.ecore#//DeviceKind/SWITCH"/>
             </genEnumLiterals>
             <genEnumLiterals>
@@ -281,6 +284,12 @@ SPDX-License-Identifier: EPL-2.0
             <genFeatures createChild="false">
                 <ecoreFeature href="homeelectrical.ecore#//DeviceType/channelCount" xsi:type="ecore:EAttribute"/>
             </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//DeviceType/nbRows" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
+            <genFeatures createChild="false">
+                <ecoreFeature href="homeelectrical.ecore#//DeviceType/nbColumns" xsi:type="ecore:EAttribute"/>
+            </genFeatures>
         </genClasses>
         <genClasses image="false">
             <ecoreClass href="homeelectrical.ecore#//Equipment"/>
@@ -302,6 +311,18 @@ SPDX-License-Identifier: EPL-2.0
         </genClasses>
         <genClasses>
             <ecoreClass href="homeelectrical.ecore#//Outlet"/>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//OutletBlock"/>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//OutletBlock/rows" xsi:type="ecore:EReference"/>
+            </genFeatures>
+        </genClasses>
+        <genClasses>
+            <ecoreClass href="homeelectrical.ecore#//OutletRow"/>
+            <genFeatures children="true" createChild="true" property="None">
+                <ecoreFeature href="homeelectrical.ecore#//OutletRow/outlets" xsi:type="ecore:EReference"/>
+            </genFeatures>
         </genClasses>
         <genClasses>
             <ecoreClass href="homeelectrical.ecore#//ElectricalLoad"/>

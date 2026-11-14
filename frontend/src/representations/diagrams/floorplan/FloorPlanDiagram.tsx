@@ -35,6 +35,8 @@ interface PlanStyle extends GQLNodeStyle {
   imageURL: string;
   caption: string;
   hasImage: boolean;
+  rows?: number;
+  columns?: number;
 }
 interface PlanData extends NodeData {
   plan: PlanStyle;
@@ -47,7 +49,8 @@ const headerHeight = 48;
 const scalePlanPosition = (
   position: { x: number; y: number },
   before: { width: number; height: number },
-  after: { width: number; height: number }
+  after: { width: number; height: number },
+  size = { width: equipmentSize, height: equipmentSize }
 ) => {
   if (
     before.width <= 0 ||
@@ -55,13 +58,14 @@ const scalePlanPosition = (
     (before.width === after.width && before.height === after.height)
   )
     return position;
-  const half = equipmentSize / 2;
+  const halfWidth = size.width / 2,
+    halfHeight = size.height / 2;
   return {
-    x: ((position.x + half) * after.width) / before.width - half,
+    x: ((position.x + halfWidth) * after.width) / before.width - halfWidth,
     y:
       headerHeight +
-      ((position.y + half - headerHeight) * (after.height - headerHeight)) / (before.height - headerHeight) -
-      half,
+      ((position.y + halfHeight - headerHeight) * (after.height - headerHeight)) / (before.height - headerHeight) -
+      halfHeight,
   };
 };
 const fragment = gql`
@@ -70,6 +74,8 @@ const fragment = gql`
     imageURL
     caption
     hasImage
+    rows
+    columns
     childrenLayoutStrategy {
       ...childrenLayoutStrategyFragment
     }
@@ -125,18 +131,23 @@ class PlanConverter implements INodeConverter {
     const plan = node.style as PlanStyle,
       saved = diagram.layoutData.nodeLayoutData.find((d) => d.id === node.id);
     // Pictogram dimensions stay fixed when labels are toggled or saved layouts are reopened.
-    const width = plan.backgroundNode ? node.defaultWidth ?? 1200 : equipmentSize,
-      height = plan.backgroundNode ? node.defaultHeight ?? 848 : equipmentSize;
+    const width = plan.backgroundNode ? node.defaultWidth ?? 1200 : equipmentSize * Math.max(1, plan.columns ?? 1),
+      height = plan.backgroundNode ? node.defaultHeight ?? 848 : equipmentSize * Math.max(1, plan.rows ?? 1);
     let position = saved?.position ?? { x: 0, y: 0 };
     if (!plan.backgroundNode && saved && parent) {
       const background = diagram.layoutData.nodeLayoutData.find((entry) => entry.id === parent.id);
       if (background) {
         // Closed plans retain their previous background size in native layout data.
         const before = background.size.width > 0 ? background.size : background.minComputedSize;
-        position = scalePlanPosition(position, before, {
-          width: parent.defaultWidth ?? 1200,
-          height: parent.defaultHeight ?? 848,
-        });
+        position = scalePlanPosition(
+          position,
+          before,
+          {
+            width: parent.defaultWidth ?? 1200,
+            height: parent.defaultHeight ?? 848,
+          },
+          { width, height }
+        );
       }
     }
     const data: PlanData = {
@@ -216,7 +227,8 @@ class PlanLayout implements INodeLayoutHandler<NodeData> {
             ? scalePlanPosition(
                 old.position,
                 { width: oldBackground.width ?? 1200, height: oldBackground.height ?? 848 },
-                { width: node.data.defaultWidth ?? 1200, height: node.data.defaultHeight ?? 848 }
+                { width: node.data.defaultWidth ?? 1200, height: node.data.defaultHeight ?? 848 },
+                { width: child.data.defaultWidth ?? equipmentSize, height: child.data.defaultHeight ?? equipmentSize }
               )
             : old.position;
       }

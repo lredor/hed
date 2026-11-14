@@ -9,6 +9,12 @@
  *******************************************************************************/
 package hed.starter.representations.diagrams.floorplan;
 
+import hed.starter.representations.diagrams.OutletBlockArtwork;
+
+import hed.homeelectrical.OutletRow;
+
+import hed.homeelectrical.OutletBlock;
+
 import java.util.List;
 import java.util.Locale;
 import org.eclipse.sirius.components.core.api.IObjectSearchService;
@@ -55,13 +61,31 @@ public class FloorPlanServices {
     }
 
     /**
+     * Computes the width of a whole-unit plan view at 24 units per outlet.
+     * @param equipment a standalone device or an outlet block
+     * @return fixed view width in diagram units
+     */
+    public int getHedPlanEquipmentWidth(FieldEquipment equipment) {
+        return equipment instanceof OutletBlock block ? 24 * OutletBlockArtwork.columns(block) : 24;
+    }
+
+    /**
+     * Computes the height of a whole-unit plan view at 24 units per row.
+     * @param equipment a standalone device or an outlet block
+     * @return fixed view height in diagram units
+     */
+    public int getHedPlanEquipmentHeight(FieldEquipment equipment) {
+        return equipment instanceof OutletBlock block ? 24 * Math.max(1, block.getRows().size()) : 24;
+    }
+
+    /**
      * Tests the room's containment, independently of the equipment's dwelling ownership.
      * @param equipment an existing terminal device
      * @param storey the storey containing the room
      * @return whether the device is assigned to a room on this storey
      */
     public static boolean belongsTo(FieldEquipment equipment, Storey storey) {
-        return equipment.getRoom() != null && equipment.getRoom().eContainer() == storey;
+        return !(equipment.eContainer() instanceof OutletRow) && equipment.getRoom() != null && equipment.getRoom().eContainer() == storey;
     }
 
     /**
@@ -82,6 +106,10 @@ public class FloorPlanServices {
      * @return whether a view may be created; never creates or moves a semantic object
      */
     public boolean canPlaceHedEquipmentInPlan(Object source, DiagramContext diagramContext, IEditingContext context) {
+        if (source instanceof hed.homeelectrical.Outlet outlet && outlet.eContainer() instanceof OutletRow) {
+            feedback.addFeedbackMessage(new Message(Messages.text(locale, "block.moveWhole"), MessageLevel.ERROR));
+            return false;
+        }
         var diagram = diagramContext.diagram();
         var storey = search.getObject(context, diagram.getTargetObjectId()).filter(Storey.class::isInstance).map(Storey.class::cast).orElse(null);
         if (storey != null && source instanceof FieldEquipment equipment && belongsTo(equipment, storey)) {

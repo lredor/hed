@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.homeelectrical.util;
 
+import hed.homeelectrical.OutletBlock;
+import hed.homeelectrical.OutletRow;
 import hed.homeelectrical.Catalog;
 import hed.homeelectrical.Circuit;
 import hed.homeelectrical.CircuitBranch;
@@ -216,6 +218,37 @@ public class HomeElectricalSwitch<T> extends Switch<T> {
                 }
                 if (result == null) {
                     result = caseNamedElement(outlet);
+                }
+                if (result == null) {
+                    result = defaultCase(theEObject);
+                }
+                return result;
+            }
+            case HomeElectricalPackage.OUTLET_BLOCK: {
+                OutletBlock outletBlock = (OutletBlock) theEObject;
+                T result = caseOutletBlock(outletBlock);
+                if (result == null) {
+                    result = caseFieldEquipment(outletBlock);
+                }
+                if (result == null) {
+                    result = caseEquipment(outletBlock);
+                }
+                if (result == null) {
+                    result = caseTechnicalElement(outletBlock);
+                }
+                if (result == null) {
+                    result = caseNamedElement(outletBlock);
+                }
+                if (result == null) {
+                    result = defaultCase(theEObject);
+                }
+                return result;
+            }
+            case HomeElectricalPackage.OUTLET_ROW: {
+                OutletRow outletRow = (OutletRow) theEObject;
+                T result = caseOutletRow(outletRow);
+                if (result == null) {
+                    result = caseNamedElement(outletRow);
                 }
                 if (result == null) {
                     result = defaultCase(theEObject);
@@ -777,6 +810,36 @@ public class HomeElectricalSwitch<T> extends Switch<T> {
      * @generated
      */
     public T caseCircuitBranch(CircuitBranch object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Outlet Block</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Outlet Block</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseOutletBlock(OutletBlock object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Outlet Row</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Outlet Row</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseOutletRow(OutletRow object) {
         return null;
     }
 

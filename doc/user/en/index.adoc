@@ -295,6 +295,10 @@ Section/rating checks also cover socket and lighting circuits: at least 1.5 mm²
 Fuses retain their historical limits before A5 and are reported as not permitted for these uses under A5.
 Ratings come from the protective device's catalog type; missing section or rating data is marked not assessed.
 
+Under A5, a final RCCB whose recorded sensitivity is at most 30 mA is also limited to eight protected outgoing circuits.
+The check follows explicitly modeled circuits and their protection's upstream links; spare breakers without a circuit assignment, relays, contactors and circuit branches are not extra departures.
+The warning targets the affected RCCB. Unknown sensitivity makes this check unassessed when more than eight departures are recorded.
+
 These checks cover a documented subset, not a conformity certification or a determination of which edition applies to an installation.
 The 2024 revision, kitchen-specific rules and room equipment minima are outside this scope.
 See the https://github.com/lredor/hed/blob/master/doc/standards.md[rule documentation] for sources and detailed scope.

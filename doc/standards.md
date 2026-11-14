@@ -44,10 +44,18 @@ This rule targets final circuits whose use is **Socket outlets** or **Lighting**
 A5 rejects fuse protection for these supported circuit uses. Larger sections do not increase these usage-specific rating caps. Missing/nonfinite sizing values are marked not assessed, and missing protection remains a structural warning. Other circuit uses, cable installation methods, thermal derating and voltage drop are not evaluated by this matrix.
 Warnings target the circuit and include the actual section/rating, applicable limit and profile. Catalog rating changes and profile changes recompute results without blocking draft edits.
 
+## Outgoing circuits under an RCCB
+
+Under **A5 (2015)**, a recorded final RCCB with sensitivity at most 30 mA may supply at most eight overcurrent-protected outgoing circuits. The rule counts explicitly modeled circuits through their distinct MCB, RCBO or fuse and recorded `upstreamRccb` links, including intermediate RCCBs. Spare breakers without a circuit assignment, room devices, circuit branches, relays, contactors and surge protectors are not extra departures. Unmodeled circuits cannot be inferred by this check.
+
+Independent RCCBs are counted separately. Warnings target the overloaded RCCB and show the recorded count and limit. The historical profile does not inherit this A5 limit. A recorded sensitivity above 30 mA is outside this final-protection check; when the count exceeds eight but sensitivity is missing/invalid, the result is marked not assessed rather than assuming 30 mA.
+
+This rule does not size an RCCB's assigned current, check phase balance or certify the installation's residual-current protection. See ABB's A5 guide, slide 9, for the eight-circuit limit.
+
 ## Sources and traceability
 
 - [Schneider Electric, Guide de l'installation électrique 2010, chapter Q, pages Q12 and Q14](https://fr.electrical-installation.org/frw/images/4/42/Q-La-norme-NF-C-15-100-dans-l-habitat-2.pdf): historical conductor/protection table and per-box socket counting.
-- [ABB, NF C 15-100 amendment 5, June 2016, slide 5](https://library.e.abb.com/public/5ce5a4dd0ee94d5792a57151d9fd7fd2/NF%20C%2015-100%20amendement%205.pdf): A5 circuit limits and individual socket counting.
+- [ABB, NF C 15-100 amendment 5, June 2016, slides 5 and 9](https://library.e.abb.com/public/5ce5a4dd0ee94d5792a57151d9fd7fd2/NF%20C%2015-100%20amendement%205.pdf): A5 circuit limits, individual socket counting and the eight-circuit limit per RCCB.
 
 - [Promotelec, lighting circuit protection](https://www.promotelec.com/faq/professionnels/combien-de-points-lumineux-peut-on-mettre-sur-un-disjoncteur-16-a/): 1.5 mm² / 16 A and the A5 prohibition on fuses.
 

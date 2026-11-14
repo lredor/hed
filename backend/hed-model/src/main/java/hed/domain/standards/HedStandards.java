@@ -14,6 +14,7 @@ import java.util.List;
 import hed.domain.HedValidation.Issue;
 import hed.domain.standards.rules.NfcConductorProtectionRule;
 import hed.domain.standards.rules.NfcOutletCountRule;
+import hed.domain.standards.rules.NfcResidualCircuitCountRule;
 import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.StandardVersion;
 
@@ -34,6 +35,7 @@ public final class HedStandards {
         var issues = new ArrayList<Issue>();
         issues.addAll(NfcOutletCountRule.validate(home));
         issues.addAll(NfcConductorProtectionRule.validate(home));
+        issues.addAll(NfcResidualCircuitCountRule.validate(home));
         return List.copyOf(issues);
     }
 

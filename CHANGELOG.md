@@ -10,6 +10,12 @@ SPDX-License-Identifier: EPL-2.0
 
 # Changelog
 
+## Unreleased
+
+### Documentation
+
+- Document isolated manual testing of a draft release using its exact image digest before publication.
+
 ## 0.1.0
 
 First release of Home Electrical Designer, a Sirius Web modeler for documenting a home's electrical installation.

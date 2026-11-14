@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.starter.representations.tables;
 
+import hed.domain.HedOutletBlocks;
+
 import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.emf.ecore.EObject;
@@ -43,7 +45,7 @@ public final class HedEquipmentTableScope {
         if (home == null) {
             return List.of();
         }
-        return home.getEquipment().stream()
+        return HedOutletBlocks.terminals(home).stream()
                 .filter(device -> owner instanceof Dwelling || device.getRoom() == owner || owner instanceof Storey && device.getRoom() != null && device.getRoom().eContainer() == owner).toList();
     }
 

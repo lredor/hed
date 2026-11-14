@@ -13,5 +13,7 @@ type FloorPlanNodeStyle {
   imageURL: String!
   caption: String!
   hasImage: Boolean!
+  rows: Int
+  columns: Int
   childrenLayoutStrategy: ILayoutStrategy!
 }

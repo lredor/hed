@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.starter.representations.modelexplorer;
 
+import hed.domain.HedOutletBlocks;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -129,7 +131,7 @@ public class HedDomainEditing extends IEditServiceDelegate.NoOp {
                     }
                     var equipment = HedDomain.addEquipment(HedDomain.dwelling(parent), type, locale);
                     if (parent instanceof Room room) {
-                        equipment.setRoom(room);
+                        HedOutletBlocks.locate(equipment, room);
                     }
                     return Optional.of(equipment);
                 }

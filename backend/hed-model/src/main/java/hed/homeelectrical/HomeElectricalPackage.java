@@ -602,13 +602,31 @@ public interface HomeElectricalPackage extends EPackage {
     int DEVICE_TYPE__CHANNEL_COUNT = TECHNICAL_ELEMENT_FEATURE_COUNT + 3;
 
     /**
+     * The feature id for the '<em><b>Nb Rows</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int DEVICE_TYPE__NB_ROWS = TECHNICAL_ELEMENT_FEATURE_COUNT + 4;
+
+    /**
+     * The feature id for the '<em><b>Nb Columns</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int DEVICE_TYPE__NB_COLUMNS = TECHNICAL_ELEMENT_FEATURE_COUNT + 5;
+
+    /**
      * The number of structural features of the '<em>Device Type</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int DEVICE_TYPE_FEATURE_COUNT = TECHNICAL_ELEMENT_FEATURE_COUNT + 4;
+    int DEVICE_TYPE_FEATURE_COUNT = TECHNICAL_ELEMENT_FEATURE_COUNT + 6;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.impl.EquipmentImpl <em>Equipment</em>}' class.
@@ -936,7 +954,328 @@ public interface HomeElectricalPackage extends EPackage {
      * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getElectricalLoad()
      * @generated
      */
-    int ELECTRICAL_LOAD = 10;
+    int ELECTRICAL_LOAD = 12;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.ControlDeviceImpl <em>Control Device</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.ControlDeviceImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getControlDevice()
+     * @generated
+     */
+    int CONTROL_DEVICE = 13;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.ControlChannelImpl <em>Control Channel</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.ControlChannelImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getControlChannel()
+     * @generated
+     */
+    int CONTROL_CHANNEL = 14;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.DistributionBoardImpl <em>Distribution Board</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.DistributionBoardImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getDistributionBoard()
+     * @generated
+     */
+    int DISTRIBUTION_BOARD = 15;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.DINRailImpl <em>DIN Rail</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.DINRailImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getDINRail()
+     * @generated
+     */
+    int DIN_RAIL = 16;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.ModularDeviceImpl <em>Modular Device</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.ModularDeviceImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getModularDevice()
+     * @generated
+     */
+    int MODULAR_DEVICE = 17;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.CircuitImpl <em>Circuit</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.CircuitImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getCircuit()
+     * @generated
+     */
+    int CIRCUIT = 18;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.FinalCircuitImpl <em>Final Circuit</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.FinalCircuitImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getFinalCircuit()
+     * @generated
+     */
+    int FINAL_CIRCUIT = 19;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.DistributionCircuitImpl <em>Distribution Circuit</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.DistributionCircuitImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getDistributionCircuit()
+     * @generated
+     */
+    int DISTRIBUTION_CIRCUIT = 20;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.ControlFunctionImpl <em>Control Function</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.ControlFunctionImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getControlFunction()
+     * @generated
+     */
+    int CONTROL_FUNCTION = 21;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.ServiceConnectionImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getServiceConnection()
+     * @generated
+     */
+    int SERVICE_CONNECTION = 22;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.EnergyMeterImpl <em>Energy Meter</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.EnergyMeterImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getEnergyMeter()
+     * @generated
+     */
+    int ENERGY_METER = 23;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.ServiceCircuitBreakerImpl <em>Service Circuit Breaker</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.ServiceCircuitBreakerImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getServiceCircuitBreaker()
+     * @generated
+     */
+    int SERVICE_CIRCUIT_BREAKER = 24;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.CircuitBranchImpl <em>Circuit Branch</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.CircuitBranchImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getCircuitBranch()
+     * @generated
+     */
+    int CIRCUIT_BRANCH = 25;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.OutletBlockImpl <em>Outlet Block</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.OutletBlockImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getOutletBlock()
+     * @generated
+     */
+    int OUTLET_BLOCK = 10;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__NAME = FIELD_EQUIPMENT__NAME;
+
+    /**
+     * The feature id for the '<em><b>Description</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__DESCRIPTION = FIELD_EQUIPMENT__DESCRIPTION;
+
+    /**
+     * The feature id for the '<em><b>Device Type</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__DEVICE_TYPE = FIELD_EQUIPMENT__DEVICE_TYPE;
+
+    /**
+     * The feature id for the '<em><b>Rated Current A</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__RATED_CURRENT_A = FIELD_EQUIPMENT__RATED_CURRENT_A;
+
+    /**
+     * The feature id for the '<em><b>Rated Power W</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__RATED_POWER_W = FIELD_EQUIPMENT__RATED_POWER_W;
+
+    /**
+     * The feature id for the '<em><b>Width Modules</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__WIDTH_MODULES = FIELD_EQUIPMENT__WIDTH_MODULES;
+
+    /**
+     * The feature id for the '<em><b>Residual Current Ma</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__RESIDUAL_CURRENT_MA = FIELD_EQUIPMENT__RESIDUAL_CURRENT_MA;
+
+    /**
+     * The feature id for the '<em><b>Residual Type</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__RESIDUAL_TYPE = FIELD_EQUIPMENT__RESIDUAL_TYPE;
+
+    /**
+     * The feature id for the '<em><b>Trip Curve</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__TRIP_CURVE = FIELD_EQUIPMENT__TRIP_CURVE;
+
+    /**
+     * The feature id for the '<em><b>Pole Configuration</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__POLE_CONFIGURATION = FIELD_EQUIPMENT__POLE_CONFIGURATION;
+
+    /**
+     * The feature id for the '<em><b>Room</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__ROOM = FIELD_EQUIPMENT__ROOM;
+
+    /**
+     * The feature id for the '<em><b>Circuit</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__CIRCUIT = FIELD_EQUIPMENT__CIRCUIT;
+
+    /**
+     * The feature id for the '<em><b>Branch</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__BRANCH = FIELD_EQUIPMENT__BRANCH;
+
+    /**
+     * The feature id for the '<em><b>Rows</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK__ROWS = FIELD_EQUIPMENT_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>Outlet Block</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_BLOCK_FEATURE_COUNT = FIELD_EQUIPMENT_FEATURE_COUNT + 1;
+
+    /**
+     * The meta object id for the '{@link hed.homeelectrical.impl.OutletRowImpl <em>Outlet Row</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.impl.OutletRowImpl
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getOutletRow()
+     * @generated
+     */
+    int OUTLET_ROW = 11;
+
+    /**
+     * The feature id for the '<em><b>Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_ROW__NAME = NAMED_ELEMENT__NAME;
+
+    /**
+     * The feature id for the '<em><b>Description</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_ROW__DESCRIPTION = NAMED_ELEMENT__DESCRIPTION;
+
+    /**
+     * The feature id for the '<em><b>Outlets</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_ROW__OUTLETS = NAMED_ELEMENT_FEATURE_COUNT + 0;
+
+    /**
+     * The number of structural features of the '<em>Outlet Row</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int OUTLET_ROW_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1063,16 +1402,6 @@ public interface HomeElectricalPackage extends EPackage {
      * @ordered
      */
     int ELECTRICAL_LOAD_FEATURE_COUNT = FIELD_EQUIPMENT_FEATURE_COUNT + 0;
-
-    /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.ControlDeviceImpl <em>Control Device</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.ControlDeviceImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getControlDevice()
-     * @generated
-     */
-    int CONTROL_DEVICE = 11;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1210,16 +1539,6 @@ public interface HomeElectricalPackage extends EPackage {
     int CONTROL_DEVICE_FEATURE_COUNT = FIELD_EQUIPMENT_FEATURE_COUNT + 1;
 
     /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.ControlChannelImpl <em>Control Channel</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.ControlChannelImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getControlChannel()
-     * @generated
-     */
-    int CONTROL_CHANNEL = 12;
-
-    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1245,16 +1564,6 @@ public interface HomeElectricalPackage extends EPackage {
      * @ordered
      */
     int CONTROL_CHANNEL_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 0;
-
-    /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.DistributionBoardImpl <em>Distribution Board</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.DistributionBoardImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getDistributionBoard()
-     * @generated
-     */
-    int DISTRIBUTION_BOARD = 13;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1311,16 +1620,6 @@ public interface HomeElectricalPackage extends EPackage {
     int DISTRIBUTION_BOARD_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 3;
 
     /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.DINRailImpl <em>DIN Rail</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.DINRailImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getDINRail()
-     * @generated
-     */
-    int DIN_RAIL = 14;
-
-    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1364,16 +1663,6 @@ public interface HomeElectricalPackage extends EPackage {
      * @ordered
      */
     int DIN_RAIL_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 2;
-
-    /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.ModularDeviceImpl <em>Modular Device</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.ModularDeviceImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getModularDevice()
-     * @generated
-     */
-    int MODULAR_DEVICE = 15;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1448,16 +1737,6 @@ public interface HomeElectricalPackage extends EPackage {
     int MODULAR_DEVICE_FEATURE_COUNT = EQUIPMENT_FEATURE_COUNT + 4;
 
     /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.CircuitImpl <em>Circuit</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.CircuitImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getCircuit()
-     * @generated
-     */
-    int CIRCUIT = 16;
-
-    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1519,16 +1798,6 @@ public interface HomeElectricalPackage extends EPackage {
      * @ordered
      */
     int CIRCUIT_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 4;
-
-    /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.FinalCircuitImpl <em>Final Circuit</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.FinalCircuitImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getFinalCircuit()
-     * @generated
-     */
-    int FINAL_CIRCUIT = 17;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1621,16 +1890,6 @@ public interface HomeElectricalPackage extends EPackage {
     int FINAL_CIRCUIT_FEATURE_COUNT = CIRCUIT_FEATURE_COUNT + 3;
 
     /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.DistributionCircuitImpl <em>Distribution Circuit</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.DistributionCircuitImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getDistributionCircuit()
-     * @generated
-     */
-    int DISTRIBUTION_CIRCUIT = 18;
-
-    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1703,16 +1962,6 @@ public interface HomeElectricalPackage extends EPackage {
     int DISTRIBUTION_CIRCUIT_FEATURE_COUNT = CIRCUIT_FEATURE_COUNT + 1;
 
     /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.ControlFunctionImpl <em>Control Function</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.ControlFunctionImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getControlFunction()
-     * @generated
-     */
-    int CONTROL_FUNCTION = 19;
-
-    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1776,16 +2025,6 @@ public interface HomeElectricalPackage extends EPackage {
     int CONTROL_FUNCTION_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 4;
 
     /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.ServiceConnectionImpl <em>Service Connection</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.ServiceConnectionImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getServiceConnection()
-     * @generated
-     */
-    int SERVICE_CONNECTION = 20;
-
-    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1847,16 +2086,6 @@ public interface HomeElectricalPackage extends EPackage {
      * @ordered
      */
     int SERVICE_CONNECTION_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 4;
-
-    /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.EnergyMeterImpl <em>Energy Meter</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.EnergyMeterImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getEnergyMeter()
-     * @generated
-     */
-    int ENERGY_METER = 21;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1967,16 +2196,6 @@ public interface HomeElectricalPackage extends EPackage {
     int ENERGY_METER_FEATURE_COUNT = EQUIPMENT_FEATURE_COUNT + 8;
 
     /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.ServiceCircuitBreakerImpl <em>Service Circuit Breaker</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.ServiceCircuitBreakerImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getServiceCircuitBreaker()
-     * @generated
-     */
-    int SERVICE_CIRCUIT_BREAKER = 22;
-
-    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2085,16 +2304,6 @@ public interface HomeElectricalPackage extends EPackage {
     int SERVICE_CIRCUIT_BREAKER_FEATURE_COUNT = EQUIPMENT_FEATURE_COUNT + 8;
 
     /**
-     * The meta object id for the '{@link hed.homeelectrical.impl.CircuitBranchImpl <em>Circuit Branch</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see hed.homeelectrical.impl.CircuitBranchImpl
-     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getCircuitBranch()
-     * @generated
-     */
-    int CIRCUIT_BRANCH = 23;
-
-    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2147,7 +2356,7 @@ public interface HomeElectricalPackage extends EPackage {
      * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getDeviceKind()
      * @generated
      */
-    int DEVICE_KIND = 24;
+    int DEVICE_KIND = 26;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.SupplyPhase <em>Supply Phase</em>}' enum.
@@ -2157,7 +2366,7 @@ public interface HomeElectricalPackage extends EPackage {
      * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getSupplyPhase()
      * @generated
      */
-    int SUPPLY_PHASE = 25;
+    int SUPPLY_PHASE = 27;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.CircuitPhase <em>Circuit Phase</em>}' enum.
@@ -2167,7 +2376,7 @@ public interface HomeElectricalPackage extends EPackage {
      * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getCircuitPhase()
      * @generated
      */
-    int CIRCUIT_PHASE = 26;
+    int CIRCUIT_PHASE = 28;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.CircuitUse <em>Circuit Use</em>}' enum.
@@ -2177,7 +2386,7 @@ public interface HomeElectricalPackage extends EPackage {
      * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getCircuitUse()
      * @generated
      */
-    int CIRCUIT_USE = 27;
+    int CIRCUIT_USE = 29;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.ControlMode <em>Control Mode</em>}' enum.
@@ -2187,7 +2396,7 @@ public interface HomeElectricalPackage extends EPackage {
      * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getControlMode()
      * @generated
      */
-    int CONTROL_MODE = 28;
+    int CONTROL_MODE = 30;
 
     /**
      * Returns the meta object for class '{@link hed.homeelectrical.NamedElement <em>Named Element</em>}'.
@@ -2555,6 +2764,28 @@ public interface HomeElectricalPackage extends EPackage {
      * @generated
      */
     EAttribute getDeviceType_ChannelCount();
+
+    /**
+     * Returns the meta object for the attribute '{@link hed.homeelectrical.DeviceType#getNbRows <em>Nb Rows</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Nb Rows</em>'.
+     * @see hed.homeelectrical.DeviceType#getNbRows()
+     * @see #getDeviceType()
+     * @generated
+     */
+    EAttribute getDeviceType_NbRows();
+
+    /**
+     * Returns the meta object for the attribute '{@link hed.homeelectrical.DeviceType#getNbColumns <em>Nb Columns</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Nb Columns</em>'.
+     * @see hed.homeelectrical.DeviceType#getNbColumns()
+     * @see #getDeviceType()
+     * @generated
+     */
+    EAttribute getDeviceType_NbColumns();
 
     /**
      * Returns the meta object for class '{@link hed.homeelectrical.Equipment <em>Equipment</em>}'.
@@ -3101,6 +3332,48 @@ public interface HomeElectricalPackage extends EPackage {
     EReference getCircuitBranch_Equipment();
 
     /**
+     * Returns the meta object for class '{@link hed.homeelectrical.OutletBlock <em>Outlet Block</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Outlet Block</em>'.
+     * @see hed.homeelectrical.OutletBlock
+     * @generated
+     */
+    EClass getOutletBlock();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link hed.homeelectrical.OutletBlock#getRows <em>Rows</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Rows</em>'.
+     * @see hed.homeelectrical.OutletBlock#getRows()
+     * @see #getOutletBlock()
+     * @generated
+     */
+    EReference getOutletBlock_Rows();
+
+    /**
+     * Returns the meta object for class '{@link hed.homeelectrical.OutletRow <em>Outlet Row</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Outlet Row</em>'.
+     * @see hed.homeelectrical.OutletRow
+     * @generated
+     */
+    EClass getOutletRow();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link hed.homeelectrical.OutletRow#getOutlets <em>Outlets</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Outlets</em>'.
+     * @see hed.homeelectrical.OutletRow#getOutlets()
+     * @see #getOutletRow()
+     * @generated
+     */
+    EReference getOutletRow_Outlets();
+
+    /**
      * Returns the meta object for enum '{@link hed.homeelectrical.DeviceKind <em>Device Kind</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3457,6 +3730,22 @@ public interface HomeElectricalPackage extends EPackage {
          * @generated
          */
         EAttribute DEVICE_TYPE__CHANNEL_COUNT = eINSTANCE.getDeviceType_ChannelCount();
+
+        /**
+         * The meta object literal for the '<em><b>Nb Rows</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute DEVICE_TYPE__NB_ROWS = eINSTANCE.getDeviceType_NbRows();
+
+        /**
+         * The meta object literal for the '<em><b>Nb Columns</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute DEVICE_TYPE__NB_COLUMNS = eINSTANCE.getDeviceType_NbColumns();
 
         /**
          * The meta object literal for the '{@link hed.homeelectrical.impl.EquipmentImpl <em>Equipment</em>}' class.
@@ -3899,6 +4188,42 @@ public interface HomeElectricalPackage extends EPackage {
          * @generated
          */
         EReference CIRCUIT_BRANCH__EQUIPMENT = eINSTANCE.getCircuitBranch_Equipment();
+
+        /**
+         * The meta object literal for the '{@link hed.homeelectrical.impl.OutletBlockImpl <em>Outlet Block</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see hed.homeelectrical.impl.OutletBlockImpl
+         * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getOutletBlock()
+         * @generated
+         */
+        EClass OUTLET_BLOCK = eINSTANCE.getOutletBlock();
+
+        /**
+         * The meta object literal for the '<em><b>Rows</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference OUTLET_BLOCK__ROWS = eINSTANCE.getOutletBlock_Rows();
+
+        /**
+         * The meta object literal for the '{@link hed.homeelectrical.impl.OutletRowImpl <em>Outlet Row</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see hed.homeelectrical.impl.OutletRowImpl
+         * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getOutletRow()
+         * @generated
+         */
+        EClass OUTLET_ROW = eINSTANCE.getOutletRow();
+
+        /**
+         * The meta object literal for the '<em><b>Outlets</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference OUTLET_ROW__OUTLETS = eINSTANCE.getOutletRow_Outlets();
 
         /**
          * The meta object literal for the '{@link hed.homeelectrical.DeviceKind <em>Device Kind</em>}' enum.

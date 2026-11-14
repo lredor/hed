@@ -33,15 +33,16 @@ public final class FloorPlanDiagram {
     }
 
     /**
-     * Builds a fixed background containing freely positioned, unsynchronized 24-by-24 device views.
+     * Builds a fixed background containing freely positioned, unsynchronized pictograms and whole outlet grids.
      * @return the native diagram description, creatable on a Storey
      */
     public DiagramDescription create() {
         var b = new DiagramBuilders();
         var ops = new ViewBuilders();
         var equipment = b.newNodeDescription().name("hed-floor-plan-equipment").domainType("homeelectrical::FieldEquipment").semanticCandidatesExpression("aql:self.getHedFloorPlanEquipment()")
-                .preconditionExpression("aql:true").synchronizationPolicy(SynchronizationPolicy.UNSYNCHRONIZED).defaultWidthExpression("24").defaultHeightExpression("24")
-                .userResizable(UserResizableDirection.NONE).style(b.newImageNodeStyleDescription().shape("hed-plan:equipment").build()).build();
+                .preconditionExpression("aql:true").synchronizationPolicy(SynchronizationPolicy.UNSYNCHRONIZED).defaultWidthExpression("aql:self.getHedPlanEquipmentWidth()")
+                .defaultHeightExpression("aql:self.getHedPlanEquipmentHeight()").userResizable(UserResizableDirection.NONE).style(b.newImageNodeStyleDescription().shape("hed-plan:equipment").build())
+                .build();
         var remove = b.newDeleteView().viewExpression("aql:selectedNode").build();
         equipment.setPalette(b.newNodePalette().deleteTool(b.newDeleteTool().name(Messages.text(locale, "plan.removeEquipment")).body(remove).build())
                 .nodeTools(b.newNodeTool().name(Messages.text(locale, "plan.removeEquipment")).body(b.newDeleteView().viewExpression("aql:selectedNode").build()).build()).build());

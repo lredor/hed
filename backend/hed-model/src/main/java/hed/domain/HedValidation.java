@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.domain;
 
+import hed.homeelectrical.OutletBlock;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -75,7 +77,18 @@ public final class HedValidation {
                     error(issues, "incompatibleType", equipment);
                 }
             }
-            if (object instanceof FieldEquipment equipment) {
+            if (object instanceof OutletBlock block) {
+                var type = block.getDeviceType();
+                if (type != null && (block.getRows().size() != type.getNbRows() || block.getRows().stream().anyMatch(row -> row.getOutlets().size() != type.getNbColumns()))) {
+                    error(issues, "block.invalidDimensions", block);
+                }
+                for (var outlet : HedOutletBlocks.outlets(block)) {
+                    if (outlet.getRoom() != block.getRoom()) {
+                        error(issues, "block.moveWhole", outlet);
+                    }
+                }
+            }
+            if (object instanceof FieldEquipment equipment && !(object.eContainer() instanceof hed.homeelectrical.OutletRow)) {
                 if (equipment.getCircuit() != null && !equipment.getCircuit().getBranches().isEmpty() && equipment.getBranch() == null) {
                     error(issues, "requiredBranch", equipment);
                 }
@@ -91,6 +104,10 @@ public final class HedValidation {
             }
             if (object instanceof CircuitBranch branch && branch.getCircuit() == null) {
                 error(issues, "requiredCircuit", branch);
+            }
+            if (object instanceof DeviceType type && type.getKind() == DeviceKind.OUTLET_BLOCK
+                    && (type.getNbRows() < 1 || type.getNbColumns() < 1 || (long) type.getNbRows() * type.getNbColumns() > 256)) {
+                error(issues, "block.invalidDimensions", type);
             }
             if (object instanceof DeviceType type && type.getChannelCount() < 1) {
                 error(issues, "positiveValue", type);

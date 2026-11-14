@@ -44,7 +44,11 @@ import org.eclipse.sirius.components.trees.renderer.TreeRenderer;
 import org.eclipse.sirius.web.domain.boundedcontexts.representationdata.RepresentationMetadata;
 import org.eclipse.sirius.web.domain.boundedcontexts.representationdata.services.api.IRepresentationMetadataSearchService;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
+import hed.domain.HedDomain;
+import hed.domain.HedOutletBlocks;
 import hed.domain.HedSamples;
+import hed.homeelectrical.DeviceKind;
+import hed.homeelectrical.OutletBlock;
 import hed.domain.Messages;
 import hed.starter.representations.diagrams.floorplan.FloorPlanNodeStyle;
 import hed.starter.representations.diagrams.floorplan.FloorPlanNodeStyleProvider;
@@ -89,6 +93,24 @@ class ExplorerPlanPlacementTest {
         assertEquals(0, fixture.metadataReads);
         assertEquals(0, fixture.representationReads);
         assertEquals(0, fixture.liveReads);
+    }
+
+    @Test
+    void aBlocksRowsAndMembersShareTheWholeUnitsPlacementState() {
+        var fixture = new Fixture();
+        var storey = fixture.home.getStoreys().getFirst();
+        var block = (OutletBlock) HedDomain.addEquipment(fixture.home, HedDomain.type(fixture.home, DeviceKind.OUTLET_BLOCK));
+        HedDomain.moveToRoom(storey.getRooms().getFirst(), List.of(block));
+        var row = block.getRows().getFirst();
+        assertTrue(fixture.missing(block, fixture.render(true)));
+        assertTrue(fixture.missing(row, fixture.render(true)));
+        assertFalse(fixture.missing(row, fixture.render(false)));
+        HedOutletBlocks.outlets(block).forEach(outlet -> assertTrue(fixture.missing(outlet, fixture.render(true))));
+        fixture.saved.put(UUID.randomUUID().toString(), fixture.plan("saved-block", fixture.id(storey), fixture.node(fixture.id(block), false)));
+        var placed = fixture.render(true);
+        assertFalse(fixture.missing(block, placed));
+        assertFalse(fixture.missing(row, placed));
+        HedOutletBlocks.outlets(block).forEach(outlet -> assertFalse(fixture.missing(outlet, placed)));
     }
 
     @Test

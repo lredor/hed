@@ -9,6 +9,10 @@
  *******************************************************************************/
 package hed.starter.representations.details;
 
+import hed.homeelectrical.OutletRow;
+
+import hed.homeelectrical.OutletBlock;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -171,6 +175,8 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
     private boolean applicable(EObject object, EStructuralFeature feature) {
         var kind = object instanceof DeviceType type ? type.getKind() : object instanceof Equipment e ? HedDomain.kind(e) : null;
         return switch (feature.getName()) {
+            case "nbRows", "nbColumns" -> kind == DeviceKind.OUTLET_BLOCK;
+            case "circuit", "branch" -> true;
             case "phase" -> !(object instanceof Circuit) || HedDomain.hasThreePhaseSupply(object);
             case "widthModules" -> object instanceof ModularDevice || HedDomain.modular(kind);
             case "residualCurrentMa", "residualType" -> EnumSet.of(DeviceKind.RCCB, DeviceKind.RCBO, DeviceKind.SERVICE_BREAKER).contains(kind);
@@ -249,6 +255,13 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
     }
 
     private boolean allowed(EObject owner, String feature, EObject candidate) {
+        if (candidate.eContainer() instanceof OutletRow && feature.equals("equipment")) {
+            return false;
+        }
+        if (owner instanceof OutletBlock block && feature.equals("deviceType") && candidate instanceof DeviceType type
+                && (type.getNbRows() != block.getRows().size() || block.getRows().stream().anyMatch(row -> row.getOutlets().size() != type.getNbColumns()))) {
+            return false;
+        }
         if (owner instanceof hed.homeelectrical.FieldEquipment equipment && feature.equals("circuit") && candidate instanceof FinalCircuit circuit) {
             return circuit.getBranches().isEmpty() || equipment.getBranch() != null && equipment.getBranch().getCircuit() == circuit;
         }
@@ -320,8 +333,8 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                     .optionLabelProvider(
                             vm -> name.equals("branch") && circuitWithoutBranches(self(vm)) ? Messages.text(locale, "circuitWithoutBranches") : label(vm.get("candidate", Object.class).orElse(null)))
                     .optionIconURLProvider(vm -> icons(vm.get("candidate", Object.class).orElse(null))).styleProvider(vm -> SelectStyle.newSelectStyle().fontSize(14).showIcon(true).build())
-                    .valueProvider(vm -> id(self(vm).eGet(feature)))
-                    .isReadOnlyProvider(vm -> self(vm) instanceof DeviceType t && name.equals("kind") && HedDomain.inUse(t) || name.equals("branch") && circuitWithoutBranches(self(vm)))
+                    .valueProvider(vm -> id(self(vm).eGet(feature))).isReadOnlyProvider(vm -> self(vm) instanceof DeviceType t && name.equals("kind") && HedDomain.inUse(t)
+                            || name.equals("branch") && circuitWithoutBranches(self(vm)) || List.of("room", "circuit", "branch").contains(name) && self(vm).eContainer() instanceof OutletRow)
                     .newValueHandler((vm, value) -> update(() -> {
                         if (name.equals("branch") && circuitWithoutBranches(self(vm))) {
                             throw new IllegalArgumentException("circuitWithoutBranches");
@@ -330,8 +343,10 @@ public class HedPropertiesDescriptionRegistryConfigurer implements IPropertiesDe
                     })).diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
         }
         return TextfieldDescription.newTextfieldDescription(widgetId).idProvider(vm -> widgetId).targetObjectIdProvider(target).labelProvider(title)
-                .isReadOnlyProvider(vm -> self(vm) instanceof Storey && name.equals("planHeight")).valueProvider(vm -> Objects.toString(self(vm).eGet(feature), ""))
-                .newValueHandler((vm, value) -> update(() -> HedDomain.setText(self(vm), name, value))).diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
+                .isReadOnlyProvider(vm -> self(vm) instanceof Storey && name.equals("planHeight")
+                        || self(vm) instanceof DeviceType catalogType && List.of("nbRows", "nbColumns").contains(name) && HedDomain.inUse(catalogType))
+                .valueProvider(vm -> Objects.toString(self(vm).eGet(feature), "")).newValueHandler((vm, value) -> update(() -> HedDomain.setText(self(vm), name, value)))
+                .diagnosticsProvider(diagnostics).kindProvider(kind).messageProvider(message).build();
     }
 
     private TextfieldDescription validation(EClass type) {

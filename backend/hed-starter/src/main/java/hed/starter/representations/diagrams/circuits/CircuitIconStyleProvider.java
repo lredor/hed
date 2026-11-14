@@ -9,6 +9,10 @@
  *******************************************************************************/
 package hed.starter.representations.diagrams.circuits;
 
+import hed.starter.representations.diagrams.OutletBlockArtwork;
+
+import hed.homeelectrical.OutletBlock;
+
 import java.util.Optional;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -44,7 +48,8 @@ public class CircuitIconStyleProvider implements INodeStyleProvider {
         }
         // Copy the description so resolving one device's icon never changes the shared description for other nodes.
         var image = EcoreUtil.copy((ImageNodeStyleDescription) style);
-        image.setShape(HedDomainIcons.of(variables.get(VariableManager.SELF, EObject.class).orElseThrow()));
+        var self = variables.get(VariableManager.SELF, EObject.class).orElseThrow();
+        image.setShape(self instanceof OutletBlock block ? OutletBlockArtwork.imagePath(block) : HedDomainIcons.of(self));
         return standard.createNodeStyle(image, layout, interpreter, variables);
     }
 }

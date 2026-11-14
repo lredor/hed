@@ -140,7 +140,9 @@ test('create all four tables, filter and edit values, and reopen persisted table
     await expect(rccb.getByRole('cell', { name: '63.0', exact: true }).getByRole('textbox')).toHaveCount(0);
     await openTable(messages['class.Catalog'], 'catalog');
     await search().fill(messages['kind.OUTLET']);
-    await expect(page.getByRole('row')).toHaveCount(2);
+    // Substring searches can also match the localized socket-outlet-block name.
+    await expect(editable(messages['kind.OUTLET'])).toBeVisible();
+    await expect(editable(messages['kind.LUMINAIRE'])).toHaveCount(0);
     await editable(messages['kind.OUTLET']).fill(typeName);
     await page.keyboard.press('Tab');
     await expect(editable(typeName)).toBeVisible();

@@ -200,6 +200,24 @@ public interface HomeElectricalFactory extends EFactory {
     CircuitBranch createCircuitBranch();
 
     /**
+     * Returns a new object of class '<em>Outlet Block</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Outlet Block</em>'.
+     * @generated
+     */
+    OutletBlock createOutletBlock();
+
+    /**
+     * Returns a new object of class '<em>Outlet Row</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Outlet Row</em>'.
+     * @generated
+     */
+    OutletRow createOutletRow();
+
+    /**
      * Returns the package supported by this factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

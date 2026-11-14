@@ -236,6 +236,23 @@ Modifier le type met à jour tous les appareils qui l’utilisent.
 Créez un autre type si vous avez besoin d’une variante différente.
 Un type déjà utilisé ne peut pas être supprimé ni changer de catégorie.
 
+=== Blocs de prises de courant
+
+Le catalogue initial propose un *Bloc de prises de courant* de 1 rangée et 2 prises.
+Pour une autre disposition, créez un type de catégorie *Bloc de prises de courant*, puis réglez *Nombre de rangées* et *Prises par rangée* avant de l'utiliser.
+Les dimensions d'un type utilisé sont en lecture seule ; créez une variante pour un autre format.
+Un bloc peut contenir au plus 256 prises.
+
+Glissez le type sur une pièce : le modeleur crée le bloc, ses rangées et toutes ses prises.
+Affectez le circuit et la branche éventuelle au bloc. Toutes ses prises héritent de cette affectation, affichée en lecture seule dans leurs propriétés.
+Dépliez le bloc dans Model Explorer pour nommer chaque prise.
+La pièce appartient au bloc et s'applique à toutes ses prises ; déplacez le bloc complet pour changer cette localisation.
+
+Sur le plan d'implantation et le schéma des circuits, seul le bloc possède un nœud déplaçable, qui affiche sa disposition en rangées et colonnes.
+Une prise de ce bloc ne peut pas être déposée individuellement dans un diagramme.
+Sur un plan, un bloc 1 × 2 mesure 48 × 24 unités ; un bloc 2 × 3 mesure 72 × 48 unités.
+Les tableaux d'équipements et les sélecteurs électriques présentent le bloc comme une unité. Les contrôles normatifs comptent toujours ses prises réelles.
+
 == Construire le tableau électrique
 
 . Sous la GTL, créez un tableau de répartition.

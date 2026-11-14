@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.starter.representations.modelexplorer;
 
+import hed.domain.HedOutletBlocks;
+
 import java.util.Optional;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
@@ -79,7 +81,7 @@ public class BranchEquipmentLinks implements IObjectSearchServiceDelegate {
             for (var resource : emf.getDomain().getResourceSet().getResources()) {
                 for (var root : resource.getContents()) {
                     if (root instanceof Dwelling home) {
-                        for (var equipment : home.getEquipment()) {
+                        for (var equipment : HedOutletBlocks.terminals(home)) {
                             var link = new EquipmentLink(equipment);
                             if (id(link, identity).equals(id)) {
                                 return Optional.of(link);

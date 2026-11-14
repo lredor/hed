@@ -19,7 +19,7 @@ Handwritten operations, validation, localized messages and samples live in `hed.
 
 - A dwelling owns one local catalog, storeys, field equipment, distribution boards, circuits and functional controls. Its service connection is optional and can contain a meter and a service circuit-breaker.
 - Storeys own rooms. A garage is normally a room, not a special storey type. A storey also owns the imported floor-plan image identifier and canvas dimensions; equipment positions remain representation data.
-- Field equipment belongs to the dwelling and optionally references a room, a final circuit and a branch of that circuit. Changing or deleting a room does not delete its equipment.
+- Standalone field equipment and outlet blocks belong to the dwelling; block rows contain their individual outlets. Terminal devices optionally reference a room, a final circuit and a branch of that circuit. A block manages its members' common room and common circuit/branch assignment. Changing or deleting a room does not delete its equipment.
 - A distribution board owns its rails and modular devices. Each modular device must reference a rail from its own board. The rail's ordered device collection defines the physical sequence. Deleting a nonempty rail is rejected.
 - Final circuits feed field equipment. Distribution circuits feed secondary boards. Source board and protection may be unknown while designing.
 - A final circuit keeps an ordered equipment reference opposite FieldEquipment.circuit, independently of dwelling/room order. Direct equipment order and each branch’s equipment order determine schematic chains. A final circuit owns optional branches. A branch references existing equipment; it does not own or duplicate it.
@@ -214,7 +214,7 @@ Le containment signifie qu'un objet contient et possède les éléments référe
 | `Storey.rooms` | Rooms | Pièces | Rooms owned by this storey. | Pièces contenues dans ce niveau. |
 | `Catalog.deviceTypes` | Device types | Types d'équipement | Editable catalog types owned by the local catalog. | Types d'équipement modifiables contenus dans le catalogue local. |
 | `Equipment.deviceType` | Device type | Type d'équipement | Required compatible catalog type; modular specifications are read from this type. | Type compatible du catalogue, obligatoire ; les caractéristiques modulaires sont lues dans ce type. |
-| `FieldEquipment.room` | Room | Pièce | Optional room assignment; the equipment remains owned by the dwelling. | Affectation facultative à une pièce ; l'équipement reste contenu dans le logement. |
+| `FieldEquipment.room` | Room | Pièce | Optional room assignment independent of containment; a block propagates its room to its outlets. | Affectation facultative à une pièce, indépendante du containment ; un bloc propage sa pièce à ses prises. |
 | `FieldEquipment.circuit` | Supply circuit | Circuit d'alimentation | Optional final circuit supplying this equipment, whether or not a branch is assigned. | Circuit terminal facultatif alimentant cet équipement, qu'une branche soit affectée ou non. |
 | `FieldEquipment.branch` | Circuit branch | Branche de circuit | Optional branch of the supply circuit; inverse of CircuitBranch.equipment. | Branche facultative du circuit d'alimentation ; opposée de CircuitBranch.equipment. |
 | `ControlDevice.channels` | Control channels | Canaux de commande | One or more independent channels owned by this control device. | Un ou plusieurs canaux indépendants contenus dans cet organe de commande. |
@@ -244,3 +244,19 @@ Le containment signifie qu'un objet contient et possède les éléments référe
 The sample model has two storeys, a garage, two boards, independent lighting/outlet/shutter circuits, a secondary-board feeder, a double switch and multiple controls for one luminaire. Branches are optional; the domain tests cover branch assignment, transfer and deletion. The tests also cover serialization, catalog specifications, protection, localized creation, ordering and rejected-edit rollback. Sample ratings illustrate data entry; they are not sizing recommendations.
 
 There is no terminal-level wiring, conductor routing, electrical simulation or regulatory compliance engine in this version.
+
+## Socket outlet blocks
+
+| English term | French term | English definition | French definition |
+| --- | --- | --- | --- |
+| OutletBlock | Bloc de prises de courant | A physical assembly placed as one unit, containing ordered outlet rows. Its contained outlets inherit the block's common circuit and branch. | Assemblage physique placé en une seule unité, contenant des rangées ordonnées de prises. Chaque prise hérite du circuit et de la branche communs du bloc. |
+| OutletRow | Rangée de prises | An ordered row of individual Outlet objects within a block. | Rangée ordonnée d'objets Outlet individuels dans un bloc. |
+
+| English property | French property | English definition | French definition |
+| --- | --- | --- | --- |
+| Number of rows (`nbRows`) | Nombre de rangées | Positive number of rows created from an outlet-block catalog type. | Nombre positif de rangées créées depuis un type de bloc du catalogue. |
+| Outlets per row (`nbColumns`) | Prises par rangée | Positive number of individual outlets in each created row. | Nombre positif de prises individuelles dans chaque rangée créée. |
+
+The default catalog includes a 1 × 2 block. Creation snapshots the catalog layout into `OutletBlock.rows` and `OutletRow.outlets`; dimensions of an already-used type cannot be changed. Create a new catalog variant for a different arrangement. Grids are limited to 256 outlets to bound one creation operation.
+Blocks remain in `Dwelling.equipment`; their individual outlets are contained in rows and inherit the block's electrical assignment. Contained outlets display their own names without a block-name prefix. The whole block is selected as a circuit or branch member; individual member assignments are read-only. Moving the block propagates its room to every outlet; individual outlets cannot be relocated or deleted separately. Deleting a block clears the contained outlets' electrical references.
+Only complete blocks have floor-plan and circuit-diagram nodes. The same MDI outlet icon is tiled at 24 units per outlet on a floor plan and 48 units per outlet in the circuit diagram. Circuit and control edges refer to the common block assignment but use the complete block as their graphical endpoint; repeated outlets of one block do not create self-loops or duplicate continuation edges within one chain.

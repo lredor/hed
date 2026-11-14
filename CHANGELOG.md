@@ -12,6 +12,10 @@ SPDX-License-Identifier: EPL-2.0
 
 ## Unreleased
 
+### Added
+
+- Socket outlet blocks with catalog-defined grids, nested individually wired outlets and whole-unit placement on floor plans and circuit diagrams.
+
 ### Documentation
 
 - Document isolated manual testing of a draft release using its exact image digest before publication.

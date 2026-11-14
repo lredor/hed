@@ -323,8 +323,10 @@ class CircuitDiagramTest {
         assertEquals(64, services.getHedCircuitDeviceWidth(rail.getDevices().get(1)));
         assertEquals(424, services.getHedCircuitRailWidth(rail));
         assertEquals(426, services.getHedCircuitBoardWidth(home.getBoards().getFirst()));
-        assertEquals("48", projection.nodes.get(home.getEquipment().getFirst()).getDefaultWidthExpression());
-        assertEquals("48", projection.nodes.get(home.getEquipment().getFirst()).getDefaultHeightExpression());
+        assertEquals("aql:self.getHedCircuitEquipmentWidth()", projection.nodes.get(home.getEquipment().getFirst()).getDefaultWidthExpression());
+        assertEquals(48, services.getHedCircuitEquipmentWidth(home.getEquipment().getFirst()));
+        assertEquals("aql:self.getHedCircuitEquipmentHeight()", projection.nodes.get(home.getEquipment().getFirst()).getDefaultHeightExpression());
+        assertEquals(48, services.getHedCircuitEquipmentHeight(home.getEquipment().getFirst()));
         assertEquals("260", projection.nodes.get(rail).getDefaultHeightExpression());
         assertEquals(UserResizableDirection.VERTICAL, projection.nodes.get(rail).getUserResizable());
         var empty = HedDomain.F.createDINRail();
@@ -408,5 +410,24 @@ class CircuitDiagramTest {
         assertTrue(restored.connects(first, command));
         assertTrue(restored.connects(command, middle));
         assertTrue(restored.connects(circuit, last));
+    }
+
+    @Test
+    void outletBlockIsOneNodeWithProjectedCircuitEdgesAndNoMemberNodesOrSelfLoops() {
+        var home = HedSamples.example();
+        var block = (hed.homeelectrical.OutletBlock) HedDomain.addEquipment(home, HedDomain.type(home, DeviceKind.OUTLET_BLOCK));
+        HedDomain.moveToRoom(home.getStoreys().getFirst().getRooms().getFirst(), List.of(block));
+        var circuit = home.getCircuits().stream().filter(hed.homeelectrical.FinalCircuit.class::isInstance).map(hed.homeelectrical.FinalCircuit.class::cast)
+                .filter(item -> item.getUsage() == hed.homeelectrical.CircuitUse.SOCKET_OUTLETS).findFirst().orElseThrow();
+        var members = new ArrayList<hed.homeelectrical.FieldEquipment>(HedDomain.served(circuit));
+        members.add(block);
+        HedDomain.set(circuit, "equipment", members);
+        var projection = new Projection(home);
+        assertTrue(projection.nodes.containsKey(block));
+        for (var outlet : hed.domain.HedOutletBlocks.outlets(block)) {
+            assertFalse(projection.nodes.containsKey(outlet));
+        }
+        assertTrue(projection.links.stream().anyMatch(link -> link.target() == block));
+        assertFalse(projection.links.stream().anyMatch(link -> link.source() == block && link.target() == block));
     }
 }

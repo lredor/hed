@@ -22,6 +22,8 @@ package hed.homeelectrical;
  *   <li>{@link hed.homeelectrical.DeviceType#getManufacturer <em>Manufacturer</em>}</li>
  *   <li>{@link hed.homeelectrical.DeviceType#getProductReference <em>Product Reference</em>}</li>
  *   <li>{@link hed.homeelectrical.DeviceType#getChannelCount <em>Channel Count</em>}</li>
+ *   <li>{@link hed.homeelectrical.DeviceType#getNbRows <em>Nb Rows</em>}</li>
+ *   <li>{@link hed.homeelectrical.DeviceType#getNbColumns <em>Nb Columns</em>}</li>
  * </ul>
  *
  * @see hed.homeelectrical.HomeElectricalPackage#getDeviceType()
@@ -120,5 +122,51 @@ public interface DeviceType extends TechnicalElement {
      * @generated
      */
     void setChannelCount(int value);
+
+    /**
+     * Returns the value of the '<em><b>Nb Rows</b></em>' attribute.
+     * The default value is <code>"1"</code>.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Nb Rows</em>' attribute.
+     * @see #setNbRows(int)
+     * @see hed.homeelectrical.HomeElectricalPackage#getDeviceType_NbRows()
+     * @model default="1"
+     * @generated
+     */
+    int getNbRows();
+
+    /**
+     * Sets the value of the '{@link hed.homeelectrical.DeviceType#getNbRows <em>Nb Rows</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Nb Rows</em>' attribute.
+     * @see #getNbRows()
+     * @generated
+     */
+    void setNbRows(int value);
+
+    /**
+     * Returns the value of the '<em><b>Nb Columns</b></em>' attribute.
+     * The default value is <code>"2"</code>.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Nb Columns</em>' attribute.
+     * @see #setNbColumns(int)
+     * @see hed.homeelectrical.HomeElectricalPackage#getDeviceType_NbColumns()
+     * @model default="2"
+     * @generated
+     */
+    int getNbColumns();
+
+    /**
+     * Sets the value of the '{@link hed.homeelectrical.DeviceType#getNbColumns <em>Nb Columns</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Nb Columns</em>' attribute.
+     * @see #getNbColumns()
+     * @generated
+     */
+    void setNbColumns(int value);
 
 } // DeviceType

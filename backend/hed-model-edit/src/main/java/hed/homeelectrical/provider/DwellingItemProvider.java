@@ -157,6 +157,8 @@ public class DwellingItemProvider extends NamedElementItemProvider {
 
         newChildDescriptors.add(createChildParameter(HomeElectricalPackage.Literals.DWELLING__EQUIPMENT, HomeElectricalFactory.eINSTANCE.createOutlet()));
 
+        newChildDescriptors.add(createChildParameter(HomeElectricalPackage.Literals.DWELLING__EQUIPMENT, HomeElectricalFactory.eINSTANCE.createOutletBlock()));
+
         newChildDescriptors.add(createChildParameter(HomeElectricalPackage.Literals.DWELLING__EQUIPMENT, HomeElectricalFactory.eINSTANCE.createElectricalLoad()));
 
         newChildDescriptors.add(createChildParameter(HomeElectricalPackage.Literals.DWELLING__EQUIPMENT, HomeElectricalFactory.eINSTANCE.createControlDevice()));

@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.starter.representations.details;
 
+import hed.domain.HedOutletBlocks;
+
 import static org.eclipse.sirius.components.widget.reference.ReferenceWidgetComponent.ITEM_VARIABLE;
 import static org.eclipse.sirius.components.widget.reference.ReferenceWidgetComponent.MOVE_FROM_VARIABLE;
 import static org.eclipse.sirius.components.widget.reference.ReferenceWidgetComponent.MOVE_TO_VARIABLE;
@@ -59,7 +61,7 @@ final class HedEquipmentReferenceDescriptionFactory {
                 .helpTextProvider(vm -> Messages.text(locale, "properties.equipmentOrder")).isReadOnlyProvider(vm -> owner(vm) instanceof FinalCircuit circuit && !circuit.getBranches().isEmpty())
                 .itemsProvider(vm -> members(owner(vm))).optionsProvider(vm -> {
                     var home = HedDomain.dwelling(owner(vm));
-                    return home == null ? List.of() : List.copyOf(home.getEquipment());
+                    return home == null ? List.of() : HedOutletBlocks.terminals(home);
                 }).itemIdProvider(vm -> identity.getId(item(vm))).itemLabelProvider(vm -> HedDomain.label(item(vm), locale)).itemKindProvider(vm -> kinds.getKind(item(vm).eClass()))
                 .itemIconURLProvider(vm -> List.of(HedDomainIcons.of(item(vm)))).ownerKindProvider(vm -> kinds.getKind(owner(vm).eClass()))
                 .referenceKindProvider(vm -> kinds.getKind(HomeElectricalPackage.Literals.FIELD_EQUIPMENT)).isContainmentProvider(vm -> false).isManyProvider(vm -> true)

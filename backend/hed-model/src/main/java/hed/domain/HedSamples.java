@@ -54,6 +54,9 @@ public final class HedSamples {
         for (var kind : DeviceKind.values()) {
             var type = named(F.createDeviceType(), Messages.text(locale, "kind." + kind.getName()));
             type.setKind(kind);
+            if (kind == DeviceKind.OUTLET_BLOCK) {
+                type.setNbColumns(2);
+            }
             if (modular(kind)) {
                 type.setWidthModules(kind == DeviceKind.RCCB || kind == DeviceKind.RCBO ? 2d : 1d);
             }

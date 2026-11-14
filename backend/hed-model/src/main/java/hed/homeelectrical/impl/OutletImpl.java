@@ -41,4 +41,47 @@ public class OutletImpl extends FieldEquipmentImpl implements Outlet {
         return HomeElectricalPackage.Literals.OUTLET;
     }
 
+    /** Inherits the physical block's circuit; contained outlets have no separate assignment.
+     * @generated NOT
+     */
+    @Override
+    public hed.homeelectrical.FinalCircuit getCircuit() {
+        var block = hed.domain.HedOutletBlocks.block(this);
+        return block == null ? super.getCircuit() : block.getCircuit();
+    }
+
+    /** Routes programmatic member assignments through their owning physical unit.
+     * @generated NOT
+     */
+    @Override
+    public void setCircuit(hed.homeelectrical.FinalCircuit circuit) {
+        var block = hed.domain.HedOutletBlocks.block(this);
+        if (block == null) {
+            super.setCircuit(circuit);
+        } else {
+            block.setCircuit(circuit);
+        }
+    }
+
+    /** Inherits the physical block's optional branch.
+     * @generated NOT
+     */
+    @Override
+    public hed.homeelectrical.CircuitBranch getBranch() {
+        var block = hed.domain.HedOutletBlocks.block(this);
+        return block == null ? super.getBranch() : block.getBranch();
+    }
+
+    /** Routes programmatic member assignments through their owning physical unit.
+     * @generated NOT
+     */
+    @Override
+    public void setBranch(hed.homeelectrical.CircuitBranch branch) {
+        var block = hed.domain.HedOutletBlocks.block(this);
+        if (block == null) {
+            super.setBranch(branch);
+        } else {
+            block.setBranch(branch);
+        }
+    }
 } //OutletImpl

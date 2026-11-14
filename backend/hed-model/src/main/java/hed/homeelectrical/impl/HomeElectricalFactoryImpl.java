@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.homeelectrical.impl;
 
+import hed.homeelectrical.OutletBlock;
+import hed.homeelectrical.OutletRow;
 import hed.homeelectrical.Catalog;
 import hed.homeelectrical.CircuitBranch;
 import hed.homeelectrical.CircuitPhase;
@@ -100,6 +102,10 @@ public class HomeElectricalFactoryImpl extends EFactoryImpl implements HomeElect
                 return createDeviceType();
             case HomeElectricalPackage.OUTLET:
                 return createOutlet();
+            case HomeElectricalPackage.OUTLET_BLOCK:
+                return createOutletBlock();
+            case HomeElectricalPackage.OUTLET_ROW:
+                return createOutletRow();
             case HomeElectricalPackage.ELECTRICAL_LOAD:
                 return createElectricalLoad();
             case HomeElectricalPackage.CONTROL_DEVICE:
@@ -384,6 +390,28 @@ public class HomeElectricalFactoryImpl extends EFactoryImpl implements HomeElect
     public CircuitBranch createCircuitBranch() {
         CircuitBranchImpl circuitBranch = new CircuitBranchImpl();
         return circuitBranch;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public OutletBlock createOutletBlock() {
+        OutletBlockImpl outletBlock = new OutletBlockImpl();
+        return outletBlock;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public OutletRow createOutletRow() {
+        OutletRowImpl outletRow = new OutletRowImpl();
+        return outletRow;
     }
 
     /**

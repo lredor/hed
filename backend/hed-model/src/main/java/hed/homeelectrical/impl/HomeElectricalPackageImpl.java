@@ -34,6 +34,8 @@ import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.ModularDevice;
 import hed.homeelectrical.NamedElement;
 import hed.homeelectrical.Outlet;
+import hed.homeelectrical.OutletBlock;
+import hed.homeelectrical.OutletRow;
 import hed.homeelectrical.Room;
 import hed.homeelectrical.ServiceCircuitBreaker;
 import hed.homeelectrical.ServiceConnection;
@@ -223,6 +225,20 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
      * @generated
      */
     private EClass circuitBranchEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass outletBlockEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass outletRowEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -661,6 +677,26 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
     @Override
     public EAttribute getDeviceType_ChannelCount() {
         return (EAttribute) deviceTypeEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EAttribute getDeviceType_NbRows() {
+        return (EAttribute) deviceTypeEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EAttribute getDeviceType_NbColumns() {
+        return (EAttribute) deviceTypeEClass.getEStructuralFeatures().get(5);
     }
 
     /**
@@ -1179,6 +1215,46 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
      * @generated
      */
     @Override
+    public EClass getOutletBlock() {
+        return outletBlockEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EReference getOutletBlock_Rows() {
+        return (EReference) outletBlockEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EClass getOutletRow() {
+        return outletRowEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EReference getOutletRow_Outlets() {
+        return (EReference) outletRowEClass.getEStructuralFeatures().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public EEnum getDeviceKind() {
         return deviceKindEEnum;
     }
@@ -1294,6 +1370,8 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         createEAttribute(deviceTypeEClass, DEVICE_TYPE__MANUFACTURER);
         createEAttribute(deviceTypeEClass, DEVICE_TYPE__PRODUCT_REFERENCE);
         createEAttribute(deviceTypeEClass, DEVICE_TYPE__CHANNEL_COUNT);
+        createEAttribute(deviceTypeEClass, DEVICE_TYPE__NB_ROWS);
+        createEAttribute(deviceTypeEClass, DEVICE_TYPE__NB_COLUMNS);
 
         equipmentEClass = createEClass(EQUIPMENT);
         createEReference(equipmentEClass, EQUIPMENT__DEVICE_TYPE);
@@ -1304,6 +1382,12 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         createEReference(fieldEquipmentEClass, FIELD_EQUIPMENT__BRANCH);
 
         outletEClass = createEClass(OUTLET);
+
+        outletBlockEClass = createEClass(OUTLET_BLOCK);
+        createEReference(outletBlockEClass, OUTLET_BLOCK__ROWS);
+
+        outletRowEClass = createEClass(OUTLET_ROW);
+        createEReference(outletRowEClass, OUTLET_ROW__OUTLETS);
 
         electricalLoadEClass = createEClass(ELECTRICAL_LOAD);
 
@@ -1411,6 +1495,8 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         fieldEquipmentEClass.getESuperTypes().add(this.getEquipment());
         fieldEquipmentEClass.getESuperTypes().add(this.getTechnicalElement());
         outletEClass.getESuperTypes().add(this.getFieldEquipment());
+        outletBlockEClass.getESuperTypes().add(this.getFieldEquipment());
+        outletRowEClass.getESuperTypes().add(this.getNamedElement());
         electricalLoadEClass.getESuperTypes().add(this.getFieldEquipment());
         controlDeviceEClass.getESuperTypes().add(this.getFieldEquipment());
         controlChannelEClass.getESuperTypes().add(this.getNamedElement());
@@ -1496,6 +1582,10 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
                 !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getDeviceType_ChannelCount(), ecorePackage.getEInt(), "channelCount", "1", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
                 !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getDeviceType_NbRows(), ecorePackage.getEInt(), "nbRows", "1", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+                !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getDeviceType_NbColumns(), ecorePackage.getEInt(), "nbColumns", "2", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
+                !IS_DERIVED, IS_ORDERED);
 
         initEClass(equipmentEClass, Equipment.class, "Equipment", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEquipment_DeviceType(), this.getDeviceType(), null, "deviceType", null, 1, 1, Equipment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES,
@@ -1510,6 +1600,14 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
                 !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(outletEClass, Outlet.class, "Outlet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+        initEClass(outletBlockEClass, OutletBlock.class, "OutletBlock", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getOutletBlock_Rows(), this.getOutletRow(), null, "rows", null, 1, -1, OutletBlock.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+                !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        initEClass(outletRowEClass, OutletRow.class, "OutletRow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getOutletRow_Outlets(), this.getOutlet(), null, "outlets", null, 1, -1, OutletRow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+                !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(electricalLoadEClass, ElectricalLoad.class, "ElectricalLoad", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1602,6 +1700,7 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         // Initialize enums and add enum literals
         initEEnum(deviceKindEEnum, DeviceKind.class, "DeviceKind");
         addEEnumLiteral(deviceKindEEnum, DeviceKind.OUTLET);
+        addEEnumLiteral(deviceKindEEnum, DeviceKind.OUTLET_BLOCK);
         addEEnumLiteral(deviceKindEEnum, DeviceKind.SWITCH);
         addEEnumLiteral(deviceKindEEnum, DeviceKind.PUSH_BUTTON);
         addEEnumLiteral(deviceKindEEnum, DeviceKind.DIMMER);

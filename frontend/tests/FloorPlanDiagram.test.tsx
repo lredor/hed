@@ -59,6 +59,21 @@ describe('floor-plan conversion and placement', () => {
     expect(node.data.deletable).toBe(true);
   });
 
+  it('renders a whole two-by-three block as one 72-by-48 view and scales its center on reopening', () => {
+    const background = plan(true);
+    background.defaultWidth = 2400;
+    background.defaultHeight = 1648;
+    const block = plan();
+    Object.assign(block.style, { rows: 2, columns: 3 });
+    const node = convert(converter, block, background, [
+      savedNode(background.id, 0, 0, 1200, 848),
+      savedNode(block.id, 100, 200, 72, 48),
+    ]).nodes[0];
+    expect(node).toMatchObject({ width: 72, height: 48, position: { x: 236, y: 376 }, draggable: true });
+    expect(node.data.defaultWidth).toBe(72);
+    expect(node.data.defaultHeight).toBe(48);
+  });
+
   it.each([false, true])('preserves relative icon centers on reopening, using fallback size: %s', (fallback) => {
     const source = plan(true);
     source.defaultWidth = 2400;

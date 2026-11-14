@@ -9,6 +9,8 @@
  *******************************************************************************/
 package hed.starter.representations;
 
+import hed.domain.HedOutletBlocks;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -99,10 +101,11 @@ public class CatalogDropService {
         if (types.stream().anyMatch(type -> HedDomain.dwelling(type) != home)) {
             throw new IllegalArgumentException("foreignReference");
         }
+        types.stream().filter(type -> type.getKind() == DeviceKind.OUTLET_BLOCK).forEach(type -> HedOutletBlocks.requireDimensions(type.getNbRows(), type.getNbColumns()));
         // Validate the whole batch first: a mixed or stale selection must not create partial results.
         return types.stream().map(type -> {
             var equipment = HedDomain.addEquipment(home, type, locale);
-            equipment.setRoom(room);
+            HedOutletBlocks.locate(equipment, room);
             return equipment;
         }).toList();
     }

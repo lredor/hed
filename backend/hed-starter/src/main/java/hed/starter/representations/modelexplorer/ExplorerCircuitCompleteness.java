@@ -9,6 +9,10 @@
  *******************************************************************************/
 package hed.starter.representations.modelexplorer;
 
+import hed.domain.HedOutletBlocks;
+
+import hed.homeelectrical.OutletRow;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -86,7 +90,7 @@ public class ExplorerCircuitCompleteness implements IRepresentationRenderVariabl
                 markUsed(control.getActuator(), home, used);
             }
         }
-        for (var equipment : home.getEquipment()) {
+        for (var equipment : HedOutletBlocks.terminals(home)) {
             if (equipment.getCircuit() == null) {
                 markEquipment(equipment, home, result);
             }
@@ -131,6 +135,13 @@ public class ExplorerCircuitCompleteness implements IRepresentationRenderVariabl
     }
 
     private void markEquipment(FieldEquipment equipment, Dwelling home, Set<Object> result) {
+        var block = HedOutletBlocks.block(equipment);
+        if (block != null) {
+            result.add(block);
+            if (equipment.eContainer() instanceof OutletRow row) {
+                result.add(row);
+            }
+        }
         result.add(equipment);
         result.add(home);
         if (equipment.getRoom() != null) {

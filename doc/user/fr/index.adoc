@@ -296,6 +296,10 @@ Avant A5, un bloc de deux prises sur le même circuit compte pour une prise ; ap
 Les plafonds sont respectivement 5 et 8 prises décomptées avant A5, contre 8 et 12 après A5 selon la section.
 Les sections absentes ou non prises en charge sont indiquées comme non évaluées.
 
+Le contrôle section/calibre couvre aussi les circuits de prises et d'éclairage : section cuivre minimale de 1,5 mm², disjoncteur limité à 16 A pour l'éclairage et les prises sous 2,5 mm², ou 20 A pour les prises à partir de 2,5 mm².
+Les fusibles conservent leurs limites historiques avant A5 et sont signalés comme non autorisés pour ces usages sous A5.
+Le calibre vient du type du disjoncteur dans le catalogue ; une section ou un calibre absent est indiqué comme non évalué.
+
 Ces contrôles couvrent une partie documentée des règles ; ils ne certifient pas la conformité de l'installation et ne déterminent pas quelle édition lui est applicable.
 La révision 2024, les règles spécifiques de cuisine et les minima d'équipement par pièce ne sont pas couverts ici.
 Les sources et le périmètre détaillé figurent dans https://github.com/lredor/hed/blob/master/doc/standards.md[la documentation des règles].

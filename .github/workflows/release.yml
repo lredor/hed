@@ -1,0 +1,156 @@
+# Copyright (c) 2026 Laurent Redor.
+# This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v2.0
+# which accompanies this distribution, and is available at
+# https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing stable tag to prepare (for example v0.1.0)
+        required: true
+        type: string
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  verify:
+    name: Verify release source and tested image
+    if: github.repository == 'lredor/hed'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      commit: ${{ steps.release.outputs.commit }}
+      image: ${{ steps.release.outputs.image }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify versions, master ancestry, CI and image provenance
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          options=()
+          if [ "$EVENT" = release ]; then
+            options+=(--published)
+          fi
+          python3 tools/ci/release.py --tag "$TAG" --output "$RUNNER_TEMP/release" "${options[@]}"
+      - name: Pass verified release files to the publishing jobs
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: verified-release-${{ github.run_id }}
+          path: ${{ runner.temp }}/release/
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 7
+
+  draft:
+    name: Prepare draft release
+    if: github.event_name == 'workflow_dispatch'
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: verified-release-${{ github.run_id }}
+          path: ${{ runner.temp }}/release
+      - name: Create or update the draft and attach its installer
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: lredor/hed
+          TAG: ${{ inputs.tag }}
+          VERSION: ${{ needs.verify.outputs.version }}
+        working-directory: ${{ runner.temp }}/release
+        run: |
+          # Listing avoids treating an authentication or network failure as a missing release.
+          gh api --paginate --slurp "repos/$GH_REPO/releases?per_page=100" > "$RUNNER_TEMP/releases.json"
+          draft=$(jq -r --arg tag "$TAG" '[.[][] | select(.tag_name == $tag)] | if length == 0 then "absent" else .[0].draft end' "$RUNNER_TEMP/releases.json")
+          if [ "$draft" = absent ]; then
+            gh release create "$TAG" --verify-tag --draft --title "Home Electrical Designer $VERSION" --notes-file release-notes.md
+          elif [ "$draft" = true ]; then
+            gh release edit "$TAG" --title "Home Electrical Designer $VERSION" --notes-file release-notes.md
+          else
+            echo 'This release is already published; it cannot be replaced.' >&2
+            exit 1
+          fi
+          gh release upload "$TAG" compose.run.yaml release-manifest.json SHA256SUMS.txt --clobber
+          {
+            echo '## Release draft ready'
+            echo
+            echo "Review the draft under https://github.com/$GH_REPO/releases and click Publish release when ready."
+            echo 'The numbered Docker image will then be promoted from the tested image. No release or numbered image has been published by this preparation job.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  publish:
+    name: Publish numbered image
+    if: github.event_name == 'release'
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      packages: write
+    steps:
+      - name: Promote the tested image without rebuilding or moving latest
+        env:
+          PUBLISH_TOKEN: ${{ github.token }}
+          REGISTRY_USER: ${{ github.actor }}
+          VERSION: ${{ needs.verify.outputs.version }}
+          IMAGE: ${{ needs.verify.outputs.image }}
+          REVISION: ${{ needs.verify.outputs.commit }}
+        run: |
+          printf '%s' "$PUBLISH_TOKEN" | docker login ghcr.io --username "$REGISTRY_USER" --password-stdin
+          trap 'docker logout ghcr.io' EXIT
+          target="ghcr.io/lredor/hed:$VERSION"
+          expected="${IMAGE##*@}"
+          if current=$(docker buildx imagetools inspect "$target" --format '{{.Manifest.Digest}}' 2> "$RUNNER_TEMP/inspect-error"); then
+            if [ "$current" != "$expected" ]; then
+              echo 'This version already points to another image. Release versions cannot be overwritten.' >&2
+              exit 1
+            fi
+          elif grep -Eiq 'manifest unknown|not found' "$RUNNER_TEMP/inspect-error"; then
+            docker buildx imagetools create --prefer-index=false --tag "$target" "$IMAGE"
+          else
+            cat "$RUNNER_TEMP/inspect-error" >&2
+            exit 1
+          fi
+          actual=$(docker buildx imagetools inspect "$target" --format '{{.Manifest.Digest}}')
+          test "$actual" = "$expected"
+          # A separate empty configuration verifies the installation needs no login.
+          mkdir -p "$RUNNER_TEMP/anonymous-docker"
+          docker --config "$RUNNER_TEMP/anonymous-docker" pull --platform linux/amd64 "$target"
+          {
+            echo '## Numbered image published'
+            echo
+            echo "Image: \`$target\` (linux/amd64)"
+            echo "Digest: \`$expected\`"
+            echo "Validated commit: \`$REVISION\`"
+            echo 'Anonymous download succeeded. The latest tag was not changed.'
+          } >> "$GITHUB_STEP_SUMMARY"

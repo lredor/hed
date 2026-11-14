@@ -10,19 +10,22 @@ SPDX-License-Identifier: EPL-2.0
 
 # Continuous integration
 
-GitHub Actions checks pushes to `master` and pull requests targeting `master`. Both workflows can also be started from **Actions → Run workflow**, choosing a branch. A newer run cancels an obsolete run for the same workflow and pull request or branch.
+GitHub Actions checks pushes to `master` and pull requests targeting `master`. Build and CheckFormatting can also be started from **Actions → Run workflow**, choosing a branch. A newer run cancels an obsolete run for the same workflow and pull request or branch. The separate Release workflow prepares drafts manually and publishes numbered images after a user publishes a release.
 
 ## Checks
 
 | Workflow / job | What it verifies |
 | --- | --- |
 | **CheckFormatting / Source formatting** | The Sirius Java formatter and Prettier checks for TypeScript, TSX, CSS, frontend unit/browser tests, build scripts and HTML. This job does not need GitHub Packages credentials. |
-| **Build / Domain verification** | `mvn -B -ntp verify`: Checkstyle, model/edit compilation and domain tests, using public dependencies. Also tests both coverage summary reporters with Python's standard library. This job runs for every contribution. |
+| **Build / Domain verification** | `mvn -B -ntp verify`: Checkstyle, model/edit compilation and domain tests, using public dependencies. Also tests coverage summary reporters and release validation helpers with Python's standard library. This job runs for every contribution. |
 | **Build / Full application build** | Locked frontend dependency installation, Prettier, TypeScript checking including unit tests, Vite assets, both user guides, `npm run test:coverage`, and `mvn -B -ntp -s .github/maven-settings.xml -Papplication,coverage clean verify`. Vitest reports targeted frontend coverage; JaCoCo aggregates Java-test coverage across modules. The application profile includes starter tests and packages the executable JAR. A final check verifies that it contains the frontend and both guides. |
 | **Build / Playwright (English)** | All browser workflows against the packaged application started with `HED_LOCALE=en_GB`, a fresh PostgreSQL 17 service and an English Chrome locale. |
 | **Build / Playwright (French)** | The same browser workflows with `HED_LOCALE=fr_FR`, a separate fresh database and a French Chrome locale. |
 | **Build / Container image** | Builds `Dockerfile.runtime` from the same verified JAR, starts it with PostgreSQL through `compose.run.yaml` without package credentials, checks readiness and both guides, and uploads the tested image. Runs on the same trusted builds as the application, including repository PRs. |
 | **Build / Publish Docker image** | Publishes that tested image only after domain, application, both browser jobs and container checks succeed, and only on pushes to `lredor/hed` master. |
+| **Release / Verify release source and tested image** | Requires consistent stable project versions, an existing tag on master, successful Build and CheckFormatting push runs on that commit, all required Build jobs and the publisher's immutable image digest. |
+| **Release / Prepare draft release** | On manual request, creates or updates a draft with changelog notes, a numbered-version installer, provenance manifest and checksums. |
+| **Release / Publish numbered image** | After the user publishes the release, verifies its assets, promotes the tested digest without rebuilding, refuses conflicting version tags and checks an anonymous pull. |
 
 Jobs run on Ubuntu 24.04 with Temurin Java 21 and Maven 3.9.9. The frontend uses Node 22.16.0. The shared Java/Maven action downloads Maven from Apache and checks a pinned SHA-512 checksum. External actions are pinned to commit hashes, with version comments for maintenance. Maven and npm dependency caches speed up subsequent runs; model, formatter and full-application Maven caches use separate dependency fingerprints.
 
@@ -30,11 +33,13 @@ Java verification and coverage run without starting the application or a databas
 
 ## Container image publication
 
-`Dockerfile.runtime` packages the already tested JAR with Java 21, OCI source/license/revision labels, an unprivileged runtime user and a readiness health check. It does not download Maven/npm dependencies or receive their credentials. The first distribution targets **linux/amd64**.
+`Dockerfile.runtime` packages the already tested JAR with Java 21, OCI source/license/revision/version labels, an unprivileged runtime user and a readiness health check. It does not download Maven/npm dependencies or receive their credentials. The first distribution targets **linux/amd64**.
 
 The **Container image** job runs on trusted PR, master and manual builds. It uses the executable artifact from the same run and commit, builds the runtime once, checks it with `compose.run.yaml`, retains startup logs as **container-logs**, and uploads **hed-image-<commit>** as a compressed image archive for one day. Its test installation is removed after the check.
 
-The **Publish Docker image** job waits for that check and both Playwright matrix entries as well as domain/application verification. It downloads and loads that exact image rather than rebuilding it, then pushes `ghcr.io/lredor/hed:latest` and `ghcr.io/lredor/hed:sha-<full-commit-id>`. It runs only for a push to `master` in `lredor/hed`; PRs, forks and manual runs never publish. No release/version tag is created. The workflow's existing master concurrency cancels obsolete runs.
+The **Publish Docker image** job waits for that check and both Playwright matrix entries as well as domain/application verification. It downloads and loads that exact image rather than rebuilding it, then pushes `ghcr.io/lredor/hed:latest` and `ghcr.io/lredor/hed:sha-<full-commit-id>`. It runs only for a push to `master` in `lredor/hed`; PRs, forks and manual Build runs never publish. Build does not create a release/version tag. The workflow's existing master concurrency cancels obsolete runs.
+
+After pushing, it retains **hed-release-image-&lt;commit SHA&gt;** for 90 days: a tiny JSON file containing the source commit, project version and immutable registry digest. The separate Release workflow uses this provenance to promote the tested image independently of the one-day Docker archive and seven-day JAR artifact. It never moves `latest`. See [the release procedure](releases.md), including draft review, asset checks, retry behavior and the later separate development-version bump.
 
 Only the publication job requests `packages: write`, using its automatic `GITHUB_TOKEN`. There is no new PAT or registry secret to configure. Compilation retains the existing optional upstream package-read credentials in the application job. The publisher has no checkout and receives neither those credentials nor source build scripts.
 
@@ -164,7 +169,7 @@ Raw reports remain available as artifacts for detailed troubleshooting. Open the
 - **java-coverage** contains aggregate JaCoCo HTML and XML after successful Java verification. Line and branch coverage can also be read directly on the native Summary page.
 - **frontend-coverage** contains V8 HTML coverage (`index.html`), LCOV (`lcov.info`) and `coverage-summary.json` for HED representation code. Available reports are retained even after a unit-test failure; the native summary is published after successful unit tests.
 - **frontend-test-reports** contains the Vitest JUnit report. Individual results and failure details also appear under **Frontend unit tests** on the native Summary page.
-- **hed-application-&lt;commit SHA&gt;** contains the executable `hed-application-0.1.0-SNAPSHOT.jar`. It is uploaded only after the full build succeeds and includes both generated user guides. This is a build artifact, not a GitHub release.
+- **hed-application-&lt;commit SHA&gt;** contains the executable `hed-application-<project version>.jar` (`hed-application-0.1.0.jar` for the first release). It is uploaded only after the full build succeeds and includes both generated user guides. This is a build artifact, not a GitHub release.
 - **playwright-en_GB** and **playwright-fr_FR** contain each language's HTML report, JUnit XML, available failure screenshots/traces and application log. The native Summary page provides the results without downloading these archives. To investigate a trace, extract the archive and run `npx playwright show-trace <path-to-trace.zip>` from `frontend`; use `npx playwright show-report <path-to-report-folder>` for the HTML report.
 
 Artifacts expire after **7 days**. The JAR is reused by both browser jobs so the application is built once. Running it locally still requires a PostgreSQL database; see [building and running](development.md).

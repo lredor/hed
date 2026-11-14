@@ -24,6 +24,8 @@ New sample projects use that same creation language for their names. Existing an
 
 For a first installation, follow the step-by-step [Windows/Docker installation guide in English](doc/user/en/index.adoc#installation) or [l’installation pas à pas en français](doc/user/fr/index.adoc#installation). Users download only [compose.run.yaml](compose.run.yaml) and the public `ghcr.io/lredor/hed` image, without compilation, a GitHub account or a package token.
 
+For a numbered version, use the installer attached to its [GitHub release](https://github.com/lredor/hed/releases). It selects that release's image rather than the moving `latest` tag. See the [changelog](CHANGELOG.md) and [release preparation and publication procedure](doc/releases.md).
+
 ## Domain build
 
 Requirements: JDK 21 or later and Maven 3.9.9 or later.

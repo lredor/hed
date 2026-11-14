@@ -39,6 +39,7 @@ import hed.homeelectrical.OutletRow;
 import hed.homeelectrical.Room;
 import hed.homeelectrical.ServiceCircuitBreaker;
 import hed.homeelectrical.ServiceConnection;
+import hed.homeelectrical.StandardVersion;
 import hed.homeelectrical.Storey;
 import hed.homeelectrical.SupplyPhase;
 import hed.homeelectrical.TechnicalElement;
@@ -274,6 +275,13 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
      * @generated
      */
     private EEnum controlModeEEnum = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EEnum standardVersionEEnum = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -527,6 +535,16 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
     @Override
     public EReference getDwelling_ServiceConnection() {
         return (EReference) dwellingEClass.getEStructuralFeatures().get(6);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EAttribute getDwelling_StandardVersion() {
+        return (EAttribute) dwellingEClass.getEStructuralFeatures().get(7);
     }
 
     /**
@@ -1305,6 +1323,16 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
      * @generated
      */
     @Override
+    public EEnum getStandardVersion() {
+        return standardVersionEEnum;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public HomeElectricalFactory getHomeElectricalFactory() {
         return (HomeElectricalFactory) getEFactoryInstance();
     }
@@ -1351,6 +1379,7 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         createEReference(dwellingEClass, DWELLING__CIRCUITS);
         createEReference(dwellingEClass, DWELLING__CONTROL_FUNCTIONS);
         createEReference(dwellingEClass, DWELLING__SERVICE_CONNECTION);
+        createEAttribute(dwellingEClass, DWELLING__STANDARD_VERSION);
 
         storeyEClass = createEClass(STOREY);
         createEAttribute(storeyEClass, STOREY__LEVEL_NUMBER);
@@ -1453,6 +1482,7 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         circuitPhaseEEnum = createEEnum(CIRCUIT_PHASE);
         circuitUseEEnum = createEEnum(CIRCUIT_USE);
         controlModeEEnum = createEEnum(CONTROL_MODE);
+        standardVersionEEnum = createEEnum(STANDARD_VERSION);
     }
 
     /**
@@ -1552,6 +1582,8 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
                 !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getDwelling_ServiceConnection(), this.getServiceConnection(), null, "serviceConnection", null, 0, 1, Dwelling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
                 !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getDwelling_StandardVersion(), this.getStandardVersion(), "standardVersion", "UNSPECIFIED", 0, 1, Dwelling.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+                !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(storeyEClass, Storey.class, "Storey", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getStorey_LevelNumber(), ecorePackage.getEIntegerObject(), "levelNumber", null, 0, 1, Storey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
@@ -1753,6 +1785,11 @@ public class HomeElectricalPackageImpl extends EPackageImpl implements HomeElect
         addEEnumLiteral(controlModeEEnum, ControlMode.SWITCHING);
         addEEnumLiteral(controlModeEEnum, ControlMode.DIMMING);
         addEEnumLiteral(controlModeEEnum, ControlMode.SHUTTER);
+
+        initEEnum(standardVersionEEnum, StandardVersion.class, "StandardVersion");
+        addEEnumLiteral(standardVersionEEnum, StandardVersion.UNSPECIFIED);
+        addEEnumLiteral(standardVersionEEnum, StandardVersion.NF_C15_100_BEFORE_A5);
+        addEEnumLiteral(standardVersionEEnum, StandardVersion.NF_C15_100_A5_2015);
 
         // Create resource
         createResource(eNS_URI);

@@ -292,13 +292,22 @@ public interface HomeElectricalPackage extends EPackage {
     int DWELLING__SERVICE_CONNECTION = NAMED_ELEMENT_FEATURE_COUNT + 6;
 
     /**
+     * The feature id for the '<em><b>Standard Version</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int DWELLING__STANDARD_VERSION = NAMED_ELEMENT_FEATURE_COUNT + 7;
+
+    /**
      * The number of structural features of the '<em>Dwelling</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int DWELLING_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 7;
+    int DWELLING_FEATURE_COUNT = NAMED_ELEMENT_FEATURE_COUNT + 8;
 
     /**
      * The meta object id for the '{@link hed.homeelectrical.impl.StoreyImpl <em>Storey</em>}' class.
@@ -2399,6 +2408,16 @@ public interface HomeElectricalPackage extends EPackage {
     int CONTROL_MODE = 30;
 
     /**
+     * The meta object id for the '{@link hed.homeelectrical.StandardVersion <em>Standard Version</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see hed.homeelectrical.StandardVersion
+     * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getStandardVersion()
+     * @generated
+     */
+    int STANDARD_VERSION = 31;
+
+    /**
      * Returns the meta object for class '{@link hed.homeelectrical.NamedElement <em>Named Element</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2603,6 +2622,17 @@ public interface HomeElectricalPackage extends EPackage {
      * @generated
      */
     EReference getDwelling_ServiceConnection();
+
+    /**
+     * Returns the meta object for the attribute '{@link hed.homeelectrical.Dwelling#getStandardVersion <em>Standard Version</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Standard Version</em>'.
+     * @see hed.homeelectrical.Dwelling#getStandardVersion()
+     * @see #getDwelling()
+     * @generated
+     */
+    EAttribute getDwelling_StandardVersion();
 
     /**
      * Returns the meta object for class '{@link hed.homeelectrical.Storey <em>Storey</em>}'.
@@ -3424,6 +3454,16 @@ public interface HomeElectricalPackage extends EPackage {
     EEnum getControlMode();
 
     /**
+     * Returns the meta object for enum '{@link hed.homeelectrical.StandardVersion <em>Standard Version</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for enum '<em>Standard Version</em>'.
+     * @see hed.homeelectrical.StandardVersion
+     * @generated
+     */
+    EEnum getStandardVersion();
+
+    /**
      * Returns the factory that creates the instances of the model.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3602,6 +3642,14 @@ public interface HomeElectricalPackage extends EPackage {
          * @generated
          */
         EReference DWELLING__SERVICE_CONNECTION = eINSTANCE.getDwelling_ServiceConnection();
+
+        /**
+         * The meta object literal for the '<em><b>Standard Version</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute DWELLING__STANDARD_VERSION = eINSTANCE.getDwelling_StandardVersion();
 
         /**
          * The meta object literal for the '{@link hed.homeelectrical.impl.StoreyImpl <em>Storey</em>}' class.
@@ -4274,6 +4322,16 @@ public interface HomeElectricalPackage extends EPackage {
          * @generated
          */
         EEnum CONTROL_MODE = eINSTANCE.getControlMode();
+
+        /**
+         * The meta object literal for the '{@link hed.homeelectrical.StandardVersion <em>Standard Version</em>}' enum.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see hed.homeelectrical.StandardVersion
+         * @see hed.homeelectrical.impl.HomeElectricalPackageImpl#getStandardVersion()
+         * @generated
+         */
+        EEnum STANDARD_VERSION = eINSTANCE.getStandardVersion();
 
     }
 

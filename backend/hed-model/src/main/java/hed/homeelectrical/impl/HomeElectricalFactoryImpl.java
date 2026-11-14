@@ -9,6 +9,7 @@
  *******************************************************************************/
 package hed.homeelectrical.impl;
 
+import hed.homeelectrical.StandardVersion;
 import hed.homeelectrical.OutletBlock;
 import hed.homeelectrical.OutletRow;
 import hed.homeelectrical.Catalog;
@@ -155,6 +156,8 @@ public class HomeElectricalFactoryImpl extends EFactoryImpl implements HomeElect
                 return createCircuitUseFromString(eDataType, initialValue);
             case HomeElectricalPackage.CONTROL_MODE:
                 return createControlModeFromString(eDataType, initialValue);
+            case HomeElectricalPackage.STANDARD_VERSION:
+                return createStandardVersionFromString(eDataType, initialValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
         }
@@ -178,6 +181,8 @@ public class HomeElectricalFactoryImpl extends EFactoryImpl implements HomeElect
                 return convertCircuitUseToString(eDataType, instanceValue);
             case HomeElectricalPackage.CONTROL_MODE:
                 return convertControlModeToString(eDataType, instanceValue);
+            case HomeElectricalPackage.STANDARD_VERSION:
+                return convertStandardVersionToString(eDataType, instanceValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
         }
@@ -521,6 +526,28 @@ public class HomeElectricalFactoryImpl extends EFactoryImpl implements HomeElect
      * @generated
      */
     public String convertControlModeToString(EDataType eDataType, Object instanceValue) {
+        return instanceValue == null ? null : instanceValue.toString();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public StandardVersion createStandardVersionFromString(EDataType eDataType, String initialValue) {
+        StandardVersion result = StandardVersion.get(initialValue);
+        if (result == null) {
+            throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+        }
+        return result;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String convertStandardVersionToString(EDataType eDataType, Object instanceValue) {
         return instanceValue == null ? null : instanceValue.toString();
     }
 

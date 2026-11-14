@@ -17,6 +17,7 @@ import hed.homeelectrical.Dwelling;
 import hed.homeelectrical.FieldEquipment;
 import hed.homeelectrical.HomeElectricalPackage;
 import hed.homeelectrical.ServiceConnection;
+import hed.homeelectrical.StandardVersion;
 import hed.homeelectrical.Storey;
 
 import java.util.Collection;
@@ -49,6 +50,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link hed.homeelectrical.impl.DwellingImpl#getCircuits <em>Circuits</em>}</li>
  *   <li>{@link hed.homeelectrical.impl.DwellingImpl#getControlFunctions <em>Control Functions</em>}</li>
  *   <li>{@link hed.homeelectrical.impl.DwellingImpl#getServiceConnection <em>Service Connection</em>}</li>
+ *   <li>{@link hed.homeelectrical.impl.DwellingImpl#getStandardVersion <em>Standard Version</em>}</li>
  * </ul>
  *
  * @generated
@@ -123,6 +125,26 @@ public class DwellingImpl extends NamedElementImpl implements Dwelling {
      * @ordered
      */
     protected ServiceConnection serviceConnection;
+
+    /**
+     * The default value of the '{@link #getStandardVersion() <em>Standard Version</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getStandardVersion()
+     * @generated
+     * @ordered
+     */
+    protected static final StandardVersion STANDARD_VERSION_EDEFAULT = StandardVersion.UNSPECIFIED;
+
+    /**
+     * The cached value of the '{@link #getStandardVersion() <em>Standard Version</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getStandardVersion()
+     * @generated
+     * @ordered
+     */
+    protected StandardVersion standardVersion = STANDARD_VERSION_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -320,6 +342,30 @@ public class DwellingImpl extends NamedElementImpl implements Dwelling {
      * @generated
      */
     @Override
+    public StandardVersion getStandardVersion() {
+        return standardVersion;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void setStandardVersion(StandardVersion newStandardVersion) {
+        StandardVersion oldStandardVersion = standardVersion;
+        standardVersion = newStandardVersion == null ? STANDARD_VERSION_EDEFAULT : newStandardVersion;
+        if (eNotificationRequired()) {
+            eNotify(new ENotificationImpl(this, Notification.SET, HomeElectricalPackage.DWELLING__STANDARD_VERSION, oldStandardVersion, standardVersion));
+        }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
             case HomeElectricalPackage.DWELLING__CATALOG:
@@ -362,6 +408,8 @@ public class DwellingImpl extends NamedElementImpl implements Dwelling {
                 return getControlFunctions();
             case HomeElectricalPackage.DWELLING__SERVICE_CONNECTION:
                 return getServiceConnection();
+            case HomeElectricalPackage.DWELLING__STANDARD_VERSION:
+                return getStandardVersion();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -401,6 +449,9 @@ public class DwellingImpl extends NamedElementImpl implements Dwelling {
             case HomeElectricalPackage.DWELLING__SERVICE_CONNECTION:
                 setServiceConnection((ServiceConnection) newValue);
                 return;
+            case HomeElectricalPackage.DWELLING__STANDARD_VERSION:
+                setStandardVersion((StandardVersion) newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -434,6 +485,9 @@ public class DwellingImpl extends NamedElementImpl implements Dwelling {
             case HomeElectricalPackage.DWELLING__SERVICE_CONNECTION:
                 setServiceConnection((ServiceConnection) null);
                 return;
+            case HomeElectricalPackage.DWELLING__STANDARD_VERSION:
+                setStandardVersion(STANDARD_VERSION_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -460,8 +514,28 @@ public class DwellingImpl extends NamedElementImpl implements Dwelling {
                 return controlFunctions != null && !controlFunctions.isEmpty();
             case HomeElectricalPackage.DWELLING__SERVICE_CONNECTION:
                 return serviceConnection != null;
+            case HomeElectricalPackage.DWELLING__STANDARD_VERSION:
+                return standardVersion != STANDARD_VERSION_EDEFAULT;
         }
         return super.eIsSet(featureID);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public String toString() {
+        if (eIsProxy()) {
+            return super.toString();
+        }
+
+        StringBuilder result = new StringBuilder(super.toString());
+        result.append(" (standardVersion: ");
+        result.append(standardVersion);
+        result.append(')');
+        return result.toString();
     }
 
 } //DwellingImpl

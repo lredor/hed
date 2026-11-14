@@ -279,6 +279,22 @@ An empty device Name produces no device-name label in the diagram.
 An RCCB displays its residual-current value and differential type, such as *Type A*.
 *Delete* on a device in this diagram deletes the installed device from the model and clears its incoming references.
 
+== Choose a standard version
+
+Select *Dwelling* in Model Explorer and edit *Applicable electrical standard* in Details.
+The choice is saved with the project and updates validation messages and circuit-table anomalies.
+New and existing projects default to *Unspecified*: structural checks remain active while standard checks are disabled.
+
+Supported profiles are *before A5 (2010 profile)* and *amendment A5 (2015)*.
+For a copper circuit with *Usage = Socket outlets* and a section of 1.5 or 2.5 mm², counting includes all assigned individual outlets across its branches and blocks.
+Before A5 a double-outlet block on one circuit counts as one socket; A5 counts each individual outlet.
+The limits are respectively 5 and 8 counted sockets before A5, and 8 and 12 under A5, depending on the section.
+Missing or unsupported sections are marked as not assessed.
+
+These checks cover a documented subset, not a conformity certification or a determination of which edition applies to an installation.
+The 2024 revision, kitchen-specific rules and room equipment minima are outside this scope.
+See the https://github.com/lredor/hed/blob/master/doc/standards.md[rule documentation] for sources and detailed scope.
+
 == Associate circuits and equipment
 
 In Model Explorer, use *Move up / Move down* on a circuit to change the reading order of the *Circuits* list.

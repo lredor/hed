@@ -41,7 +41,7 @@ public final class HedDomainEValidator extends EObjectValidator {
             for (var issue : new HedValidation().validate(home)) {
                 boolean error = issue.severity() == HedValidation.Severity.ERROR;
                 if (diagnostics != null) {
-                    diagnostics.add(new BasicDiagnostic(error ? Diagnostic.ERROR : Diagnostic.WARNING, "hed", 0, Messages.text(locale, issue.code()), new Object[] { issue.target() }));
+                    diagnostics.add(new BasicDiagnostic(error ? Diagnostic.ERROR : Diagnostic.WARNING, "hed", 0, issue.message(locale), new Object[] { issue.target() }));
                 }
                 valid = valid && !error;
             }

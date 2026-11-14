@@ -21,7 +21,9 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
@@ -52,8 +54,21 @@ public class DwellingItemProvider extends NamedElementItemProvider {
         if (itemPropertyDescriptors == null) {
             super.getPropertyDescriptors(object);
 
+            addStandardVersionPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
+    }
+
+    /**
+     * This adds a property descriptor for the Standard Version feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addStandardVersionPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+                getString("_UI_Dwelling_standardVersion_feature"), getString("_UI_PropertyDescriptor_description", "_UI_Dwelling_standardVersion_feature", "_UI_Dwelling_type"),
+                HomeElectricalPackage.Literals.DWELLING__STANDARD_VERSION, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
     }
 
     /**
@@ -127,6 +142,9 @@ public class DwellingItemProvider extends NamedElementItemProvider {
         updateChildren(notification);
 
         switch (notification.getFeatureID(Dwelling.class)) {
+            case HomeElectricalPackage.DWELLING__STANDARD_VERSION:
+                fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+                return;
             case HomeElectricalPackage.DWELLING__CATALOG:
             case HomeElectricalPackage.DWELLING__STOREYS:
             case HomeElectricalPackage.DWELLING__EQUIPMENT:

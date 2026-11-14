@@ -260,3 +260,11 @@ There is no terminal-level wiring, conductor routing, electrical simulation or r
 The default catalog includes a 1 × 2 block. Creation snapshots the catalog layout into `OutletBlock.rows` and `OutletRow.outlets`; dimensions of an already-used type cannot be changed. Create a new catalog variant for a different arrangement. Grids are limited to 256 outlets to bound one creation operation.
 Blocks remain in `Dwelling.equipment`; their individual outlets are contained in rows and inherit the block's electrical assignment. Contained outlets display their own names without a block-name prefix. The whole block is selected as a circuit or branch member; individual member assignments are read-only. Moving the block propagates its room to every outlet; individual outlets cannot be relocated or deleted separately. Deleting a block clears the contained outlets' electrical references.
 Only complete blocks have floor-plan and circuit-diagram nodes. The same MDI outlet icon is tiled at 24 units per outlet on a floor plan and 48 units per outlet in the circuit diagram. Circuit and control edges refer to the common block assignment but use the complete block as their graphical endpoint; repeated outlets of one block do not create self-loops or duplicate continuation edges within one chain.
+
+## Applicable standard profile
+
+| English property | French property | English definition | French definition |
+| --- | --- | --- | --- |
+| `Dwelling.standardVersion` / Applicable electrical standard | Norme électrique applicable | Persisted explicit profile used to select the supported version-aware design checks. Unspecified disables normative checks while preserving structural validation. | Profil explicite enregistré pour choisir les contrôles métier versionnés pris en charge. Non spécifiée désactive les contrôles normatifs et conserve les contrôles structurels. |
+
+`StandardVersion` supports `UNSPECIFIED`, `NF_C_15_100_BEFORE_A5` and `NF_C_15_100_A5_2015`. The first literal is the backward-compatible default for existing resources and new dwellings. See [rule scope, historical counting and sources](standards.md).

@@ -49,7 +49,54 @@ It downloads the image digest recorded by the publisher, then prepares a **draft
 The draft notes come from the matching changelog section and link to both installation guides.
 This step does not publish the release or numbered image. You may rerun it to refresh an existing draft; it refuses to replace a published release.
 
-## 4. Review and publish
+## 4. Install and manually test the draft
+
+Test the release candidate yourself before publishing the draft. The numbered image, such as `ghcr.io/lredor/hed:0.1.0`, does not exist yet: it is created only after publication.
+Use the immutable `image` reference from the draft's `release-manifest.json` instead. It identifies the exact image that will receive the numbered tag, without rebuilding.
+
+Download `compose.run.yaml` and `release-manifest.json` from the draft into a new, separate test folder. Inspect the manifest's version, source commit and original Build run URL.
+Create `compose.test.yaml` in that folder with the following content:
+
+```yaml
+services:
+  application:
+    ports: !override
+      - "127.0.0.1:8090:8080"
+```
+
+The override replaces the normal port mapping, so the test installation can run alongside HED on port 8080. Use a recent Docker Compose version that supports `!override`.
+The distinct project name `hed-release-test` below gives this installation its own database volume; do not reuse your usual installation's project name.
+
+Open a new PowerShell window in the test folder and run:
+
+```powershell
+$release = Get-Content .\release-manifest.json -Raw | ConvertFrom-Json
+$env:HED_IMAGE = $release.image
+$env:HED_LOCALE = "fr_FR"
+
+docker compose -p hed-release-test -f compose.run.yaml -f compose.test.yaml up -d --pull always --wait --wait-timeout 180
+```
+
+`HED_IMAGE` overrides the installer's not-yet-published numbered tag with the manifest's `ghcr.io/lredor/hed@sha256:...` reference. No GitHub token or compilation is required.
+Use `en_GB` instead of `fr_FR` to test in English. These environment settings apply only to this PowerShell window.
+
+Open [http://localhost:8090](http://localhost:8090) and check the main workflows:
+
+- Create a sample project, check its language, edit an object, return home and reopen the project to verify persistence.
+- Exercise the explorer, catalog drag and drop, properties, tables, distribution-board layout and floor plans; open the bundled user guide.
+- Import an exported copy of a representative existing project and check its data and representations. The experimental Circuit Diagram may require adaptation in future versions.
+
+Test with copies of your projects; keep your normal installation and its database separate. If a problem is found, investigate it before publishing the candidate.
+When finished, stop the test installation from the same PowerShell window:
+
+```powershell
+docker compose -p hed-release-test -f compose.run.yaml -f compose.test.yaml down
+```
+
+This preserves the test database volume for another session. Close this PowerShell window afterward so its test-only `HED_IMAGE` and language settings are not reused for another installation.
+Once the manual checks pass, continue with publication: the tested digest will receive the numbered tag.
+
+## 5. Review and publish
 
 Inspect the draft notes and download its installer. Check that the version, source commit and original CI run are correct.
 Then click **Publish release** in GitHub. Keep it a stable release, not a prerelease.

@@ -14,6 +14,8 @@ SPDX-License-Identifier: EPL-2.0
 
 ### Added
 
+- A5 validation of the eight-departure limit under final RCCBs, using recorded upstream links and catalog sensitivity.
+
 - Profile-aware copper section and protective-device rating checks for socket and lighting circuits, including historical fuse allowances.
 
 - Explicit NF C 15-100 profiles and version-aware outlet counts, including historical socket-block weighting and localized targeted diagnostics.

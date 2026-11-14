@@ -300,6 +300,10 @@ Le contrôle section/calibre couvre aussi les circuits de prises et d'éclairage
 Les fusibles conservent leurs limites historiques avant A5 et sont signalés comme non autorisés pour ces usages sous A5.
 Le calibre vient du type du disjoncteur dans le catalogue ; une section ou un calibre absent est indiqué comme non évalué.
 
+Sous A5, un interrupteur différentiel final dont la sensibilité renseignée est au plus 30 mA est également limité à huit départs protégés.
+Le calcul suit les circuits explicitement associés à une protection et ses liens amont ; il ne compte pas les disjoncteurs de réserve sans circuit associé, les télérupteurs, les contacteurs ou les branches comme des départs supplémentaires.
+Le message est porté par l'interrupteur différentiel concerné. Une sensibilité inconnue rend ce contrôle non évalué lorsqu'il y a plus de huit départs.
+
 Ces contrôles couvrent une partie documentée des règles ; ils ne certifient pas la conformité de l'installation et ne déterminent pas quelle édition lui est applicable.
 La révision 2024, les règles spécifiques de cuisine et les minima d'équipement par pièce ne sont pas couverts ici.
 Les sources et le périmètre détaillé figurent dans https://github.com/lredor/hed/blob/master/doc/standards.md[la documentation des règles].

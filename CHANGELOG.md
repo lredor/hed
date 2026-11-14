@@ -14,6 +14,8 @@ SPDX-License-Identifier: EPL-2.0
 
 ### Added
 
+- Profile-aware copper section and protective-device rating checks for socket and lighting circuits, including historical fuse allowances.
+
 - Explicit NF C 15-100 profiles and version-aware outlet counts, including historical socket-block weighting and localized targeted diagnostics.
 
 - Socket outlet blocks with catalog-defined grids, nested individually wired outlets and whole-unit placement on floor plans and circuit diagrams.

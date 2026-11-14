@@ -291,6 +291,10 @@ Before A5 a double-outlet block on one circuit counts as one socket; A5 counts e
 The limits are respectively 5 and 8 counted sockets before A5, and 8 and 12 under A5, depending on the section.
 Missing or unsupported sections are marked as not assessed.
 
+Section/rating checks also cover socket and lighting circuits: at least 1.5 mm² copper, with a maximum 16 A breaker for lighting and sockets below 2.5 mm², or 20 A for sockets from 2.5 mm².
+Fuses retain their historical limits before A5 and are reported as not permitted for these uses under A5.
+Ratings come from the protective device's catalog type; missing section or rating data is marked not assessed.
+
 These checks cover a documented subset, not a conformity certification or a determination of which edition applies to an installation.
 The 2024 revision, kitchen-specific rules and room equipment minima are outside this scope.
 See the https://github.com/lredor/hed/blob/master/doc/standards.md[rule documentation] for sources and detailed scope.

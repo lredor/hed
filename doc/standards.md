@@ -31,9 +31,24 @@ Missing or other conductor sections are explicitly marked **not assessed** by th
 
 Warnings identify the affected circuit, selected profile, counted quantity and limit. They appear through standard EMF validation, the Dwelling/circuit validation fields in Details and circuit-table anomalies. They do not prevent saving an incomplete design. Rule dispatch and counting are in `hed.domain.standards`; messages retain stable keys and immutable parameters for English/French rendering.
 
+## Copper section and protection rating
+
+This rule targets final circuits whose use is **Socket outlets** or **Lighting**. It reads the protective device's current rating from its catalog type and assumes copper conductors.
+
+| Use | Minimum section | Maximum MCB/RCBO rating | Historical fuse allowance before A5 |
+| --- | --- | --- | --- |
+| Lighting | 1.5 mm² | 16 A | 10 A maximum |
+| General-purpose sockets below 2.5 mm² | 1.5 mm² | 16 A | Not permitted |
+| General-purpose sockets from 2.5 mm² | 2.5 mm² | 20 A | 16 A maximum |
+
+A5 rejects fuse protection for these supported circuit uses. Larger sections do not increase these usage-specific rating caps. Missing/nonfinite sizing values are marked not assessed, and missing protection remains a structural warning. Other circuit uses, cable installation methods, thermal derating and voltage drop are not evaluated by this matrix.
+Warnings target the circuit and include the actual section/rating, applicable limit and profile. Catalog rating changes and profile changes recompute results without blocking draft edits.
+
 ## Sources and traceability
 
 - [Schneider Electric, Guide de l'installation électrique 2010, chapter Q, pages Q12 and Q14](https://fr.electrical-installation.org/frw/images/4/42/Q-La-norme-NF-C-15-100-dans-l-habitat-2.pdf): historical conductor/protection table and per-box socket counting.
 - [ABB, NF C 15-100 amendment 5, June 2016, slide 5](https://library.e.abb.com/public/5ce5a4dd0ee94d5792a57151d9fd7fd2/NF%20C%2015-100%20amendement%205.pdf): A5 circuit limits and individual socket counting.
 
-These are manufacturer-authored technical guides used to trace the implemented subset. HED does not redistribute the normative text.
+- [Promotelec, lighting circuit protection](https://www.promotelec.com/faq/professionnels/combien-de-points-lumineux-peut-on-mettre-sur-un-disjoncteur-16-a/): 1.5 mm² / 16 A and the A5 prohibition on fuses.
+
+These are manufacturer/industry-authored technical guides used to trace the implemented subset. HED does not redistribute the normative text.

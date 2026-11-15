@@ -23,7 +23,7 @@ The supported profiles cover selected design rules, not a complete conformity as
 | Before A5 | 5 counted outlets | 8 counted outlets | 1-2 outlets count as 1; 3-4 as 2; above 4 as 3 |
 | A5 (2015) | 8 outlets | 12 outlets | Each individual outlet counts once |
 
-The rule targets final circuits with **Usage = Socket outlets**. It expands each assigned block into all its individual outlets, including all branches and rows. A block has one common circuit and optional branch; moving it transfers every member together. Unassigned blocks do not contribute to a circuit count.
+The rule targets final circuits with **Usage = Socket outlets**. A circuit whose use is unspecified receives an explicit not-assessed warning: select the actual use in Details to enable the relevant checks. HED does not infer a circuit use from its name or connected devices. It expands each assigned block into all its individual outlets, including all branches and rows. A block has one common circuit and optional branch; moving it transfers every member together. Unassigned blocks do not contribute to a circuit count.
 
 For example, seven double-outlet blocks and one standalone outlet on one 2.5 mm² circuit count as 8 before A5, and 15 under A5. The historical profile accepts that count; A5 reports a warning because 15 exceeds 12.
 
@@ -58,5 +58,7 @@ This rule does not size an RCCB's assigned current, check phase balance or certi
 - [ABB, NF C 15-100 amendment 5, June 2016, slides 5 and 9](https://library.e.abb.com/public/5ce5a4dd0ee94d5792a57151d9fd7fd2/NF%20C%2015-100%20amendement%205.pdf): A5 circuit limits, individual socket counting and the eight-circuit limit per RCCB.
 
 - [Promotelec, lighting circuit protection](https://www.promotelec.com/faq/professionnels/combien-de-points-lumineux-peut-on-mettre-sur-un-disjoncteur-16-a/): 1.5 mm² / 16 A and the A5 prohibition on fuses.
+
+- [Legrand, NF C 15-100 — revision of 23 August 2024, key points and solutions](https://assets.legrand.com/editorial/legrandfr/outils/documentations-et-guides/legrand-guide-norme-nf-c-15-100.pdf): additional reference for future rules and the 2024 profile. This edition is not used to backdate requirements to the pre-A5 or A5 profiles currently supported.
 
 These are manufacturer/industry-authored technical guides used to trace the implemented subset. HED does not redistribute the normative text.

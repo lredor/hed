@@ -160,6 +160,23 @@ class NfcOutletCountTest {
         circuit.setUsage(CircuitUse.DEDICATED_APPLIANCE);
         assertTrue(HedStandards.validate(home).isEmpty());
         circuit.setUsage(CircuitUse.UNKNOWN);
-        assertTrue(HedStandards.validate(home).isEmpty());
+        assertEquals("nfc.circuitUseUnspecified", HedStandards.validate(home).getFirst().code());
+    }
+
+    @Test
+    void unclassifiedOutletCircuitsExplainWhyCountingIsNotAssessed() {
+        for (var version : List.of(StandardVersion.NF_C15_100_BEFORE_A5, StandardVersion.NF_C15_100_A5_2015)) {
+            var circuit = circuit(version, 2.5);
+            var home = HedDomain.dwelling(circuit);
+            standalone(circuit, version == StandardVersion.NF_C15_100_BEFORE_A5 ? 9 : 13);
+            circuit.setUsage(CircuitUse.UNKNOWN);
+            var issue = HedStandards.validate(home).getFirst();
+            assertEquals("nfc.circuitUseUnspecified", issue.code());
+            assertSame(circuit, issue.target());
+            assertTrue(issue.message(Locale.FRENCH).contains("Prises de courant"));
+            assertTrue(issue.message(Locale.ENGLISH).contains("Socket outlets"));
+            HedDomain.set(circuit, "usage", CircuitUse.SOCKET_OUTLETS);
+            assertEquals("nfc.outletCount", HedStandards.validate(home).getFirst().code());
+        }
     }
 }

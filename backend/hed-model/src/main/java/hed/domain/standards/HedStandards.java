@@ -12,10 +12,13 @@ package hed.domain.standards;
 import java.util.ArrayList;
 import java.util.List;
 import hed.domain.HedValidation.Issue;
+import hed.domain.HedValidation.Severity;
 import hed.domain.standards.rules.NfcConductorProtectionRule;
 import hed.domain.standards.rules.NfcOutletCountRule;
 import hed.domain.standards.rules.NfcResidualCircuitCountRule;
+import hed.homeelectrical.CircuitUse;
 import hed.homeelectrical.Dwelling;
+import hed.homeelectrical.FinalCircuit;
 import hed.homeelectrical.StandardVersion;
 
 /** Dispatches documented, nonblocking design checks using the dwelling's explicitly selected standard profile. */
@@ -33,6 +36,12 @@ public final class HedStandards {
             return List.of();
         }
         var issues = new ArrayList<Issue>();
+        // Rule eligibility depends on the recorded use. Do not silently treat an unclassified circuit as assessed.
+        for (var item : home.getCircuits()) {
+            if (item instanceof FinalCircuit circuit && circuit.getUsage() == CircuitUse.UNKNOWN) {
+                issues.add(new Issue(Severity.WARNING, "nfc.circuitUseUnspecified", circuit, List.of(reference(home.getStandardVersion()))));
+            }
+        }
         issues.addAll(NfcOutletCountRule.validate(home));
         issues.addAll(NfcConductorProtectionRule.validate(home));
         issues.addAll(NfcResidualCircuitCountRule.validate(home));

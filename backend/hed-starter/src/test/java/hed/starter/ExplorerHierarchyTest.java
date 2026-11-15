@@ -130,4 +130,5 @@ class ExplorerHierarchyTest {
         assertFalse(service.canCreateHedObject(new Group(home, "unlocated"), "MCB"));
         assertTrue(service.canCreateHedObject(new Group(home, "unlocated"), "OUTLET"));
     }
+
 }

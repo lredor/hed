@@ -309,6 +309,16 @@ public class HedJavaServices {
     }
 
     /**
+     * Leaves room device creation to the per-catalog-entry native menu contribution.
+     * @param self the selected explorer element
+     * @param kind a category-based creation action
+     * @return whether that category action belongs in this owner's menu
+     */
+    public boolean canCreateHedCategoryObject(Object self, String kind) {
+        return !(self instanceof Room) && canCreateHedObject(self, kind);
+    }
+
+    /**
      * Tests whether the selected semantic element owns an electrical table or diagram description.
      * @param self the Model Explorer selection
      * @return whether the native New Representation dialog can be offered

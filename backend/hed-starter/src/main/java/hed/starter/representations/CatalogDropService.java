@@ -110,7 +110,12 @@ public class CatalogDropService {
         }).toList();
     }
 
-    private boolean isTerminalType(DeviceType type) {
+    /**
+     * Shares room-type eligibility between drag-and-drop and native creation menus.
+     * @param type a catalog entry
+     * @return whether its category describes terminal room equipment
+     */
+    public boolean isTerminalType(DeviceType type) {
         var kind = type.getKind();
         return !HedDomain.modular(kind) && kind != DeviceKind.ENERGY_METER && kind != DeviceKind.SERVICE_BREAKER;
     }

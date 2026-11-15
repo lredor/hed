@@ -102,10 +102,11 @@ public class ViewContribution implements IEditingContextProcessor, IJavaServiceP
         var actions = new ArrayList<TreeItemContextMenuEntry>();
         var names = new ArrayList<>(List.of("Storey", "Room", "DistributionBoard", "DINRail", "FinalCircuit", "CircuitBranch", "DistributionCircuit", "ControlFunction", "ControlChannel",
                 "ServiceConnection", "EnergyMeter", "ServiceCircuitBreaker", "DeviceType"));
-        Arrays.stream(DeviceKind.values()).filter(k -> k != DeviceKind.ENERGY_METER && k != DeviceKind.SERVICE_BREAKER).map(DeviceKind::getName).forEach(names::add);
+        var creationKinds = Arrays.stream(DeviceKind.values()).filter(k -> k != DeviceKind.ENERGY_METER && k != DeviceKind.SERVICE_BREAKER).map(DeviceKind::getName).toList();
+        names.addAll(creationKinds);
         for (var name : names) {
             var key = Character.isUpperCase(name.charAt(0)) && name.contains("_") || Arrays.stream(DeviceKind.values()).anyMatch(k -> k.getName().equals(name)) ? "kind." + name : "class." + name;
-            actions.add(tb.newSingleClickTreeItemContextMenuEntry().name("hed-create-" + name).preconditionExpression("aql:self.canCreateHedObject('" + name + "')")
+            actions.add(tb.newSingleClickTreeItemContextMenuEntry().name("hed-create-" + name).preconditionExpression("aql:self.canCreateHedCategoryObject('" + name + "')")
                     .labelExpression("aql:self.getHedText('action.create') + ' ' + self.getHedText('" + key + "')").iconURLExpression(HedDomainIcons.concept(name))
                     .body(vb.newChangeContext().expression("aql:self.createHedObject('" + name + "')").build()).build());
         }

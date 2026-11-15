@@ -248,6 +248,7 @@ Individual block outlets cannot be dropped onto either diagram.
 On a floor plan, a 1 × 2 block measures 48 × 24 units and a 2 × 3 block measures 72 × 48 units.
 Equipment tables and electrical selectors list the block as one unit. Standard checks still count its actual outlets.
 
+Room creation tools list every terminal catalog entry in catalog order, using its editable name. Multiple variants of the same category each have their own tool; creation uses the exact selected type and its dimensions.
 
 == Build the distribution board
 

@@ -253,6 +253,7 @@ Une prise de ce bloc ne peut pas être déposée individuellement dans un diagra
 Sur un plan, un bloc 1 × 2 mesure 48 × 24 unités ; un bloc 2 × 3 mesure 72 × 48 unités.
 Les tableaux d'équipements et les sélecteurs électriques présentent le bloc comme une unité. Les contrôles normatifs comptent toujours ses prises réelles.
 
+Les outils de création d’une pièce présentent chaque entrée du catalogue des équipements terminaux, dans son ordre et sous son nom. Les variantes d’une même catégorie ont chacune leur outil ; la création utilise précisément le type choisi et ses dimensions.
 
 == Construire le tableau électrique
 

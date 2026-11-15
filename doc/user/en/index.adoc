@@ -248,6 +248,7 @@ Individual block outlets cannot be dropped onto either diagram.
 On a floor plan, a 1 × 2 block measures 48 × 24 units and a 2 × 3 block measures 72 × 48 units.
 Equipment tables and electrical selectors list the block as one unit. Standard checks still count its actual outlets.
 
+
 == Build the distribution board
 
 . Under the GTL, create a distribution board.
@@ -286,6 +287,8 @@ The choice is saved with the project and updates validation messages and circuit
 New and existing projects default to *Unspecified*: structural checks remain active while standard checks are disabled.
 
 Supported profiles are *before A5 (2010 profile)* and *amendment A5 (2015)*.
+Set the circuit *Usage* to *Socket outlets* for the outlet-count check. An unspecified use produces an explicit not-assessed warning; a circuit name such as "Bedroom outlets" does not select its use.
+
 For a copper circuit with *Usage = Socket outlets* and a section of 1.5 or 2.5 mm², counting includes all assigned individual outlets across its branches and blocks.
 Before A5 a double-outlet block on one circuit counts as one socket; A5 counts each individual outlet.
 The limits are respectively 5 and 8 counted sockets before A5, and 8 and 12 under A5, depending on the section.

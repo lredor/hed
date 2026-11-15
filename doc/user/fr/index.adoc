@@ -253,6 +253,7 @@ Une prise de ce bloc ne peut pas être déposée individuellement dans un diagra
 Sur un plan, un bloc 1 × 2 mesure 48 × 24 unités ; un bloc 2 × 3 mesure 72 × 48 unités.
 Les tableaux d'équipements et les sélecteurs électriques présentent le bloc comme une unité. Les contrôles normatifs comptent toujours ses prises réelles.
 
+
 == Construire le tableau électrique
 
 . Sous la GTL, créez un tableau de répartition.
@@ -292,6 +293,8 @@ Par défaut, pour les nouveaux projets comme pour les projets existants, la vale
 
 Les profils proposés sont *avant A5 (profil 2010)* et *amendement A5 (2015)*.
 Pour un circuit d'usage *Prises de courant* en cuivre de 1,5 ou 2,5 mm², le décompte porte sur toutes ses prises, y compris celles de ses branches et de ses blocs.
+Renseignez *Usage = Prises de courant* sur le circuit pour activer le décompte. Un usage non renseigné produit un avertissement explicite de contrôle non évalué ; nommer un circuit « Prises chambre » ne définit pas son usage.
+
 Avant A5, un bloc de deux prises sur le même circuit compte pour une prise ; après A5, chaque prise compte individuellement.
 Les plafonds sont respectivement 5 et 8 prises décomptées avant A5, contre 8 et 12 après A5 selon la section.
 Les sections absentes ou non prises en charge sont indiquées comme non évaluées.

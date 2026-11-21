@@ -122,6 +122,10 @@ class ExplorerHierarchyTest {
         var board = service.createHedObject(gtl, "DistributionBoard");
         assertEquals(gtl, service.getHedParent(board));
         assertTrue(service.canCreateHedObject(board, "DINRail"));
+        assertTrue(service.canCreateHedCategoryObject(board, "DINRail"));
+        var rail = service.createHedObject(board, "DINRail");
+        assertTrue(service.canCreateHedObject(rail, "MCB"));
+        assertFalse(service.canCreateHedCategoryObject(rail, "MCB"));
         assertFalse(service.canCreateHedObject(board, "MCB"));
         assertFalse(service.canCreateHedObject(gtl, "MCB"));
         assertTrue(service.canCreateHedObject(service.createHedObject(board, "DINRail"), "MCB"));

@@ -265,6 +265,9 @@ Les outils de création d’une pièce présentent chaque entrée du catalogue d
 Un appareil modulaire doit être installé sur un rail de son propre tableau.
 Une création ou un déplacement est refusé si la capacité disponible est insuffisante.
 Le dialogue Nouvel objet propose les variantes compactes du catalogue lorsqu’elles tiennent sur le rail.
+
+Les outils de création d’un rail DIN présentent chaque entrée compatible du catalogue des appareils modulaires, dans son ordre et sous son nom. Chaque variante dispose de son propre outil et crée un appareil de ce type précis. Seuls les types qui tiennent dans la capacité restante du rail sont proposés ; réordonner ou renommer les entrées du catalogue met les outils à jour.
+
 Un rail occupé ne peut pas être supprimé : déplacez ou supprimez d’abord ses appareils.
 
 Sélectionnez un interrupteur différentiel et renseignez son *Disjoncteur de branchement amont* pour le relier au disjoncteur général.

@@ -309,13 +309,13 @@ public class HedJavaServices {
     }
 
     /**
-     * Leaves room device creation to the per-catalog-entry native menu contribution.
+     * Leaves room and DIN rail device creation to the per-catalog-entry native menu contribution.
      * @param self the selected explorer element
      * @param kind a category-based creation action
      * @return whether that category action belongs in this owner's menu
      */
     public boolean canCreateHedCategoryObject(Object self, String kind) {
-        return !(self instanceof Room) && canCreateHedObject(self, kind);
+        return !(self instanceof Room) && !(self instanceof DINRail) && canCreateHedObject(self, kind);
     }
 
     /**

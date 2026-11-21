@@ -260,6 +260,9 @@ Room creation tools list every terminal catalog entry in catalog order, using it
 A modular device must be on a rail belonging to its own board.
 Creation and moves are refused when the destination rail has insufficient capacity.
 The New Object dialog includes compact catalog variants when they fit.
+
+DIN rail creation tools list every compatible modular catalog entry in catalog order, using its editable name. Each variant has its own tool and creates a device from that exact type. Only types that fit the remaining rail capacity are offered; reordering or renaming catalog entries updates the tools.
+
 An occupied rail cannot be deleted; first move or delete its devices.
 
 Select an RCCB and set its *Upstream service circuit-breaker* to connect it to the service breaker.

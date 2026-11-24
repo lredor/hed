@@ -54,7 +54,9 @@ test('persist the standard profile and recompute historical and A5 counts for br
         result.url().endsWith('/api/graphql') && result.request().postDataJSON()?.operationName === 'dropTreeItem'
     );
     await source.dragTo(target);
-    expect((await (await response).json()).errors).toBeUndefined();
+    const payload = await (await response).json();
+    expect(payload.errors).toBeUndefined();
+    expect(payload.data.dropTreeItem.__typename).toBe('SuccessPayload');
   };
   const selectProfile = async (version: string) => {
     await item(messages['class.Dwelling']).click();
@@ -100,10 +102,20 @@ test('persist the standard profile and recompute historical and A5 counts for br
         .filter({ hasText: new RegExp('^' + escape(messages['kind.OUTLET_BLOCK']) + '$') })
         .first()
         .click();
+      // The catalog type and its instance share a name; wait for the installed device's Details.
+      await expect(page.getByTestId(messages['feature.room']).getByRole('combobox')).toHaveText(
+        sampleName('livingRoom')
+      );
+      await expect(page.getByTestId(messages['feature.deviceType']).getByRole('combobox')).toHaveText(
+        messages['kind.OUTLET_BLOCK']
+      );
       await name.fill('NORM-BLOCK-' + index);
       await name.press('Tab');
-      await expect(item('NORM-BLOCK-' + index)).toBeVisible();
-      await drop(item('NORM-BLOCK-' + index), item('Norm branch'));
+      const created = room.locator('p').filter({ hasText: 'NORM-BLOCK-' + index });
+      await expect(created).toHaveCount(1);
+      await expect(created).toBeVisible();
+      await expect(type).toHaveText(messages['kind.OUTLET_BLOCK']);
+      await drop(created, item('Norm branch'));
     }
     await selectProfile('NF_C_15_100_A5_2015');
     const validation = page.getByRole('textbox', { name: messages['validation'], exact: true });
